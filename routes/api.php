@@ -23,12 +23,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/sanctum/token', function (Request $request) {
     $request->validate([
-        'email'       => 'required|email',
+        'username'    => 'required',
         'password'    => 'required',
         'device_name' => 'required',
     ]);
 
-    $user = User::where('email', $request->email)->first();
+    $user = User::where('username', $request->username)->first();
 
     if (!$user || !Hash::check($request->password, $user->password)) {
         throw ValidationException::withMessages([
