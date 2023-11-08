@@ -32,7 +32,7 @@ Route::post('/sanctum/token', function (Request $request) {
 
     if (!$user || !Hash::check($request->password, $user->password)) {
         throw ValidationException::withMessages([
-            'email' => ['The provided credentials are incorrect.'],
+            'username' => ['The provided credentials are incorrect.'],
         ]);
     }
 
