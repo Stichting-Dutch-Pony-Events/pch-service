@@ -1,14 +1,10 @@
 <?php
 
-namespace DataAccessLayer\Pretix;
+namespace App\DataAccessLayer\Pretix;
 
-use DataAccessLayer\Pretix\Views\CheckInList;
-use DataAccessLayer\Pretix\Views\Invoice;
-use DataAccessLayer\Pretix\Views\Item;
-use DataAccessLayer\Pretix\Views\Order;
 use GuzzleHttp\Client;
 
-use function PHPUnit\Framework\stringContains;
+use function DataAccessLayer\Pretix\str_ends_with;
 
 class PretixApi
 {
@@ -41,54 +37,9 @@ class PretixApi
         ]);
     }
 
-    /**
-     * @return CheckInList[]
-     */
-    public function getCheckinLists(): array {
-        $checkinLists = $this->retrieveAll('checkinlists');
 
-        $checkinListObjs = [];
-        foreach ($checkinLists as $checkinList) {
-            $checkinListObjs[] = new CheckInList($checkinList);
-        }
 
-        return $checkinListObjs;
-    }
 
-    public function getInvoices(string $order = null)
-    {
-        $parameters = [];
-        if ($order !== null) {
-            $parameters['order'] = $order;
-        }
-        $invoices   = $this->retrieveAll("invoices", $parameters);
-        $invObjects = [];
-        foreach ($invoices as $inv) {
-            $invObjects[] = new Invoice($inv);
-        }
-        return $invObjects;
-    }
-
-    public function getOrder(string $order): Order
-    {
-        $uri = "orders/".$order;
-        return new Order(json_decode($this->client->get($uri)->getBody()));
-    }
-
-    public function getItem(int $item): ?Item
-    {
-        return new Item(json_decode($this->client->get('items/'.$item)->getBody()));
-    }
-
-    public function getOrders()
-    {
-        $orders   = $this->retrieveAll('orders', ['status' => 'p']);
-        $orderObj = [];
-        foreach ($orders as $order) {
-            $orderObj[] = new Order($order);
-        }
-        return $orderObj;
-    }
 
 
     private function addParametersToUrl(string $url, array $parameters): string

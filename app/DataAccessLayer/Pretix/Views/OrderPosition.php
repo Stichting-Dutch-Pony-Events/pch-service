@@ -1,8 +1,7 @@
 <?php
 
-namespace DataAccessLayer\Pretix\Views;
+namespace App\DataAccessLayer\Pretix\Views;
 
-use DateTime;
 use Illuminate\Support\Carbon;
 
 class OrderPosition

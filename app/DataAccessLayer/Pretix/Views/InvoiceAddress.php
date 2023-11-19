@@ -1,12 +1,13 @@
 <?php
 
-namespace DataAccessLayer\Pretix\Views;
+namespace App\DataAccessLayer\Pretix\Views;
 
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
 use IntVent\EBoekhouden\Client;
 use IntVent\EBoekhouden\Filters\RelationFilter;
 use IntVent\EBoekhouden\Models\EboekhoudenRelation;
+
+use function DataAccessLayer\Pretix\Views\mb_convert_encoding;
 
 class InvoiceAddress
 {

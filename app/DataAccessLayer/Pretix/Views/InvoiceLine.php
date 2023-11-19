@@ -1,6 +1,6 @@
 <?php
 
-namespace DataAccessLayer\Pretix\Views;
+namespace App\DataAccessLayer\Pretix\Views;
 
 use App\Api\PretixApi;
 use Illuminate\Support\Carbon;

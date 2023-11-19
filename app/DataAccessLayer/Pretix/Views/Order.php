@@ -1,6 +1,6 @@
 <?php
 
-namespace DataAccessLayer\Pretix\Views;
+namespace App\DataAccessLayer\Pretix\Views;
 
 use App\Api\PayPal\PayPalApi;
 use App\Api\PretixApi;
@@ -12,6 +12,9 @@ use IntVent\EBoekhouden\Models\EboekhoudenMutation;
 use IntVent\EBoekhouden\Models\EboekhoudenMutationLine;
 use IntVent\EBoekhouden\Models\EboekhoudenRelation;
 use Stripe\StripeClient;
+
+use function DataAccessLayer\Pretix\Views\str_contains;
+use function DataAccessLayer\Pretix\Views\str_starts_with;
 
 class Order
 {
