@@ -1,0 +1,8 @@
+# config/routes.yaml
+api_login_check:
+    path: /api/login_check
+
+api:
+    prefix: /api/{version}
+    resource: 'routes/api'
+    type: directory
