@@ -1,0 +1,37 @@
+version: '3.7'
+services:
+  php:
+    image: ghcr.io/bakerware/docker-images/php-8.2-dev:latest
+    restart: always
+    volumes:
+      - './:/usr/src/app'
+      - './var/php_error.log:/var/log/error.log'
+    environment:
+      XDEBUG_CONFIG: client_host=host.docker.internal
+      PHP_IDE_CONFIG: serverName=pch-service
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - web
+  nginx:
+    image: nginx:1.17.1-alpine
+    restart: always
+    volumes:
+      - './:/usr/src/app'
+      - './docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro'
+    depends_on:
+      - php
+    links:
+      - php
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.digitalebalie-service.rule=Host(`pch-service.bw-dev.nl`)"
+      - "traefik.http.routers.digitalebalie-service.entrypoints=web"
+      - "traefik.http.routers.digitalebalie-service-secure.rule=Host(`pch-service.bw-dev.nl`)"
+      - "traefik.http.routers.digitalebalie-service-secure.entrypoints=websecure"
+      - "traefik.http.routers.digitalebalie-service-secure.tls.domains[0].main=pch-service.bw-dev.nl"
+networks:
+  web:
+    external: true

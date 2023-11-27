@@ -20,6 +20,7 @@
         "jschaedl/iban-validation": "^1.8.2",
         "lexik/jwt-authentication-bundle": "^2.18",
         "nelmio/api-doc-bundle": "^4.12",
+        "nesbot/carbon": "^2.71",
         "stof/doctrine-extensions-bundle": "^1.9",
         "symfony/asset": "6.3.*",
         "symfony/console": "6.3.*",
