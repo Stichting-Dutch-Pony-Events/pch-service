@@ -7,11 +7,11 @@ use App\Domain\Entity\CheckInList;
 use App\Domain\Service\CheckInListDomainService;
 use Doctrine\ORM\EntityManagerInterface;
 
-class CheckInListApplicationService
+readonly class CheckInListApplicationService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private readonly CheckInListDomainService $checkInListDomainService,
+        private EntityManagerInterface   $entityManager,
+        private CheckInListDomainService $checkInListDomainService,
     )
     {
     }

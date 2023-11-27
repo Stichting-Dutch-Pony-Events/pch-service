@@ -12,7 +12,6 @@ class CheckInRequest
     public CheckInType $type = CheckInType::ENTRY;
     public bool $force = false;
     public bool $ignore_unpaid = false;
-    public DateTime $datetime;
     public string $nonce;
 
 
@@ -20,7 +19,6 @@ class CheckInRequest
         public string $secret,
         public array  $lists,
     ) {
-        $this->datetime = Carbon::now();
         $this->nonce    = uniqid();
     }
 }

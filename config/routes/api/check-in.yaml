@@ -1,0 +1,4 @@
+api.check-in:
+    path: /check-in
+    controller: App\Controller\CheckInController::checkIn
+    methods: POST

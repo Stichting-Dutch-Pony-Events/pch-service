@@ -42,12 +42,12 @@ class OrderPosition
         $this->id                = $item->id;
         $this->order             = $item->order;
         $this->positionId        = $item->positionid;
-        $this->cancelled         = $item->canceled;
+        $this->cancelled         = $item->canceled ?? false;
         $this->itemId            = $item->item;
         $this->variationId       = $item->variation ?? null;
         $this->price             = $item->price;
         $this->attendeeName      = $item->attendee_name ?? null;
-        $this->attendeeNameParts = $item->attendee_name_parts;
+        $this->attendeeNameParts = (array)$item->attendee_name_parts ?? null;
         $this->attendeeEmail     = $item->attendee_email;
         $this->street            = $item->street ?? null;
         $this->zipcode           = $item->zipcode ?? null;
@@ -149,6 +149,17 @@ class OrderPosition
     public function getAttendeeNameParts(): ?array
     {
         return $this->attendeeNameParts;
+    }
+
+    public function getAttendeeNamePart(string $part): ?string
+    {
+        foreach ($this->attendeeNameParts as $key => $value) {
+            if (str_contains(strtolower($key), strtolower($part))) {
+                return $value;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -287,5 +298,14 @@ class OrderPosition
         return $this->answers;
     }
 
+    public function getAnswer(string $identifier): ?string
+    {
+        foreach ($this->answers as $answer) {
+            if (strtolower($answer->getQuestionIdentifier()) === strtolower($identifier)) {
+                return $answer->getAnswer();
+            }
+        }
 
+        return null;
+    }
 }

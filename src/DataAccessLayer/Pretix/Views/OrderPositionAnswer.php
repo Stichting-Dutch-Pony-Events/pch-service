@@ -16,7 +16,7 @@ class OrderPositionAnswer
         $this->questionIdentifier = $item->question_identifier;
 
         if(property_exists($item, 'options') && is_array($item->options)) {
-            for ($i = 0; $i < $item->options; $i++) {
+            for ($i = 0; $i < count($item->options); $i++) {
                 $this->options[$item->options[$i]] = $item->option_identifiers[$i] ?? null;
             }
         }

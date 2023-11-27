@@ -3,7 +3,7 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="https://doctrine-project.org/schemas/orm/doctrine-mapping
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="App\Domain\Entity\Product" table="product">
+    <entity name="App\Domain\Entity\Product" table="product" repository-class="App\DataAccessLayer\Repository\ProductRepository">
         <id name="id" type="uuid" column="id">
             <generator strategy="CUSTOM"/>
             <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>

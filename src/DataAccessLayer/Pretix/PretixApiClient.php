@@ -2,6 +2,8 @@
 
 namespace App\DataAccessLayer\Pretix;
 
+use Exception;
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -56,7 +58,7 @@ class PretixApiClient
             $url            = $this->addParametersToUrl($uri, $parameters);
 
             if($prependEvent) {
-                $url = 'event/' . $this->event . '/' . $url;
+                $url = 'events/' . $this->event . '/' . $url;
             }
 
             $objects        = json_decode($this->client->request(Request::METHOD_GET, $url)->getContent());
@@ -74,7 +76,7 @@ class PretixApiClient
     public function retrieve(string $uri, bool $prependEvent = true): object
     {
         if($prependEvent) {
-            $uri = 'event/' . $this->event . '/' . $uri;
+            $uri = 'events/' . $this->event . '/' . $uri;
         }
 
         return json_decode($this->client->request(Request::METHOD_GET, $uri)->getContent());
@@ -83,11 +85,18 @@ class PretixApiClient
     public function post(string $uri, object $data, bool $prependEvent = true): object
     {
         if($prependEvent) {
-            $uri = 'event/' . $this->event . '/' . $uri;
+            $uri = 'events/' . $this->event . '/' . $uri;
         }
 
-        return json_decode($this->client->request(Request::METHOD_POST, $uri, [
-            'json' => $data
-        ])->getContent());
+        $response = null;
+        try {
+            $response = $this->client->request(Request::METHOD_POST, $uri, [
+                'json' => $data
+            ])->getContent();
+        } catch (ClientException $e) {
+            $response = $e->getResponse()->getContent(false);
+        }
+
+        return json_decode($response);
     }
 }

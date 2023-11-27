@@ -16,4 +16,9 @@ class Item
         $this->name = $item->name;
         $this->metaData = $item->meta_data;
     }
+
+    public function getEnglishName(): string
+    {
+        return $this->name->en;
+    }
 }

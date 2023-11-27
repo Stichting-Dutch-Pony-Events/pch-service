@@ -30,8 +30,7 @@ class SetupCheckInListsCommand extends Command
         parent::__construct();
     }
 
-    protected
-    function execute(
+    protected function execute(
         InputInterface  $input,
         OutputInterface $output
     ) {
@@ -113,8 +112,7 @@ class SetupCheckInListsCommand extends Command
         return Command::SUCCESS;
     }
 
-    private
-    function getDate(
+    private function getDate(
         InputInterface  $input,
         OutputInterface $output,
         string          $question,
@@ -145,8 +143,7 @@ class SetupCheckInListsCommand extends Command
         return null;
     }
 
-    private
-    function deleteCurrentCheckInLists(): void
+    private function deleteCurrentCheckInLists(): void
     {
         $checkInLists = $this->checkInListRepository->findAll();
 

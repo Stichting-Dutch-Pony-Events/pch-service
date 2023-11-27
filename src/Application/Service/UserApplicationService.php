@@ -7,11 +7,11 @@ use App\Domain\Entity\User;
 use App\Domain\Service\UserDomainService;
 use Doctrine\ORM\EntityManagerInterface;
 
-class UserApplicationService
+readonly class UserApplicationService
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly UserDomainService $userDomainService
+        private EntityManagerInterface $entityManager,
+        private UserDomainService      $userDomainService
     )
     {
     }
