@@ -4,6 +4,8 @@ namespace App\Domain\Entity;
 
 use App\Domain\Enum\CheckInListType;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Uid\Uuid;
 
@@ -13,17 +15,21 @@ class CheckInList
 
     private ?Uuid $id;
 
+    /** @var Collection<int, Product> $products */
+    private Collection $products;
+
     public function __construct(
         private string          $name,
         private ?int            $pretixId,
         private DateTime        $startTime,
         private DateTime        $endTime,
         private CheckInListType $type,
-        /**
-         * @var int[]|null
-         */
-        private ?array           $pretixProductIds
+        /** @var int[]|null $pretixProductIds */
+        private ?array          $pretixProductIds,
+        /** @var Collection<int, Product> $products */
+        ?Collection             $products = null,
     ) {
+        $this->products = $products ?? new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -90,5 +96,29 @@ class CheckInList
     public function getPretixProductIds(): ?array
     {
         return $this->pretixProductIds;
+    }
+
+    /** @return Collection<int, Product> */
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    public function addProduct(Product $product): self
+    {
+        if(!$this->products->contains($product)) {
+            $this->products->add($product);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): self
+    {
+        if($this->products->contains($product)) {
+            $this->products->removeElement($product);
+        }
+
+        return $this;
     }
 }

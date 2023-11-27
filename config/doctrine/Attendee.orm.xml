@@ -3,25 +3,25 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="https://doctrine-project.org/schemas/orm/doctrine-mapping
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="App\Domain\Entity\CheckInList" table="check_in_list"
-            repository-class="App\DataAccessLayer\Repository\CheckInListRepository">
+    <entity name="App\Domain\Entity\Attendee" table="attendee">
         <id name="id" type="uuid" column="id">
             <generator strategy="CUSTOM"/>
             <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>
         </id>
 
         <field name="name" length="200"/>
-        <field name="pretixId" type="integer" nullable="true" unique="true"/>
-        <field name="startTime" type="datetime"/>
-        <field name="endTime" type="datetime"/>
-        <field name="type" enum-type="App\Domain\Enum\CheckInListType">
-            <options>
-                <option name="default">TICKET</option>
-            </options>
-        </field>
-        <field name="pretixProductIds" type="json" nullable="true"/>
+        <field name="firstName" nullable="true"/>
+        <field name="middleName" nullable="true"/>
+        <field name="familyName" nullable="true"/>
+        <field name="nickName" nullable="true"/>
+        <field name="email" nullable="true"/>
+        <field name="orderCode"/>
+        <field name="ticketId"/>
+        <field name="ticketSecret"/>
 
-        <many-to-many field="products" target-entity="App\Domain\Entity\Product" mapped-by="checkInLists"/>
+        <many-to-one field="product" target-entity="App\Domain\Entity\Product" fetch="EAGER">
+            <join-column name="product_id"/>
+        </many-to-one>
 
         <field name="createdAt" type="datetime">
             <gedmo:timestampable on="create"/>

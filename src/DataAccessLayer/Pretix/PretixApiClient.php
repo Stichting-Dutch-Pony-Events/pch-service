@@ -12,17 +12,17 @@ class PretixApiClient
         string                      $baseUrl,
         string                      $apiKey,
         string                      $organiser,
-        string                      $event
+        private string              $event
     ) {
         if (!str_ends_with($baseUrl, '/')) {
             $baseUrl .= '/';
         }
-        $baseUrl .= 'api/v1/organizers/'.$organiser.'/events/'.$event.'/';
+        $baseUrl .= 'api/v1/organizers/' . $organiser . '/';
 
         $this->client = $this->client->withOptions([
             'base_uri' => $baseUrl,
             'headers'  => [
-                'Authorization' => 'Token '.$apiKey,
+                'Authorization' => 'Token ' . $apiKey,
                 'Accept'        => 'application/json'
             ]
         ]);
@@ -37,13 +37,13 @@ class PretixApiClient
             } else {
                 $url .= '&';
             }
-            $url .= $key.'='.$value;
+            $url .= $key . '=' . $value;
             $i++;
         }
         return $url;
     }
 
-    public function retrieveAll($uri, $parameters = []): array
+    public function retrieveAll(string $uri, array $parameters = [], bool $prependEvent = true): array
     {
         if ($parameters === null) {
             $parameters = [];
@@ -54,6 +54,11 @@ class PretixApiClient
         while ($nextPageExists) {
             $nextPageExists = false;
             $url            = $this->addParametersToUrl($uri, $parameters);
+
+            if($prependEvent) {
+                $url = 'event/' . $this->event . '/' . $url;
+            }
+
             $objects        = json_decode($this->client->request(Request::METHOD_GET, $url)->getContent());
             if (property_exists($objects, 'next') && $objects->next !== null) {
                 $parameters['page']++;
@@ -66,7 +71,23 @@ class PretixApiClient
         return $results;
     }
 
-    public function retrieve(string $uri): object {
+    public function retrieve(string $uri, bool $prependEvent = true): object
+    {
+        if($prependEvent) {
+            $uri = 'event/' . $this->event . '/' . $uri;
+        }
+
         return json_decode($this->client->request(Request::METHOD_GET, $uri)->getContent());
+    }
+
+    public function post(string $uri, object $data, bool $prependEvent = true): object
+    {
+        if($prependEvent) {
+            $uri = 'event/' . $this->event . '/' . $uri;
+        }
+
+        return json_decode($this->client->request(Request::METHOD_POST, $uri, [
+            'json' => $data
+        ])->getContent());
     }
 }

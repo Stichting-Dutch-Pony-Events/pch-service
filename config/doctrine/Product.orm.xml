@@ -3,8 +3,7 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="https://doctrine-project.org/schemas/orm/doctrine-mapping
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="App\Domain\Entity\CheckInList" table="check_in_list"
-            repository-class="App\DataAccessLayer\Repository\CheckInListRepository">
+    <entity name="App\Domain\Entity\Product" table="product">
         <id name="id" type="uuid" column="id">
             <generator strategy="CUSTOM"/>
             <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>
@@ -12,16 +11,17 @@
 
         <field name="name" length="200"/>
         <field name="pretixId" type="integer" nullable="true" unique="true"/>
-        <field name="startTime" type="datetime"/>
-        <field name="endTime" type="datetime"/>
-        <field name="type" enum-type="App\Domain\Enum\CheckInListType">
-            <options>
-                <option name="default">TICKET</option>
-            </options>
-        </field>
-        <field name="pretixProductIds" type="json" nullable="true"/>
 
-        <many-to-many field="products" target-entity="App\Domain\Entity\Product" mapped-by="checkInLists"/>
+        <many-to-many field="checkInLists" target-entity="App\Domain\Entity\CheckInList" inversed-by="products">
+            <join-table name="check_in_list_products">
+                <join-columns>
+                    <join-column name="product_id" on-delete="CASCADE"/>
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="check_in_list_id" on-delete="CASCADE"/>
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
 
         <field name="createdAt" type="datetime">
             <gedmo:timestampable on="create"/>
