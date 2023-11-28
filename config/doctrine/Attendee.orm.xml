@@ -3,7 +3,7 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="https://doctrine-project.org/schemas/orm/doctrine-mapping
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="App\Domain\Entity\Attendee" table="attendee">
+    <entity name="App\Domain\Entity\Attendee" table="attendee" repository-class="App\DataAccessLayer\Repository\AttendeeRepository">
         <id name="id" type="uuid" column="id">
             <generator strategy="CUSTOM"/>
             <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>
@@ -16,8 +16,8 @@
         <field name="nickName" nullable="true"/>
         <field name="email" nullable="true"/>
         <field name="orderCode"/>
-        <field name="ticketId"/>
-        <field name="ticketSecret"/>
+        <field name="ticketId" unique="true"/>
+        <field name="ticketSecret" unique="true"/>
 
         <many-to-one field="product" target-entity="App\Domain\Entity\Product" fetch="EAGER">
             <join-column name="product_id"/>

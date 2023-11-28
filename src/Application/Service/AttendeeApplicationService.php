@@ -4,6 +4,7 @@ namespace App\Application\Service;
 
 use App\Application\Request\AttendeeRequest;
 use App\DataAccessLayer\Pretix\Views\OrderPosition;
+use App\DataAccessLayer\Repository\AttendeeRepository;
 use App\DataAccessLayer\Repository\ProductRepository;
 use App\Domain\Entity\Attendee;
 use App\Domain\Service\AttendeeDomainService;
@@ -15,6 +16,7 @@ readonly class AttendeeApplicationService
     public function __construct(
         private ProductRepository      $productRepository,
         private AttendeeDomainService  $attendeeDomainService,
+        private AttendeeRepository     $attendeeRepository,
         private EntityManagerInterface $entityManager
     ) {
     }
@@ -25,6 +27,8 @@ readonly class AttendeeApplicationService
         if (!isset($product)) {
             throw new EntityNotFoundException('Product not found');
         }
+
+        $attendee = $this->attendeeRepository->findOneBy(['ticketId' => $orderPosition->getId()]);
 
         $attendeeRequest = new AttendeeRequest(
             name: $orderPosition->getAttendeeName(),
@@ -39,9 +43,14 @@ readonly class AttendeeApplicationService
             productId: $product->getId()
         );
 
-        $attendee = $this->attendeeDomainService->createAttendee($attendeeRequest, $product);
+        if (isset($attendee)) {
+            $this->attendeeDomainService->updateAttendee($attendee, $attendeeRequest);
+        } else {
+            $attendee = $this->attendeeDomainService->createAttendee($attendeeRequest, $product);
 
-        $this->entityManager->persist($attendee);
+            $this->entityManager->persist($attendee);
+        }
+
         $this->entityManager->flush();
 
         return $attendee;

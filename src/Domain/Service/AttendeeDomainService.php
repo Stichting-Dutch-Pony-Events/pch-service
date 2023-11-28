@@ -23,4 +23,14 @@ class AttendeeDomainService
             product: $product
         );
     }
+
+    public function updateAttendee(Attendee $attendee, AttendeeRequest $attendeeRequest): Attendee
+    {
+        return $attendee->setName($attendeeRequest->name)
+                        ->setFirstName($attendeeRequest->firstName)
+                        ->setMiddleName($attendeeRequest->middleName)
+                        ->setFamilyName($attendeeRequest->familyName)
+                        ->setNickName($attendeeRequest->nickName)
+                        ->setEmail($attendeeRequest->email);
+    }
 }
