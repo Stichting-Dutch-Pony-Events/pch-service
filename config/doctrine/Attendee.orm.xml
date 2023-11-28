@@ -19,6 +19,13 @@
         <field name="ticketId" unique="true"/>
         <field name="ticketSecret" unique="true"/>
 
+        <one-to-many field="checkIns" target-entity="App\Domain\Entity\CheckIn" mapped-by="attendee">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
         <many-to-one field="product" target-entity="App\Domain\Entity\Product" fetch="EAGER">
             <join-column name="product_id"/>
         </many-to-one>

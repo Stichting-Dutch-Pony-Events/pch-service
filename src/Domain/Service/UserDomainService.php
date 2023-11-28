@@ -27,4 +27,20 @@ class UserDomainService
 
         return $user;
     }
+
+    public function updateUser(User $user, UserRequest $userRequest): User
+    {
+        $user->setName($userRequest->name);
+        $user->setUsername($userRequest->username);
+        if($userRequest->roles !== null) {
+            $user->setRoles($userRequest->roles);
+        }
+
+        if ($userRequest->password !== null) {
+            $hashedPassword = $this->passwordHasher->hashPassword($user, $userRequest->password);
+            $user->setPassword($hashedPassword);
+        }
+
+        return $user;
+    }
 }

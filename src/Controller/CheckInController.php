@@ -8,16 +8,16 @@ use App\Application\Service\CheckInApplicationService;
 use App\Domain\Enum\CheckInListType;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
 use App\Util\Validator\Validator;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 
-class CheckInController extends AbstractFOSRestController
+class CheckInController extends AbstractController
 {
     public function __construct(
         private readonly CheckInApplicationService $checkInApplicationService
@@ -68,6 +68,6 @@ class CheckInController extends AbstractFOSRestController
             ]
         ]);
 
-        return $this->handleView($this->view($this->checkInApplicationService->performCheckIn($checkInRequest)));
+        return $this->json($this->checkInApplicationService->performCheckIn($checkInRequest));
     }
 }

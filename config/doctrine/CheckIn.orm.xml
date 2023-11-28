@@ -3,16 +3,24 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="https://doctrine-project.org/schemas/orm/doctrine-mapping
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="App\Domain\Entity\User" table="user" repository-class="App\DataAccessLayer\Repository\UserRepository">
+    <entity name="App\Domain\Entity\CheckIn" table="check_in">
         <id name="id" type="uuid" column="id">
             <generator strategy="CUSTOM"/>
             <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>
         </id>
 
-        <field name="name" type="string"/>
-        <field name="username" unique="true"/>
-        <field name="password" nullable="true"/>
-        <field name="roles" type="json"/>
+        <many-to-one field="attendee" target-entity="App\Domain\Entity\Attendee" inversed-by="checkIns">
+            <join-column name="attendee_id" nullable="false"/>
+        </many-to-one>
+
+        <many-to-one field="checkInList" target-entity="App\Domain\Entity\CheckInList">
+            <join-column name="check_in_list_id" nullable="false"/>
+        </many-to-one>
+
+        <field name="status" enum-type="App\DataAccessLayer\Pretix\Enum\CheckInStatus"/>
+        <field name="errorReason" enum-type="App\DataAccessLayer\Pretix\Enum\CheckInErrorReason" nullable="true"/>
+        <field name="reasonExplanation" nullable="true"/>
+        <field name="checkInTime" type="datetime"/>
 
         <field name="createdAt" type="datetime">
             <gedmo:timestampable on="create"/>

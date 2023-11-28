@@ -6,10 +6,11 @@ use App\Application\View\UserView;
 use App\Util\SymfonyUtils\Mapper;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use OpenApi\Attributes as OA;
 
-class UserController extends AbstractFOSRestController
+class UserController extends AbstractController
 {
     #[OA\Response(
         response: 200,
@@ -22,6 +23,6 @@ class UserController extends AbstractFOSRestController
     )]
     #[OA\Tag(name: 'User')]
     public function me(): Response {
-        return $this->handleView($this->view(Mapper::mapOne($this->getUser(), UserView::class), 200));
+        return $this->json(Mapper::mapOne($this->getUser(), UserView::class));
     }
 }

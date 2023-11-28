@@ -2,6 +2,8 @@
 
 namespace App\Domain\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Uid\Uuid;
 
@@ -10,6 +12,9 @@ class Attendee
     use Timestampable;
 
     private ?Uuid $id = null;
+
+    /** @var Collection<int, CheckIn> $checkIns */
+    private Collection $checkIns;
 
     public function __construct(
         private string  $name,
@@ -21,8 +26,11 @@ class Attendee
         private string  $orderCode,
         private int     $ticketId,
         private string  $ticketSecret,
-        private Product $product
+        private Product $product,
+        /** @var Collection<int, CheckIn> $checkIns */
+        ?Collection     $checkIns = null
     ) {
+        $this->checkIns = $checkIns ?? new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -120,5 +128,13 @@ class Attendee
     public function getProduct(): Product
     {
         return $this->product;
+    }
+
+    /**
+     * @return Collection<int, CheckIn>
+     */
+    public function getCheckIns(): Collection
+    {
+        return $this->checkIns;
     }
 }

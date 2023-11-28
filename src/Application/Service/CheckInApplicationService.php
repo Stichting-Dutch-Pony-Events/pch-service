@@ -5,19 +5,22 @@ namespace App\Application\Service;
 use App\Application\Request\CheckInRequest;
 use App\Application\Response\CheckInResponse;
 use App\Application\View\AttendeeView;
-use App\DataAccessLayer\Pretix\Enum\CheckInStatus;
 use App\DataAccessLayer\Pretix\Repositories\CheckInRepository;
 use App\DataAccessLayer\Pretix\Request\CheckInRequest as PretixCheckInRequest;
 use App\DataAccessLayer\Repository\CheckInListRepository;
+use App\Domain\Service\CheckInDomainService;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use App\Util\SymfonyUtils\Mapper;
+use Doctrine\ORM\EntityManagerInterface;
 
 readonly class CheckInApplicationService
 {
     public function __construct(
         private CheckInListRepository      $checkInListRepository,
         private CheckInRepository          $checkInRepository,
-        private AttendeeApplicationService $attendeeApplicationService
+        private AttendeeApplicationService $attendeeApplicationService,
+        private CheckInDomainService       $checkInDomainService,
+        private EntityManagerInterface     $entityManager,
     ) {
     }
 
@@ -38,12 +41,21 @@ readonly class CheckInApplicationService
             requiresAttention: $checkIn->isRequiresAttention()
         );
 
-        if ($checkIn->getStatus() === CheckInStatus::OK) {
+        if ($checkIn->getOrderPosition() !== null) {
             $attendee = $this->attendeeApplicationService->createAttendeeFromOrderPosition(
                 $checkIn->getOrderPosition()
             );
 
             $checkInResponse->attendee = Mapper::mapOne($attendee, AttendeeView::class);
+
+            $checkInEntity = $this->checkInDomainService->createCheckIn(
+                $checkInResponse,
+                $attendee,
+                $activeCheckInList
+            );
+
+            $this->entityManager->persist($checkInEntity);
+            $this->entityManager->flush();
         }
 
         return $checkInResponse;

@@ -7,8 +7,8 @@ class UserRequest
     public function __construct(
         public string $name,
         public string $username,
-        public string $password,
-        public array  $roles,
+        public ?string $password,
+        public ?array  $roles,
     ) {
     }
 }

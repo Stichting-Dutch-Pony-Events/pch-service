@@ -24,4 +24,12 @@ readonly class UserApplicationService
 
         return $user;
     }
+
+    public function updateUser(User $user, UserRequest $userRequest): User {
+        $this->userDomainService->updateUser($user, $userRequest);
+
+        $this->entityManager->flush();
+
+        return $user;
+    }
 }
