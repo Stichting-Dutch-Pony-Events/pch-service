@@ -20,17 +20,21 @@ class AttendeeDomainService
             orderCode: $attendeeRequest->orderCode,
             ticketId: $attendeeRequest->ticketId,
             ticketSecret: $attendeeRequest->ticketSecret,
-            product: $product
+            product: $product, nfcTagId: $attendeeRequest->nfcTagId,
+            miniIdentifier: $attendeeRequest->miniIdentifier,
+            pinCode: $attendeeRequest->pinCode
         );
     }
 
     public function updateAttendee(Attendee $attendee, AttendeeRequest $attendeeRequest): Attendee
     {
         return $attendee->setName($attendeeRequest->name)
-                        ->setFirstName($attendeeRequest->firstName)
-                        ->setMiddleName($attendeeRequest->middleName)
-                        ->setFamilyName($attendeeRequest->familyName)
-                        ->setNickName($attendeeRequest->nickName)
-                        ->setEmail($attendeeRequest->email);
+            ->setFirstName($attendeeRequest->firstName)
+            ->setMiddleName($attendeeRequest->middleName)
+            ->setFamilyName($attendeeRequest->familyName)
+            ->setNickName($attendeeRequest->nickName)
+            ->setEmail($attendeeRequest->email)
+            ->setNfcTagId($attendeeRequest->nfcTagId)
+            ->setPinCode($attendeeRequest->pinCode);
     }
 }

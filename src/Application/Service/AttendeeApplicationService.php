@@ -40,7 +40,9 @@ readonly class AttendeeApplicationService
             orderCode: $orderPosition->getOrder(),
             ticketId: $orderPosition->getId(),
             ticketSecret: $orderPosition->getSecret(),
-            productId: $product->getId()
+            productId: $product->getId(),nfcTagId: null,
+            miniIdentifier: $this->attendeeRepository->getFreeMiniIdentifier(),
+            pinCode: null
         );
 
         if (isset($attendee)) {

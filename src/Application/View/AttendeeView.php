@@ -19,6 +19,9 @@ class AttendeeView
         public ProductView $product,
         public DateTime    $createdAt,
         public DateTime    $updatedAt,
+        public ?string     $nfcTagId,
+        public ?string     $miniIdentifier,
+        public ?string     $pinCode,
     ) {
     }
 }

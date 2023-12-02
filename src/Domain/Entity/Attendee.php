@@ -5,6 +5,7 @@ namespace App\Domain\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
+use phpDocumentor\Reflection\Types\True_;
 use Symfony\Component\Uid\Uuid;
 
 class Attendee
@@ -27,6 +28,9 @@ class Attendee
         private int     $ticketId,
         private string  $ticketSecret,
         private Product $product,
+        private ?string $nfcTagId = null,
+        private ?string $miniIdentifier = null,
+        private ?string $pinCode = null,
         /** @var Collection<int, CheckIn> $checkIns */
         ?Collection     $checkIns = null
     ) {
@@ -136,5 +140,32 @@ class Attendee
     public function getCheckIns(): Collection
     {
         return $this->checkIns;
+    }
+
+    public function getNfcTagId(): ?string
+    {
+        return $this->nfcTagId;
+    }
+
+    public function setNfcTagId(?string $nfcTagId): self
+    {
+        $this->nfcTagId = $nfcTagId;
+
+        return $this;
+    }
+
+    public function getMiniIdentifier(): ?string
+    {
+        return $this->miniIdentifier;
+    }
+
+    public function getPinCode(): ?string {
+        return $this->pinCode;
+    }
+
+    public function setPinCode(?string $pinCode): self {
+        $this->pinCode = $pinCode;
+
+        return $this;
     }
 }
