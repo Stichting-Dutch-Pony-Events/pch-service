@@ -21,7 +21,7 @@ class AttendeeView
         public DateTime    $updatedAt,
         public ?string     $nfcTagId,
         public ?string     $miniIdentifier,
-        public ?string     $pinCode,
+        public ?array      $roles,
     ) {
     }
 }

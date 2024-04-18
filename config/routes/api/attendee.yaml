@@ -1,0 +1,4 @@
+api.attendee.me:
+    path: /attendee/me
+    controller: App\Controller\AttendeeController::me
+    methods: GET

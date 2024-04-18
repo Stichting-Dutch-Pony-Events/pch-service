@@ -3,6 +3,7 @@
 namespace App\Application\Service;
 
 use App\Application\Request\AttendeeRequest;
+use App\DataAccessLayer\Pretix\Views\Order;
 use App\DataAccessLayer\Pretix\Views\OrderPosition;
 use App\DataAccessLayer\Repository\AttendeeRepository;
 use App\DataAccessLayer\Repository\ProductRepository;
@@ -21,7 +22,7 @@ readonly class AttendeeApplicationService
     ) {
     }
 
-    public function createAttendeeFromOrderPosition(OrderPosition $orderPosition): Attendee
+    public function createAttendeeFromOrderPosition(OrderPosition $orderPosition, Order $order): Attendee
     {
         $product = $this->productRepository->findByPretixId($orderPosition->getItemId());
         if (!isset($product)) {
@@ -36,13 +37,12 @@ readonly class AttendeeApplicationService
             middleName: $orderPosition->getAttendeeNamePart('middle'),
             familyName: $orderPosition->getAttendeeNamePart('family'),
             nickName: $orderPosition->getAnswer('nickname'),
-            email: $orderPosition->getAttendeeEmail(),
+            email: $orderPosition->getAttendeeEmail() ?? $order->email,
             orderCode: $orderPosition->getOrder(),
             ticketId: $orderPosition->getId(),
             ticketSecret: $orderPosition->getSecret(),
             productId: $product->getId(),nfcTagId: null,
-            miniIdentifier: $this->attendeeRepository->getFreeMiniIdentifier(),
-            pinCode: null
+            miniIdentifier: $this->attendeeRepository->getFreeMiniIdentifier()
         );
 
         if (isset($attendee)) {

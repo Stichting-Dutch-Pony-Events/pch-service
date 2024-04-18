@@ -1,4 +1,3 @@
-version: '3.7'
 services:
   php:
     image: ghcr.io/bakerware/docker-images/php-8.2-dev:latest
@@ -32,6 +31,18 @@ services:
       - "traefik.http.routers.digitalebalie-service-secure.rule=Host(`pch-service.bw-dev.nl`)"
       - "traefik.http.routers.digitalebalie-service-secure.entrypoints=websecure"
       - "traefik.http.routers.digitalebalie-service-secure.tls.domains[0].main=pch-service.bw-dev.nl"
+  elasticsearch:
+    image: elasticsearch:8.8.0
+    ports:
+      - 9200:9200
+      - 9300:9300
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    networks:
+      - web
 networks:
   web:
     external: true

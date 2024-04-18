@@ -20,10 +20,15 @@ class Order
 {
     public string $code;
     public string $status;
+    public string $email;
     public bool $testMode;
     public ?Carbon $datetime;
     public ?Carbon $expires;
     public ?string $total;
+
+    /** @var OrderPosition[] $positions */
+    public ?array $positions;
+
     /** @var OrderPayment[] $payments */
     public ?array $payments;
     /** @var  OrderRefund[] $refunds */
@@ -37,6 +42,7 @@ class Order
         $this->code = $orderObj->code;
         $this->status = $orderObj->status;
         $this->testMode = $orderObj->testmode;
+        $this->email = $orderObj->email;
         try { $this->datetime = Carbon::parse($orderObj->datetime); } catch (\Exception) { $this->datetime = null; }
         try { $this->expires = Carbon::parse($orderObj->expires); } catch (\Exception) { $this->expires = null; }
         $this->total = $orderObj->total;
@@ -56,6 +62,13 @@ class Order
             }
         } else {
             $this->refunds = null;
+        }
+
+        if(is_array($orderObj->positions)) {
+            $this->positions = [];
+            foreach ($orderObj->positions as $position) {
+                $this->positions[] = new OrderPosition($position);
+            }
         }
 
         try { $this->lastModified = Carbon::parse($orderObj->last_modified); } catch (\Exception) { $this->lastModified = null; }

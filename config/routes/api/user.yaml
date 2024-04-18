@@ -1,4 +1,0 @@
-api.user_me:
-    path: /user/me
-    controller: App\Controller\UserController::me
-    methods: GET

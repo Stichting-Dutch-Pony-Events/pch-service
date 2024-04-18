@@ -5,10 +5,11 @@ namespace App\Domain\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
-use phpDocumentor\Reflection\Types\True_;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
 
-class Attendee
+class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use Timestampable;
 
@@ -30,7 +31,8 @@ class Attendee
         private Product $product,
         private ?string $nfcTagId = null,
         private ?string $miniIdentifier = null,
-        private ?string $pinCode = null,
+        private ?string $password = null,
+        private ?array  $roles = ['ROLE_USER'],
         /** @var Collection<int, CheckIn> $checkIns */
         ?Collection     $checkIns = null
     ) {
@@ -159,13 +161,29 @@ class Attendee
         return $this->miniIdentifier;
     }
 
-    public function getPinCode(): ?string {
-        return $this->pinCode;
+    public function getPassword(): ?string
+    {
+        return $this->password;
     }
 
-    public function setPinCode(?string $pinCode): self {
-        $this->pinCode = $pinCode;
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    public function eraseCredentials(): void
+    {
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->getMiniIdentifier() ?? $this->getId();
     }
 }

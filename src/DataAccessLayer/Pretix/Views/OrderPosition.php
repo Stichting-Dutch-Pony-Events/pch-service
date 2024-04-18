@@ -47,7 +47,7 @@ class OrderPosition
         $this->variationId       = $item->variation ?? null;
         $this->price             = $item->price;
         $this->attendeeName      = $item->attendee_name ?? null;
-        $this->attendeeNameParts = (array)$item->attendee_name_parts ?? null;
+        $this->attendeeNameParts = empty($item->attendee_name_parts) ? null : (array) $item->attendee_name_parts;
         $this->attendeeEmail     = $item->attendee_email;
         $this->street            = $item->street ?? null;
         $this->zipcode           = $item->zipcode ?? null;

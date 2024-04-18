@@ -17,7 +17,6 @@ class AttendeeRequest
         public string  $productId,
         public ?string $nfcTagId = null,
         public ?string $miniIdentifier = null,
-        public ?string $pinCode = null,
     ) {
     }
 }

@@ -6,6 +6,7 @@ use App\Application\Request\CheckInRequest;
 use App\Application\Response\CheckInResponse;
 use App\Application\View\AttendeeView;
 use App\DataAccessLayer\Pretix\Repositories\CheckInRepository;
+use App\DataAccessLayer\Pretix\Repositories\OrderRepository;
 use App\DataAccessLayer\Pretix\Request\CheckInRequest as PretixCheckInRequest;
 use App\DataAccessLayer\Repository\CheckInListRepository;
 use App\Domain\Service\CheckInDomainService;
@@ -21,6 +22,7 @@ readonly class CheckInApplicationService
         private AttendeeApplicationService $attendeeApplicationService,
         private CheckInDomainService       $checkInDomainService,
         private EntityManagerInterface     $entityManager,
+        private OrderRepository            $orderRepository
     ) {
     }
 
@@ -43,7 +45,8 @@ readonly class CheckInApplicationService
 
         if ($checkIn->getOrderPosition() !== null) {
             $attendee = $this->attendeeApplicationService->createAttendeeFromOrderPosition(
-                $checkIn->getOrderPosition()
+                $checkIn->getOrderPosition(),
+                $this->orderRepository->getOrderByCode($checkIn->getOrderPosition()->getOrder())
             );
 
             $checkInResponse->attendee = Mapper::mapOne($attendee, AttendeeView::class);
