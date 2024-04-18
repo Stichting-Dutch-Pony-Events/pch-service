@@ -5,14 +5,10 @@ namespace App\Util;
 use App\DataAccessLayer\Pretix\Repositories\OrderRepository;
 use App\Domain\Entity\Attendee;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
-use Imagick;
-use ImagickDraw;
-use ImagickPixel;
+use GdImage;
 
 class BadgeGenerator
 {
-    private Imagick $image;
-
     public function __construct(
         private OrderRepository $orderRepository
     ) {
@@ -20,8 +16,8 @@ class BadgeGenerator
 
     public function generate(Attendee $attendee): string
     {
-        $imagePath = __DIR__ . '/../../assets/badges/' . $attendee->getProduct()->getPretixId() . '.png';
-        $dataPath  = __DIR__ . '/../../assets/badges/' . $attendee->getProduct()->getPretixId() . '.json';
+        $imagePath = __DIR__.'/../../assets/badges/'.$attendee->getProduct()->getPretixId().'.png';
+        $dataPath  = __DIR__.'/../../assets/badges/'.$attendee->getProduct()->getPretixId().'.json';
 
         if (!file_exists($imagePath) || !file_exists($dataPath)) {
             throw new EntityNotFoundException('Badges not found');
@@ -29,24 +25,99 @@ class BadgeGenerator
 
         $data = json_decode(file_get_contents($dataPath));
 
-        $image = new Imagick($imagePath);
-
         $orderPosition = $this->orderRepository->getOrderPosition($attendee->getTicketId());
         $ocImageUrl    = $orderPosition->getAnswer('OC-IMAGE');
 
+        $image = imagecreatefrompng($imagePath);
+
+
         if ($ocImageUrl) {
-            $tmpPath = __DIR__ . '/../../var/tmp/' . $attendee->getProduct()->getPretixId() . '.png';
+            $tmpPath = __DIR__.'/../../var/tmp/'.$attendee->getProduct()->getPretixId();
 
-            $this->orderRepository->downloadUrl($ocImageUrl, $tmpPath);
+            $tmpPath = $this->orderRepository->downloadImage($ocImageUrl, $tmpPath);
 
-            $ocImage = new Imagick($tmpPath);
-            $ocImage->resizeImage($data->profileWidth, $data->profileHeight, Imagick::FILTER_LANCZOS, 1, true);
-            $image->compositeImage($ocImage, Imagick::COMPOSITE_OVER, $data->profileX, $data->profileY);
+            $ocImage = str_ends_with($tmpPath, 'png') ? imagecreatefrompng($tmpPath) : imagecreatefromjpeg($tmpPath);
+            $ocImage = $this->resizeImage($ocImage, $data->profileWidth, $data->profileHeight);
+
+            $posX = ($data->profileWidth - imagesx($ocImage)) / 2 + $data->profileX;
+            $posY = ($data->profileHeight - imagesy($ocImage)) / 2 + $data->profileY;
+
+            imagecopy($image, $ocImage, $posX, $posY, 0, 0, imagesx($ocImage), imagesy($ocImage));
         }
 
+        $fontFile = __DIR__.'/../../assets/badges/'.$data->font;
+        if (file_exists($fontFile)) {
+            $fontSize = $this->getMaxFontSize($fontFile, $attendee->getNickName(), $data->nameWidth, $data->nameHeight);
+            $color    = imagecolorallocate($image, 0, 0, 0);
+            $boxSize  = imagettfbbox($fontSize, 0, $fontFile, $attendee->getNickName());
+            $width    = $boxSize[2] - $boxSize[0];
+            $height   = $boxSize[1] - $boxSize[7];
+            $posX     = ($data->nameWidth - $width) / 2 + $data->nameX;
+            $posY     = ($data->nameHeight - $height) / 2 + $data->nameY + $fontSize;
+
+            imagettftext($image, $fontSize, 0, $posX, $posY, $color, $fontFile, $attendee->getNickName());
+        }
+
+
+        ob_start();
+        imagepng($image);
+        $stringdata = ob_get_contents(); // read from buffer
+        ob_end_clean(); // delete buffer
+
+        imagedestroy($image);
+        imagedestroy($ocImage);
+
+        return $stringdata;
+        /*
         $fontFile = __DIR__ . '/../../assets/badges/' . $data->font;
 
         $image->setImageFormat('png');
         return $image->getImageBlob();
+        */
+    }
+
+    function resizeImage(GdImage $image, int $max_width, int $max_height)
+    {
+        $orig_width  = imagesx($image);
+        $orig_height = imagesy($image);
+
+        $width  = $orig_width;
+        $height = $orig_height;
+
+        # taller
+        if ($height > $max_height) {
+            $width  = ($max_height / $height) * $width;
+            $height = $max_height;
+        }
+
+        # wider
+        if ($width > $max_width) {
+            $height = ($max_width / $width) * $height;
+            $width  = $max_width;
+        }
+
+        $image_p = imagecreatetruecolor($width, $height);
+
+        imagecopyresampled($image_p, $image, 0, 0, 0, 0,
+            $width, $height, $orig_width, $orig_height);
+
+        return $image_p;
+    }
+
+    public function getMaxFontSize(
+        string $fontFile,
+        string $text,
+        int    $maxWidth,
+        int    $maxHeight,
+        int    $maxSize = 100
+    ): int {
+        $size = $maxSize;
+
+        do {
+            $size--;
+            $box = imagettfbbox($size, 0, $fontFile, $text);
+        } while ($size > 0 && ($box[2] - $box[0] > $maxWidth || $box[1] - $box[7] > $maxHeight));
+
+        return $size;
     }
 }

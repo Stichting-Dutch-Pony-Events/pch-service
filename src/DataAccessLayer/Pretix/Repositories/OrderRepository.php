@@ -19,10 +19,10 @@ class OrderRepository extends PretixBaseRepository
         return new OrderPosition($this->pretixApiClient->retrieve($uri));
     }
 
-    public function downloadUrl(string $url, string $path): string
+    public function downloadImage(string $url, string $path): string
     {
         realpath(dirname($path)) ?: mkdir(dirname($path), 0777, true);
-        return $this->pretixApiClient->download($url, $path);
+        return $this->pretixApiClient->downloadImage($url, $path);
     }
 
     public function getOrders()
