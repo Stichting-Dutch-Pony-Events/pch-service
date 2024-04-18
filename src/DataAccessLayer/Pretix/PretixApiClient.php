@@ -82,6 +82,12 @@ class PretixApiClient
         return json_decode($this->client->request(Request::METHOD_GET, $uri)->getContent());
     }
 
+    public function download(string $url, string $path): string
+    {
+        file_put_contents($path, $this->client->request(Request::METHOD_GET, $url)->getContent());
+        return $path;
+    }
+
     public function post(string $uri, object $data, bool $prependEvent = true): object
     {
         if($prependEvent) {
