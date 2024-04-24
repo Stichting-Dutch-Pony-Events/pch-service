@@ -19,6 +19,6 @@ class CheckInRequest
         public string $secret,
         public array  $lists,
     ) {
-        $this->nonce    = uniqid();
+        $this->nonce    = uniqid('', true);
     }
 }

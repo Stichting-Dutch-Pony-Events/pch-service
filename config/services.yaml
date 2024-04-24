@@ -8,6 +8,7 @@ parameters:
     pretix.api_key: '%env(string:PRETIX_API_KEY)%'
     pretix.organiser: '%env(string:PRETIX_ORGANISER)%'
     pretix.event: '%env(string:PRETIX_EVENT)%'
+    app.live_mode: '%env(bool:LIVE_MODE)%'
 
 services:
     # default configuration for services in *this* file
