@@ -7,5 +7,8 @@
   "nameY": 505,
   "nameWidth": 550,
   "nameHeight": 70,
+  "qrX": 981,
+  "qrY": 450,
+  "qrSize": 68,
   "font": "MatrixSans-Screen.ttf"
 }

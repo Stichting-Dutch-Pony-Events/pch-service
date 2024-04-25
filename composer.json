@@ -6,6 +6,7 @@
     "require": {
         "php": ">=8.2",
         "ext-ctype": "*",
+        "ext-gd": "*",
         "ext-iconv": "*",
         "ext-json": "*",
         "doctrine/doctrine-bundle": "^2.11",
@@ -19,6 +20,7 @@
         "illuminate/validation": "^9.0",
         "jms/serializer-bundle": "^5.3",
         "jschaedl/iban-validation": "^1.8.2",
+        "jucksearm/php-barcode": "^1.0",
         "lexik/jwt-authentication-bundle": "^2.18",
         "nelmio/api-doc-bundle": "^4.12",
         "nesbot/carbon": "^2.71",
@@ -42,8 +44,7 @@
         "symfony/uid": "6.3.*",
         "symfony/yaml": "6.3.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0",
-        "ext-gd": "*"
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {

@@ -6,6 +6,7 @@ use App\DataAccessLayer\Pretix\Repositories\OrderRepository;
 use App\Domain\Entity\Attendee;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use GdImage;
+use jucksearm\barcode\QRcode;
 
 class BadgeGenerator
 {
@@ -16,8 +17,8 @@ class BadgeGenerator
 
     public function generate(Attendee $attendee): string
     {
-        $imagePath = __DIR__.'/../../assets/badges/'.$attendee->getProduct()->getPretixId().'.png';
-        $dataPath  = __DIR__.'/../../assets/badges/'.$attendee->getProduct()->getPretixId().'.json';
+        $imagePath = __DIR__ . '/../../assets/badges/' . $attendee->getProduct()->getPretixId() . '.png';
+        $dataPath  = __DIR__ . '/../../assets/badges/' . $attendee->getProduct()->getPretixId() . '.json';
 
         if (!file_exists($imagePath) || !file_exists($dataPath)) {
             throw new EntityNotFoundException('Badges not found');
@@ -32,7 +33,7 @@ class BadgeGenerator
 
 
         if ($ocImageUrl) {
-            $tmpPath = __DIR__.'/../../var/tmp/'.$attendee->getProduct()->getPretixId();
+            $tmpPath = __DIR__ . '/../../var/tmp/' . $attendee->getProduct()->getPretixId();
 
             $tmpPath = $this->orderRepository->downloadImage($ocImageUrl, $tmpPath);
 
@@ -45,7 +46,7 @@ class BadgeGenerator
             imagecopy($image, $ocImage, $posX, $posY, 0, 0, imagesx($ocImage), imagesy($ocImage));
         }
 
-        $fontFile = __DIR__.'/../../assets/badges/'.$data->font;
+        $fontFile = __DIR__ . '/../../assets/badges/' . $data->font;
         if (file_exists($fontFile)) {
             $fontSize = $this->getMaxFontSize($fontFile, $attendee->getNickName(), $data->nameWidth, $data->nameHeight);
             $color    = imagecolorallocate($image, 0, 0, 0);
@@ -58,6 +59,12 @@ class BadgeGenerator
             imagettftext($image, $fontSize, 0, $posX, $posY, $color, $fontFile, $attendee->getNickName());
         }
 
+        $qrCode   = imagecreatefromstring($this->getDataMatrix($attendee->getMiniIdentifier(), $data->qrSize));
+        $qrWidth  = imagesx($qrCode);
+        $qrHeight = imagesy($qrCode);
+        $posX     = $data->qrX - $qrWidth;
+        $posY     = $data->qrY - $qrHeight;
+        imagecopy($image, $qrCode, $posX, $posY, 0, 0, $qrWidth, $qrHeight);
 
         ob_start();
         imagepng($image);
@@ -66,6 +73,7 @@ class BadgeGenerator
 
         imagedestroy($image);
         imagedestroy($ocImage);
+        imagedestroy($qrCode);
 
         return $stringdata;
         /*
@@ -98,8 +106,18 @@ class BadgeGenerator
 
         $image_p = imagecreatetruecolor($width, $height);
 
-        imagecopyresampled($image_p, $image, 0, 0, 0, 0,
-            $width, $height, $orig_width, $orig_height);
+        imagecopyresampled(
+            $image_p,
+            $image,
+            0,
+            0,
+            0,
+            0,
+            $width,
+            $height,
+            $orig_width,
+            $orig_height
+        );
 
         return $image_p;
     }
@@ -119,5 +137,14 @@ class BadgeGenerator
         } while ($size > 0 && ($box[2] - $box[0] > $maxWidth || $box[1] - $box[7] > $maxHeight));
 
         return $size;
+    }
+
+    public function getDataMatrix(string $miniIdentifier, int $size): string
+    {
+        return QRcode::factory()
+                     ->setCode($miniIdentifier)
+                     ->setMargin(2)
+                     ->setSize($size)
+                     ->getQRcodePngData();
     }
 }
