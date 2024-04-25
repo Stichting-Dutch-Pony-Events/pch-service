@@ -48,17 +48,11 @@ class AttendeeController extends AbstractController
         description: 'Attendee Image',
     )]
     #[OA\Tag(name: 'Attendee')]
-    public function getAttendeeImage(string $attendee): Response
+    public function getAttendeeImage(Attendee $attendee): Response
     {
-        $attendeeObj = $this->attendeeRepository->find($attendee);
-
-        if (!$attendee) {
-            throw new EntityNotFoundException('Attendee not found');
-        }
-
-        return new Response($this->badgeGenerator->generate($attendeeObj), Response::HTTP_OK, [
+        return new Response($this->badgeGenerator->generate($attendee), Response::HTTP_OK, [
             'Content-Type'        => 'image/png',
-            'Content-Disposition' => 'inline; filename="'.$attendeeObj->getProduct()->getPretixId().'.png"'
+            'Content-Disposition' => 'inline; filename="'.$attendee->getProduct()->getPretixId().'.png"'
         ]);
     }
 }
