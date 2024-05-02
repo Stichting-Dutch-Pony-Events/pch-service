@@ -1,14 +1,14 @@
 {
-  "profileX": 31,
-  "profileY": 211,
+  "profileX": 33,
+  "profileY": 207,
   "profileWidth": 300,
   "profileHeight": 400,
-  "nameX": 436,
-  "nameY": 505,
-  "nameWidth": 550,
-  "nameHeight": 70,
-  "qrX": 981,
-  "qrY": 450,
+  "nameX": 511,
+  "nameY": 495,
+  "nameWidth": 460,
+  "nameHeight": 80,
+  "qrX": 971,
+  "qrY": 454,
   "qrSize": 68,
   "font": "MatrixSans-Screen.ttf"
 }
