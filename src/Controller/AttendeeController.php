@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 class AttendeeController extends AbstractController
 {
     public function __construct(
-        private readonly AttendeeRepository $attendeeRepository,
         private readonly BadgeGenerator     $badgeGenerator
     ) {
     }
@@ -40,7 +39,7 @@ class AttendeeController extends AbstractController
             throw new EntityNotFoundException('Attendee not found');
         }
 
-        return new JsonResponse(Mapper::mapOne($user, AttendeeView::class));
+        return $this->json(Mapper::mapOne($user, AttendeeView::class));
     }
 
     #[OA\Response(
