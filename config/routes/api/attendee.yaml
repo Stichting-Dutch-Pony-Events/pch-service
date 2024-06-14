@@ -1,9 +1,19 @@
 api.attendee.me:
-    path: /attendee/me
-    controller: App\Controller\AttendeeController::me
-    methods: GET
+  path: /attendee/me
+  controller: App\Controller\AttendeeController::me
+  methods: GET
 
 api.attendee.image:
-    path: /attendee/{attendee}/image
-    controller: App\Controller\AttendeeController::getAttendeeImage
-    methods: GET
+  path: /attendee/{attendee}/image
+  controller: App\Controller\AttendeeController::getAttendeeImage
+  methods: GET
+
+api.attendee.update:
+  path: /attendee/{attendee}
+  controller: App\Controller\AttendeeController::updateAttendee
+  methods: PUT
+
+api.attendee.set-password:
+  path: /attendee/me/password
+  controller: App\Controller\AttendeeController::updatePassword
+  methods: PATCH

@@ -3,6 +3,7 @@
 namespace App\Application\Service;
 
 use App\Application\Request\AttendeeRequest;
+use App\Application\Request\SetPasswordRequest;
 use App\DataAccessLayer\Pretix\Views\Order;
 use App\DataAccessLayer\Pretix\Views\OrderPosition;
 use App\DataAccessLayer\Repository\AttendeeRepository;
@@ -41,7 +42,7 @@ readonly class AttendeeApplicationService
             orderCode: $orderPosition->getOrder(),
             ticketId: $orderPosition->getId(),
             ticketSecret: $orderPosition->getSecret(),
-            productId: $product->getId(),nfcTagId: null,
+            productId: $product->getId(), nfcTagId: null,
             miniIdentifier: $this->attendeeRepository->getFreeMiniIdentifier()
         );
 
@@ -52,6 +53,24 @@ readonly class AttendeeApplicationService
 
             $this->entityManager->persist($attendee);
         }
+
+        $this->entityManager->flush();
+
+        return $attendee;
+    }
+
+    public function updateAttendee(Attendee $attendee, AttendeeRequest $attendeeRequest): Attendee
+    {
+        $this->attendeeDomainService->updateAttendee($attendee, $attendeeRequest);
+
+        $this->entityManager->flush();
+
+        return $attendee;
+    }
+
+    public function updatePassword(Attendee $attendee, SetPasswordRequest $passwordRequest): Attendee
+    {
+        $attendee = $this->attendeeDomainService->updatePassword($attendee, $passwordRequest);
 
         $this->entityManager->flush();
 

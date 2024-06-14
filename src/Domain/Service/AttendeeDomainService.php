@@ -3,8 +3,10 @@
 namespace App\Domain\Service;
 
 use App\Application\Request\AttendeeRequest;
+use App\Application\Request\SetPasswordRequest;
 use App\Domain\Entity\Attendee;
 use App\Domain\Entity\Product;
+use App\Util\Exceptions\Exception\Common\InvalidInputException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AttendeeDomainService
@@ -38,11 +40,27 @@ class AttendeeDomainService
     public function updateAttendee(Attendee $attendee, AttendeeRequest $attendeeRequest): Attendee
     {
         return $attendee->setName($attendeeRequest->name)
-                        ->setFirstName($attendeeRequest->firstName)
-                        ->setMiddleName($attendeeRequest->middleName)
-                        ->setFamilyName($attendeeRequest->familyName)
-                        ->setNickName($attendeeRequest->nickName)
-                        ->setEmail($attendeeRequest->email)
-                        ->setNfcTagId($attendeeRequest->nfcTagId);
+            ->setFirstName($attendeeRequest->firstName)
+            ->setMiddleName($attendeeRequest->middleName)
+            ->setFamilyName($attendeeRequest->familyName)
+            ->setNickName($attendeeRequest->nickName)
+            ->setEmail($attendeeRequest->email)
+            ->setNfcTagId($attendeeRequest->nfcTagId);
+    }
+
+    public function updatePassword(Attendee $attendee, SetPasswordRequest $setPasswordRequest): Attendee
+    {
+        if ($this->passwordHasher->isPasswordValid($attendee, $setPasswordRequest->currentPassword)) {
+            throw new InvalidInputException("Password Incorrect");
+        }
+
+        if ($setPasswordRequest->password !== $setPasswordRequest->passwordConfirmation) {
+            throw new InvalidInputException("Passwords are not the same");
+        }
+
+        $hashedPassword = $this->passwordHasher->hashPassword($attendee, $setPasswordRequest->password);
+        $attendee->setPassword($hashedPassword);
+
+        return $attendee;
     }
 }
