@@ -2,6 +2,7 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Enum\TShirtSize;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
@@ -19,22 +20,23 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $checkIns;
 
     public function __construct(
-        private string  $name,
-        private ?string $firstName,
-        private ?string $middleName,
-        private ?string $familyName,
-        private ?string $nickName,
-        private ?string $email,
-        private string  $orderCode,
-        private int     $ticketId,
-        private string  $ticketSecret,
-        private Product $product,
-        private ?string $nfcTagId = null,
-        private ?string $miniIdentifier = null,
-        private ?string $password = null,
-        private ?array  $roles = ['ROLE_USER'],
+        private string      $name,
+        private ?string     $firstName,
+        private ?string     $middleName,
+        private ?string     $familyName,
+        private ?string     $nickName,
+        private ?string     $email,
+        private string      $orderCode,
+        private int         $ticketId,
+        private string      $ticketSecret,
+        private Product     $product,
+        private ?TShirtSize $tShirtSize = null,
+        private ?string     $nfcTagId = null,
+        private ?string     $miniIdentifier = null,
+        private ?string     $password = null,
+        private ?array      $roles = ['ROLE_USER'],
         /** @var Collection<int, CheckIn> $checkIns */
-        ?Collection     $checkIns = null
+        ?Collection         $checkIns = null
     ) {
         $this->checkIns = $checkIns ?? new ArrayCollection();
     }
@@ -161,6 +163,11 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->miniIdentifier;
     }
 
+    public function getTShirtSize(): ?TShirtSize
+    {
+        return $this->tShirtSize;
+    }
+
     public function getPassword(): ?string
     {
         return $this->password;
@@ -170,6 +177,16 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->password = $password;
 
+        return $this;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        if (!in_array('ROLE_USER', $roles, true)) {
+            $roles[] = 'ROLE_USER';
+        }
+
+        $this->roles = $roles;
         return $this;
     }
 

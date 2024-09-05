@@ -16,4 +16,4 @@ api.attendee.update:
 api.attendee.set-password:
   path: /attendee/me/password
   controller: App\Controller\AttendeeController::updatePassword
-  methods: PATCH
+  methods: PUT

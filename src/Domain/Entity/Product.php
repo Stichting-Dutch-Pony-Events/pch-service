@@ -19,6 +19,7 @@ class Product
     public function __construct(
         private string $name,
         private int    $pretixId,
+        private string $defaultRole = 'ROLE_USER',
         /** @var Collection<int, CheckInList> $checkInLists */
         ?Collection    $checkInLists = null,
     ) {
@@ -69,5 +70,10 @@ class Product
     public function getPretixId(): int
     {
         return $this->pretixId;
+    }
+
+    public function getDefaultRole(): string
+    {
+        return $this->defaultRole;
     }
 }

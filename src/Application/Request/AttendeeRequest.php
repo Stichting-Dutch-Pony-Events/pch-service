@@ -2,6 +2,8 @@
 
 namespace App\Application\Request;
 
+use App\Domain\Enum\TShirtSize;
+
 class AttendeeRequest
 {
     public function __construct(
@@ -17,6 +19,7 @@ class AttendeeRequest
         public string  $productId,
         public ?string $nfcTagId = null,
         public ?string $miniIdentifier = null,
+        public ?TShirtSize  $tShirtSize = null,
     )
     {
     }

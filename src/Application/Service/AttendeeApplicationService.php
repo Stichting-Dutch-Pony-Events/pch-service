@@ -9,6 +9,7 @@ use App\DataAccessLayer\Pretix\Views\OrderPosition;
 use App\DataAccessLayer\Repository\AttendeeRepository;
 use App\DataAccessLayer\Repository\ProductRepository;
 use App\Domain\Entity\Attendee;
+use App\Domain\Enum\TShirtSize;
 use App\Domain\Service\AttendeeDomainService;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,6 +32,7 @@ readonly class AttendeeApplicationService
         }
 
         $attendee = $this->attendeeRepository->findOneBy(['ticketId' => $orderPosition->getId()]);
+        $shirtSize = $orderPosition->getAnswer('t-shirt-size');
 
         $attendeeRequest = new AttendeeRequest(
             name: $orderPosition->getAttendeeName(),
@@ -42,8 +44,10 @@ readonly class AttendeeApplicationService
             orderCode: $orderPosition->getOrder(),
             ticketId: $orderPosition->getId(),
             ticketSecret: $orderPosition->getSecret(),
-            productId: $product->getId(), nfcTagId: null,
-            miniIdentifier: $this->attendeeRepository->getFreeMiniIdentifier()
+            productId: $product->getId(),
+            nfcTagId: null,
+            miniIdentifier: $this->attendeeRepository->getFreeMiniIdentifier(),
+            tShirtSize: $shirtSize !== null ? TShirtSize::tryFrom($shirtSize) : null,
         );
 
         if (isset($attendee)) {

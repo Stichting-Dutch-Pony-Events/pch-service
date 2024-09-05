@@ -2,6 +2,7 @@
 
 namespace App\Application\View;
 
+use App\Domain\Enum\TShirtSize;
 use DateTime;
 
 class AttendeeView
@@ -21,6 +22,7 @@ class AttendeeView
         public DateTime    $updatedAt,
         public ?string     $nfcTagId,
         public ?string     $miniIdentifier,
+        public ?TShirtSize $tShirtSize,
         public ?array      $roles,
     ) {
     }

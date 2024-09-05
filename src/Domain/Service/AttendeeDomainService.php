@@ -9,9 +9,9 @@ use App\Domain\Entity\Product;
 use App\Util\Exceptions\Exception\Common\InvalidInputException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class AttendeeDomainService
+readonly class AttendeeDomainService
 {
-    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher)
+    public function __construct(private UserPasswordHasherInterface $passwordHasher)
     {
     }
 
@@ -27,12 +27,16 @@ class AttendeeDomainService
             orderCode: $attendeeRequest->orderCode,
             ticketId: $attendeeRequest->ticketId,
             ticketSecret: $attendeeRequest->ticketSecret,
-            product: $product, nfcTagId: $attendeeRequest->nfcTagId,
+            product: $product,
+            tShirtSize: $attendeeRequest->tShirtSize,
+            nfcTagId: $attendeeRequest->nfcTagId,
             miniIdentifier: $attendeeRequest->miniIdentifier,
         );
 
         $hashedPassword = $this->passwordHasher->hashPassword($attendee, '0000');
         $attendee->setPassword($hashedPassword);
+
+        $attendee->setRoles([$product->getDefaultRole()]);
 
         return $attendee;
     }
