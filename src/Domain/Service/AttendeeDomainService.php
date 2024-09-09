@@ -54,7 +54,7 @@ readonly class AttendeeDomainService
 
     public function updatePassword(Attendee $attendee, SetPasswordRequest $setPasswordRequest): Attendee
     {
-        if ($this->passwordHasher->isPasswordValid($attendee, $setPasswordRequest->currentPassword)) {
+        if (!$this->passwordHasher->isPasswordValid($attendee, $setPasswordRequest->currentPassword)) {
             throw new InvalidInputException("Password Incorrect");
         }
 
