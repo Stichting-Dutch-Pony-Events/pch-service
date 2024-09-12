@@ -9,6 +9,7 @@ class CheckInRequest
     public function __construct(
         public string $secret,
         public CheckInListType $listType = CheckInListType::TICKET,
+        public bool $merchPreCheckIn = false,
     )
     {
     }

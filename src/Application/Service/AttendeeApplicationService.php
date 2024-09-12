@@ -47,7 +47,7 @@ readonly class AttendeeApplicationService
             productId: $product->getId(),
             nfcTagId: null,
             miniIdentifier: $this->attendeeRepository->getFreeMiniIdentifier(),
-            tShirtSize: $shirtSize !== null ? TShirtSize::tryFrom($shirtSize) : null,
+            tShirtSize: $shirtSize !== null ? TShirtSize::tryFrom(strtolower($shirtSize)) : null,
         );
 
         if (isset($attendee)) {
