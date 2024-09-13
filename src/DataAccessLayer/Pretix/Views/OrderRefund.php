@@ -13,7 +13,7 @@ class OrderRefund
     public ?Carbon $created;
     public ?Carbon $executionDate;
     public string $provider;
-    public ?object $comment;
+    public ?string $comment;
 
     public function __construct($paymentObj)
     {

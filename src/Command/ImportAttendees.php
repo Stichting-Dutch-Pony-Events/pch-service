@@ -7,6 +7,7 @@ use App\DataAccessLayer\Pretix\Repositories\OrderRepository;
 use App\DataAccessLayer\Pretix\Views\Order;
 use App\DataAccessLayer\Repository\ProductRepository;
 use App\Domain\Entity\Product;
+use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -77,8 +78,10 @@ class ImportAttendees extends Command
             try {
                 $this->attendeeApplicationService->createAttendeeFromOrderPosition($position, $order);
                 $count++;
+            } catch (EntityNotFoundException $e) {
+                continue;
             } catch (Exception $e) {
-                var_dump($e);
+                var_dump($e->getMessage());
                 continue;
             }
         }

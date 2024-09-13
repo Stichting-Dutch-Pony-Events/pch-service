@@ -20,8 +20,8 @@ final class Version20240905212445 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE attendee ADD t_shirt_size VARCHAR(255) DEFAULT NULL');
-        $this->addSql('ALTER TABLE product ADD default_role VARCHAR(255) DEFAULT \'ROLE_USER\' NOT NULL');
+        $this->addSql('ALTER TABLE attendee ADD t_shirt_size VARCHAR(255) DEFAULT NULL AFTER `nick_name`');
+        $this->addSql('ALTER TABLE product ADD default_role VARCHAR(255) DEFAULT \'ROLE_USER\' NOT NULL AFTER `pretix_id`');
     }
 
     public function down(Schema $schema): void
