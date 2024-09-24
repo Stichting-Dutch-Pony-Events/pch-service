@@ -20,23 +20,24 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $checkIns;
 
     public function __construct(
-        private string      $name,
-        private ?string     $firstName,
-        private ?string     $middleName,
-        private ?string     $familyName,
-        private ?string     $nickName,
-        private ?string     $email,
-        private string      $orderCode,
-        private int         $ticketId,
-        private string      $ticketSecret,
-        private Product     $product,
+        private string $name,
+        private ?string $firstName,
+        private ?string $middleName,
+        private ?string $familyName,
+        private ?string $nickName,
+        private ?string $email,
+        private string $orderCode,
+        private int $ticketId,
+        private string $ticketSecret,
+        private Product $product,
+        private ?Team $team = null,
         private ?TShirtSize $tShirtSize = null,
-        private ?string     $nfcTagId = null,
-        private ?string     $miniIdentifier = null,
-        private ?string     $password = null,
-        private ?array      $roles = ['ROLE_USER'],
+        private ?string $nfcTagId = null,
+        private ?string $miniIdentifier = null,
+        private ?string $password = null,
+        private ?array $roles = ['ROLE_USER'],
         /** @var Collection<int, CheckIn> $checkIns */
-        ?Collection         $checkIns = null
+        ?Collection $checkIns = null
     ) {
         $this->checkIns = $checkIns ?? new ArrayCollection();
     }
@@ -136,6 +137,21 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     public function getProduct(): Product
     {
         return $this->product;
+    }
+
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): self
+    {
+        $this->team?->removeAttendee($this);
+        $team?->addAttendee($this);
+
+        $this->team = $team;
+
+        return $this;
     }
 
     /**

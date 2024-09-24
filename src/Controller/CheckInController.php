@@ -6,6 +6,7 @@ use App\Application\Request\CheckInRequest;
 use App\Application\Response\CheckInResponse;
 use App\Application\Service\CheckInApplicationService;
 use App\Domain\Enum\CheckInListType;
+use App\Security\CheckInVoter;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
 use App\Util\Validator\Validator;
 use Illuminate\Validation\Rule;
@@ -16,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class CheckInController extends AbstractController
 {
@@ -55,6 +57,7 @@ class CheckInController extends AbstractController
         )
     )]
     #[OA\Tag(name: 'Check-In')]
+    #[IsGranted(CheckInVoter::CHECK_IN)]
     public function checkIn(
         #[MapRequestPayload] CheckInRequest $checkInRequest,
         Request                             $request

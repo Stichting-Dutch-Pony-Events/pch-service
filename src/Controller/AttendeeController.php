@@ -19,6 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AttendeeController extends AbstractController
 {
@@ -54,6 +55,7 @@ class AttendeeController extends AbstractController
         description: 'Attendee Image',
     )]
     #[OA\Tag(name: 'Attendee')]
+    #[IsGranted(AttendeeVoter::VIEW, subject: 'attendee')]
     public function getAttendeeImage(Attendee $attendee): Response
     {
         return new Response($this->badgeGenerator->generate($attendee), Response::HTTP_OK, [
@@ -64,6 +66,7 @@ class AttendeeController extends AbstractController
 
     #[OA\Response(
         response: Response::HTTP_NO_CONTENT,
+        description: 'Password updated'
     )]
     #[OA\Response(
         response: Response::HTTP_BAD_REQUEST,
@@ -133,6 +136,7 @@ class AttendeeController extends AbstractController
         )
     )]
     #[OA\Tag(name: 'Attendee')]
+    #[IsGranted(AttendeeVoter::EDIT, subject: 'attendee')]
     public function updateAttendee(
         Attendee                             $attendee,
         #[MapRequestPayload] AttendeeRequest $attendeeRequest,

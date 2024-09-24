@@ -33,6 +33,10 @@
             <join-column name="product_id"/>
         </many-to-one>
 
+        <many-to-one field="team" target-entity="App\Domain\Entity\Team" fetch="EAGER" inversed-by="attendees">
+            <join-column name="team_id" on-delete="SET NULL"/>
+        </many-to-one>
+
         <field name="createdAt" type="datetime">
             <gedmo:timestampable on="create"/>
         </field>
