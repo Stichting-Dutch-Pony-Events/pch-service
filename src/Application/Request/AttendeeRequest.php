@@ -20,6 +20,7 @@ class AttendeeRequest
         public ?string $nfcTagId = null,
         public ?string $miniIdentifier = null,
         public ?TShirtSize  $tShirtSize = null,
+        public ?string $fireBaseToken = null,
     )
     {
     }

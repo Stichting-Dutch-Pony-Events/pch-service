@@ -23,6 +23,7 @@ class AttendeeView
         public ?string     $nfcTagId,
         public ?string     $miniIdentifier,
         public ?TShirtSize $tShirtSize,
+        public ?string     $fireBaseToken,
         public ?array      $roles,
     ) {
     }

@@ -1,0 +1,7 @@
+kreait_firebase:
+  projects:
+    ponycon_holland:
+      credentials: '%kernel.project_dir%/config/firebase/ponycon-holland-app-47287e0b1225.json'
+      project_id: 'ponycon-holland-app'
+      default: true
+      public: false

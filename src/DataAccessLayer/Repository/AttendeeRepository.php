@@ -52,4 +52,16 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
             ->setParameter('identifier', $identifier)
             ->getOneOrNullResult();
     }
+
+    /**
+     * @return Attendee[]
+     */
+    public function getAttendeesWithoutTeam(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->select('a')
+            ->where('a.team IS NULL')
+            ->getQuery()
+            ->execute();
+    }
 }

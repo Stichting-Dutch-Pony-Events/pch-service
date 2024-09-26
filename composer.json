@@ -21,6 +21,7 @@
         "jms/serializer-bundle": "^5.3",
         "jschaedl/iban-validation": "^1.8.2",
         "jucksearm/php-barcode": "^1.0",
+        "kreait/firebase-bundle": "^5.4",
         "lexik/jwt-authentication-bundle": "^2.18",
         "nelmio/api-doc-bundle": "^4.12",
         "nesbot/carbon": "^2.71",
@@ -95,6 +96,7 @@
         }
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
         "symfony/maker-bundle": "^1.51"
     }
 }

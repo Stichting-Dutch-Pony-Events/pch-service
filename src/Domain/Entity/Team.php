@@ -21,6 +21,7 @@ class Team
     public function __construct(
         private string $name,
         private string $description,
+        private string $identifier,
         /** @var Collection<int, Attendee> $attendees */
         Collection $attendees = null
     ) {
@@ -52,6 +53,18 @@ class Team
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
+    }
+
+    public function setIdentifier(string $identifier): self
+    {
+        $this->identifier = $identifier;
 
         return $this;
     }
