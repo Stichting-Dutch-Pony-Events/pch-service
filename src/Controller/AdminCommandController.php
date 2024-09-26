@@ -19,15 +19,15 @@ class AdminCommandController extends AbstractController
         description: 'Command Executed'
     )]
     #[OA\RequestBody(
-        description: 'Set Password Request',
+        description: 'Admin Command Request',
         required: true,
         content: new OA\JsonContent(
             ref: new Model(
-                type: SetPasswordRequest::class
+                type: AdminCommandRequest::class
             )
         )
     )]
-    #[OA\Tag(name: 'Attendee')]
+    #[OA\Tag(name: 'Admin')]
     public function runAdminCommand(
         #[MapRequestPayload] AdminCommandRequest $request
     ): Response
