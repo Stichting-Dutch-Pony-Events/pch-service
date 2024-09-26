@@ -11,9 +11,8 @@ doctrine:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         enable_lazy_ghost_objects: true
-        auto_mapping: true
         controller_resolver:
-            auto_mapping: true
+            enabled: false
         mappings:
             App:
                 type: xml

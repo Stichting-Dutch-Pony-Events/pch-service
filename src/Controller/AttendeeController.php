@@ -15,6 +15,7 @@ use App\Util\SymfonyUtils\Mapper;
 use App\Util\Validator\Validator;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -56,11 +57,12 @@ class AttendeeController extends AbstractController
     )]
     #[OA\Tag(name: 'Attendee')]
     #[IsGranted(AttendeeVoter::VIEW, subject: 'attendee')]
-    public function getAttendeeImage(Attendee $attendee): Response
-    {
+    public function getAttendeeImage(
+        #[MapEntity(id: 'attendee')] Attendee $attendee
+    ): Response {
         return new Response($this->badgeGenerator->generate($attendee), Response::HTTP_OK, [
             'Content-Type'        => 'image/png',
-            'Content-Disposition' => 'inline; filename="'.$attendee->getProduct()->getPretixId().'.png"'
+            'Content-Disposition' => 'inline; filename="' . $attendee->getProduct()->getPretixId() . '.png"'
         ]);
     }
 
@@ -138,9 +140,9 @@ class AttendeeController extends AbstractController
     #[OA\Tag(name: 'Attendee')]
     #[IsGranted(AttendeeVoter::EDIT, subject: 'attendee')]
     public function updateAttendee(
-        Attendee                             $attendee,
-        #[MapRequestPayload] AttendeeRequest $attendeeRequest,
-        Request                              $request
+        #[MapEntity(id: 'attendee')] Attendee $attendee,
+        #[MapRequestPayload] AttendeeRequest  $attendeeRequest,
+        Request                               $request
     ): Response {
         $this->denyAccessUnlessGranted(AttendeeVoter::EDIT, $attendee);
 
