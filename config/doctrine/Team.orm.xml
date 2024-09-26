@@ -8,7 +8,7 @@
 
         <field name="name" length="200"/>
         <field name="description" nullable="true"/>
-
+        <field name="identifier"/>
         <one-to-many field="attendees" target-entity="App\Domain\Entity\Attendee" mapped-by="team"/>
 
         <field name="createdAt" type="datetime">
