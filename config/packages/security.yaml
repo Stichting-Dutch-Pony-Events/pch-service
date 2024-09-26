@@ -1,7 +1,5 @@
 # config/packages/security.yaml
 security:
-    enable_authenticator_manager: true
-
     providers:
         users:
             entity:
