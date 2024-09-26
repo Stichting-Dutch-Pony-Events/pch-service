@@ -39,8 +39,13 @@ readonly class TeamDomainService
     /**
      * @param Team[] $teams
      */
-    public function orderTeamsByLowestAttendeeNumber(array &$teams): void
+    private function orderTeamsByLowestAttendeeNumber(array &$teams): void
     {
         usort($teams, static fn (Team $a, Team $b) => $a->getAttendees()->count() <=> $b->getAttendees()->count());
+    }
+
+    public function createTeam(string $name, string $description, string $identifier): Team
+    {
+        return new Team($name, $description, $identifier);
     }
 }
