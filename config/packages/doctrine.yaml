@@ -13,6 +13,7 @@ doctrine:
         enable_lazy_ghost_objects: true
         controller_resolver:
             enabled: false
+            auto_mapping: false
         mappings:
             App:
                 type: xml
