@@ -25,6 +25,7 @@ class AttendeeView
         public ?TShirtSize $tShirtSize,
         public ?string     $fireBaseToken,
         public ?array      $roles,
+        public ?TeamView   $team,
     ) {
     }
 }

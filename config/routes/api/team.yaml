@@ -1,0 +1,4 @@
+api.team.all:
+  path: /team
+  controller: App\Controller\TeamController::all
+  methods: POST

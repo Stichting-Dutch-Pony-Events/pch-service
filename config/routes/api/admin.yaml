@@ -1,0 +1,4 @@
+api.admin.command:
+  path: /admin/command
+  controller: App\Controller\AdminCommandController::runAdminCommand
+  methods: POST
