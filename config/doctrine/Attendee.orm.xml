@@ -20,7 +20,7 @@
         <field name="nfcTagId" nullable="true"/>
         <field name="miniIdentifier" type="string" length="4" nullable="true"/>
         <field name="password" type="string" nullable="false"/>
-        <field name="fireBaseToken" type="string" length="255"/>
+        <field name="fireBaseToken" type="string" length="255" nullable="true"/>
         <field name="roles" type="simple_array"/>
 
         <one-to-many field="checkIns" target-entity="App\Domain\Entity\CheckIn" mapped-by="attendee">

@@ -49,7 +49,8 @@ readonly class AttendeeDomainService
             ->setFamilyName($attendeeRequest->familyName)
             ->setNickName($attendeeRequest->nickName)
             ->setEmail($attendeeRequest->email)
-            ->setNfcTagId($attendeeRequest->nfcTagId);
+            ->setNfcTagId($attendeeRequest->nfcTagId)
+            ->setFireBaseToken($attendeeRequest->fireBaseToken);
     }
 
     public function updatePassword(Attendee $attendee, SetPasswordRequest $setPasswordRequest): Attendee
