@@ -19,6 +19,9 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     /** @var Collection<int, CheckIn> $checkIns */
     private Collection $checkIns;
 
+    /** @var Collection<int, AttendeeAchievement> $achievements */
+    private Collection $achievements;
+
     public function __construct(
         private string      $name,
         private ?string     $firstName,
@@ -38,9 +41,13 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
         private ?string     $fireBaseToken = null,
         private ?array      $roles = ['ROLE_USER'],
         /** @var Collection<int, CheckIn> $checkIns */
-        ?Collection         $checkIns = null
+        ?Collection         $checkIns = null,
+
+        /** @var Collection<int, Achievement> $achievements */
+        ?Collection         $achievements = null,
     ) {
         $this->checkIns = $checkIns ?? new ArrayCollection();
+        $this->achievements = $achievements ?? new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -231,5 +238,28 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->getMiniIdentifier() ?? $this->getId();
+    }
+
+    public function getAchievements(): Collection
+    {
+        return $this->achievements;
+    }
+
+    public function addAchievement(Achievement $achievement): self
+    {
+        if (!$this->achievements->contains($achievement)) {
+            $this->achievements->add($achievement);
+        }
+
+        return $this;
+    }
+
+    public function removeAchievement(Achievement $achievement): self
+    {
+        if ($this->achievements->contains($achievement)) {
+            $this->achievements->removeElement($achievement);
+        }
+
+        return $this;
     }
 }

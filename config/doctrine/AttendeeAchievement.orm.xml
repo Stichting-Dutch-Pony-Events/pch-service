@@ -1,0 +1,24 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+    <entity name="App\Domain\Entity\AttendeeAchievement" repository-class="App\DataAccessLayer\Repository\AchievementRepository" table="attendee_achievement">
+        <id name="id" type="uuid" column="id">
+            <generator strategy="CUSTOM"/>
+            <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>
+        </id>
+
+        <many-to-one field="achievement" target-entity="App\Domain\Entity\Achievement">
+            <join-column name="achievement_id" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <many-to-one field="attendee" target-entity="App\Domain\Entity\Attendee" inversed-by="achievements">
+            <join-column name="attendee_id" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <field name="createdAt" type="datetime">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" type="datetime">
+            <gedmo:timestampable on="update"/>
+        </field>
+    </entity>
+</doctrine-mapping>
