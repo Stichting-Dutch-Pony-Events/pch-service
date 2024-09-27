@@ -5,6 +5,7 @@ namespace App\Application\Service;
 use App\Application\Request\AdminCommandRequest;
 use App\DataAccessLayer\Repository\AttendeeRepository;
 use App\Domain\Enum\AdminCommandType;
+use App\Domain\Service\SettingDomainService;
 use App\Domain\Service\TeamDomainService;
 use App\Util\Exceptions\Exception\Common\InvalidInputException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,6 +23,7 @@ readonly class AdminCommandApplicationService
         private TeamDomainService      $teamDomainService,
         private EntityManagerInterface $entityManager,
         private LoggerInterface        $logger,
+        private SettingDomainService   $settingDomainService
     ) {
     }
 
@@ -38,6 +40,7 @@ readonly class AdminCommandApplicationService
 
         $this->entityManager->wrapInTransaction(function () use ($attendees) {
             $this->teamDomainService->assignAttendeesToTeam($attendees);
+            $this->settingDomainService->setSetting('auto-assign-teams', '1');
         });
 
         foreach ($attendees as $attendee) {

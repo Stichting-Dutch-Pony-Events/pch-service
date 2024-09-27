@@ -8,9 +8,13 @@ use App\DataAccessLayer\Pretix\Views\Order;
 use App\DataAccessLayer\Pretix\Views\OrderPosition;
 use App\DataAccessLayer\Repository\AttendeeRepository;
 use App\DataAccessLayer\Repository\ProductRepository;
+use App\DataAccessLayer\Repository\SettingRepository;
 use App\Domain\Entity\Attendee;
+use App\Domain\Entity\Setting;
 use App\Domain\Enum\TShirtSize;
 use App\Domain\Service\AttendeeDomainService;
+use App\Domain\Service\SettingDomainService;
+use App\Domain\Service\TeamDomainService;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -20,7 +24,9 @@ readonly class AttendeeApplicationService
         private ProductRepository      $productRepository,
         private AttendeeDomainService  $attendeeDomainService,
         private AttendeeRepository     $attendeeRepository,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private SettingRepository      $settingRepository,
+        private TeamDomainService      $teamDomainService,
     ) {
     }
 
@@ -55,6 +61,10 @@ readonly class AttendeeApplicationService
         } else {
             $attendee = $this->attendeeDomainService->createAttendee($attendeeRequest, $product);
 
+            if ($this->shouldAutoAssignTeam() && $attendee->getTeam() === null) {
+                $this->teamDomainService->assignAttendeesToTeam([$attendee]);
+            }
+
             $this->entityManager->persist($attendee);
         }
 
@@ -79,5 +89,12 @@ readonly class AttendeeApplicationService
         $this->entityManager->flush();
 
         return $attendee;
+    }
+
+    public function shouldAutoAssignTeam(): bool
+    {
+        $setting = $this->settingRepository->findOneBy(['name' => 'auto-assign-teams']);
+
+        return $setting instanceof Setting && $setting->getValue() === '1';
     }
 }
