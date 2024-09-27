@@ -12,6 +12,7 @@ use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Exception\MessagingException;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use Psr\Log\LoggerInterface;
 
 readonly class AdminCommandApplicationService
 {
@@ -20,6 +21,7 @@ readonly class AdminCommandApplicationService
         private AttendeeRepository     $attendeeRepository,
         private TeamDomainService      $teamDomainService,
         private EntityManagerInterface $entityManager,
+        private LoggerInterface        $logger,
     ) {
     }
 
@@ -51,7 +53,9 @@ readonly class AdminCommandApplicationService
 
                 try {
                     $this->firebaseMessaging->send($message);
-                } catch (MessagingException $e) {}
+                } catch (MessagingException $e) {
+                    $this->logger->error($e->getMessage(), ['exception' => $e]);
+                }
             }
         }
     }
