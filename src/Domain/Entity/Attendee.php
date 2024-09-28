@@ -240,12 +240,15 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->getMiniIdentifier() ?? $this->getId();
     }
 
+    /**
+     * @return Collection<int, AttendeeAchievement>
+     */
     public function getAchievements(): Collection
     {
         return $this->achievements;
     }
 
-    public function addAchievement(Achievement $achievement): self
+    public function addAchievement(AttendeeAchievement $achievement): self
     {
         if (!$this->achievements->contains($achievement)) {
             $this->achievements->add($achievement);
@@ -254,7 +257,7 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeAchievement(Achievement $achievement): self
+    public function removeAchievement(AttendeeAchievement $achievement): self
     {
         if ($this->achievements->contains($achievement)) {
             $this->achievements->removeElement($achievement);

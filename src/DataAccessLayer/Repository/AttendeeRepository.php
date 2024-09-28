@@ -39,7 +39,7 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
         return null;
     }
 
-    public function loadUserByIdentifier(string $identifier): ?UserInterface
+    public function loadUserByIdentifier(string $identifier): ?Attendee
     {
         $entityManager = $this->getEntityManager();
 

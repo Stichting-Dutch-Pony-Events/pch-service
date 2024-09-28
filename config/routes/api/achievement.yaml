@@ -1,0 +1,14 @@
+api.achievements.all:
+  path: /achievement
+  controller: App\Controller\AchievementController::all
+  methods: GET
+
+api.achievements.award:
+  path: /achievement/{achievement}/award
+  controller: App\Controller\AchievementController::awardAchievement
+  methods: POST
+
+api.achievements.unlock:
+  path: /achievement/unlock
+  controller: App\Controller\AchievementController::unlockAchievement
+  methods: POST
