@@ -2,8 +2,11 @@
 
 namespace App\Application\View;
 
+use App\Domain\Entity\Achievement;
 use App\Domain\Enum\TShirtSize;
+use App\Util\SymfonyUtils\Attribute\MapsMany;
 use DateTime;
+use JMS\Serializer\Annotation\Type;
 
 class AttendeeView
 {
@@ -26,6 +29,11 @@ class AttendeeView
         public ?string     $fireBaseToken,
         public ?array      $roles,
         public ?TeamView   $team,
+
+        /** @var Achievement[] $achievements */
+        #[Type('array<' . Achievement::class . '>')]
+        #[MapsMany(Achievement::class)]
+        public array       $achievements
     ) {
     }
 }

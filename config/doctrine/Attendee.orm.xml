@@ -38,7 +38,7 @@
             <join-column name="team_id" on-delete="SET NULL"/>
         </many-to-one>
 
-        <one-to-many field="achievements" target-entity="App\Domain\Entity\Achievement" mapped-by="attendee"/>
+        <one-to-many field="achievements" target-entity="App\Domain\Entity\Achievement" mapped-by="attendee" fetch="EAGER"/>
 
         <field name="createdAt" type="datetime">
             <gedmo:timestampable on="create"/>

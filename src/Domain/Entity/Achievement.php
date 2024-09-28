@@ -12,10 +12,12 @@ class Achievement
     private ?Uuid $id = null;
 
     public function __construct(
-        private string $name,
-        private string $description,
-        private string $identifier,
-        private int    $pointValue = 1
+        private string  $name,
+        private string  $description,
+        private string  $identifier,
+        private int     $pointValue = 1,
+        private ?string $unlockCode = null,
+        private bool    $eveningActivity = false,
     ) {
     }
 
@@ -61,6 +63,30 @@ class Achievement
     public function setPointValue(int $pointValue): self
     {
         $this->pointValue = $pointValue;
+
+        return $this;
+    }
+
+    public function getUnlockCode(): ?string
+    {
+        return $this->unlockCode;
+    }
+
+    public function setUnlockCode(?string $unlockCode): self
+    {
+        $this->unlockCode = $unlockCode;
+
+        return $this;
+    }
+
+    public function getEveningActivity(): bool
+    {
+        return $this->eveningActivity;
+    }
+
+    public function setEveningActivity(bool $eveningActivity): self
+    {
+        $this->eveningActivity = $eveningActivity;
 
         return $this;
     }

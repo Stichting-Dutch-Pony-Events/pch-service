@@ -9,6 +9,12 @@
         <field name="name" length="200"/>
         <field name="description" nullable="true"/>
         <field name="identifier"/>
+        <field name="unlockCode" nullable="true"/>
+        <field name="eveningActivity" type="boolean">
+            <options>
+                <option name="default">1</option>
+            </options>
+        </field>
 
         <field name="createdAt" type="datetime">
             <gedmo:timestampable on="create"/>

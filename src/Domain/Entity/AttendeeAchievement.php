@@ -27,6 +27,11 @@ class AttendeeAchievement
         return $this->achievement;
     }
 
+    public function getAchievementId(): ?string
+    {
+        return $this->getAchievement()->getId();
+    }
+
     public function getAttendee(): Attendee
     {
         return $this->attendee;

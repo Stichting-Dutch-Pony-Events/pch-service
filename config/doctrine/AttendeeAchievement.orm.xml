@@ -6,7 +6,7 @@
             <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>
         </id>
 
-        <many-to-one field="achievement" target-entity="App\Domain\Entity\Achievement">
+        <many-to-one field="achievement" target-entity="App\Domain\Entity\Achievement" fetch="EAGER">
             <join-column name="achievement_id" on-delete="CASCADE"/>
         </many-to-one>
 
