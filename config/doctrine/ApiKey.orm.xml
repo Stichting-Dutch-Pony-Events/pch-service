@@ -1,0 +1,21 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+    <entity name="App\Domain\Entity\ApiKey" repository-class="App\DataAccessLayer\Repository\ApiKeyRepository" table="api_key">
+        <id name="id" type="uuid" column="id">
+            <generator strategy="CUSTOM"/>
+            <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>
+        </id>
+
+        <field name="key" column="`key`"/>
+        <many-to-one field="attendee" target-entity="App\Domain\Entity\Attendee" fetch="EAGER">
+            <join-column name="attendee_id" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <field name="createdAt" type="datetime">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" type="datetime">
+            <gedmo:timestampable on="update"/>
+        </field>
+    </entity>
+</doctrine-mapping>

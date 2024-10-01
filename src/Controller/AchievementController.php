@@ -10,14 +10,14 @@ use App\Application\View\AttendeeAchievementView;
 use App\DataAccessLayer\Repository\AchievementRepository;
 use App\Domain\Entity\Achievement;
 use App\Domain\Entity\Attendee;
-use App\Security\AchievementVoter;
+use App\Security\Voter\AchievementVoter;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
 use App\Util\SymfonyUtils\Mapper;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\HttpFoundation\Response;
-use OpenApi\Attributes as OA;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 

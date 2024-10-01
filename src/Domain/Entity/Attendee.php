@@ -43,7 +43,7 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
         /** @var Collection<int, CheckIn> $checkIns */
         ?Collection         $checkIns = null,
 
-        /** @var Collection<int, Achievement> $achievements */
+        /** @var Collection<int, AttendeeAchievement> $achievements */
         ?Collection         $achievements = null,
     ) {
         $this->checkIns = $checkIns ?? new ArrayCollection();

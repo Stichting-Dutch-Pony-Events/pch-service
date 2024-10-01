@@ -7,7 +7,7 @@ use App\Application\Request\SetPasswordRequest;
 use App\Application\Service\AttendeeApplicationService;
 use App\Application\View\AttendeeView;
 use App\Domain\Entity\Attendee;
-use App\Security\AttendeeVoter;
+use App\Security\Voter\AttendeeVoter;
 use App\Util\BadgeGenerator;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use App\Util\Exceptions\Response\PublicExceptionResponse;

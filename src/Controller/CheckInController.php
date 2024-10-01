@@ -6,7 +6,7 @@ use App\Application\Request\CheckInRequest;
 use App\Application\Response\CheckInResponse;
 use App\Application\Service\CheckInApplicationService;
 use App\Domain\Enum\CheckInListType;
-use App\Security\CheckInVoter;
+use App\Security\Voter\CheckInVoter;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
 use App\Util\Validator\Validator;
 use Illuminate\Validation\Rule;
