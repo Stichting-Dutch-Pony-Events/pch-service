@@ -10,7 +10,8 @@ class AchievementView
         public string $description,
         public string $identifier,
         public int    $points,
-        public bool   $eveningActivity
+        public bool   $eveningActivity,
+        public bool   $hasUnlockCode
     ) {
     }
 }

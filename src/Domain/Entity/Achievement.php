@@ -90,4 +90,9 @@ class Achievement
 
         return $this;
     }
+
+    public function getHasUnlockCode(): bool
+    {
+        return !empty($this->unlockCode);
+    }
 }
