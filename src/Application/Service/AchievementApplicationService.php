@@ -13,6 +13,11 @@ use App\Domain\Service\AchievementDomainService;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use App\Util\Exceptions\Exception\Entity\EntityNotUniqueException;
 use Doctrine\ORM\EntityManagerInterface;
+use Kreait\Firebase\Contract\Messaging;
+use Kreait\Firebase\Exception\MessagingException;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
+use Psr\Log\LoggerInterface;
 
 readonly class AchievementApplicationService
 {
@@ -20,7 +25,9 @@ readonly class AchievementApplicationService
         private EntityManagerInterface   $entityManager,
         private AttendeeRepository       $attendeeRepository,
         private AchievementRepository    $achievementRepository,
-        private AchievementDomainService $achievementDomainService
+        private AchievementDomainService $achievementDomainService,
+        private Messaging                $firebaseMessaging,
+        private LoggerInterface          $logger,
     ) {
     }
 
@@ -47,6 +54,8 @@ readonly class AchievementApplicationService
                 //Create achievement
                 $attendeeAchievement = $this->achievementDomainService->awardAchievement($achievement, $attendee);
                 $this->entityManager->persist($attendeeAchievement);
+
+                $this->sendNotification($attendee, $achievement);
 
                 return $attendeeAchievement;
             }
@@ -78,8 +87,30 @@ readonly class AchievementApplicationService
                 $attendeeAchievement = $this->achievementDomainService->awardAchievement($achievement, $attendee);
                 $this->entityManager->persist($attendeeAchievement);
 
+                $this->sendNotification($attendee, $achievement);
+
                 return $attendeeAchievement;
             }
         );
+    }
+
+    private function sendNotification(Attendee $attendee, Achievement $achievement): void
+    {
+        if ($attendee->getFireBaseToken() !== null) {
+            $message = CloudMessage::withTarget('token', $attendee->getFireBaseToken())
+                ->withNotification(
+                    Notification::create(
+                        "Achievement Unlocked!",
+                        "You have unlocked the achievement " . $achievement->getName(),
+                    )
+                )
+                ->withData(['refresh-user' => 'true']);
+
+            try {
+                $this->firebaseMessaging->send($message);
+            } catch (MessagingException $e) {
+                $this->logger->error($e->getMessage(), ['exception' => $e]);
+            }
+        }
     }
 }
