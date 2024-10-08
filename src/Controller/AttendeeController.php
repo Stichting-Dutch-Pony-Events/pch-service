@@ -25,7 +25,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AttendeeController extends AbstractController
 {
     public function __construct(
-        private readonly BadgeGenerator             $badgeGenerator,
         private readonly AttendeeApplicationService $attendeeApplicationService
     ) {
     }
@@ -60,9 +59,9 @@ class AttendeeController extends AbstractController
     public function getAttendeeImage(
         #[MapEntity(id: 'attendee')] Attendee $attendee
     ): Response {
-        return new Response($this->badgeGenerator->generate($attendee), Response::HTTP_OK, [
+        return new Response($this->attendeeApplicationService->getAttendeeBadge($attendee), Response::HTTP_OK, [
             'Content-Type'        => 'image/png',
-            'Content-Disposition' => 'inline; filename="' . $attendee->getProduct()->getPretixId() . '.png"'
+            'Content-Disposition' => 'inline; filename="' . $attendee->getId() . '.png"'
         ]);
     }
 

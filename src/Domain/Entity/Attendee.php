@@ -39,6 +39,7 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
         private ?string     $miniIdentifier = null,
         private ?string     $password = null,
         private ?string     $fireBaseToken = null,
+        private ?string     $badgeFile = null,
         private ?array      $roles = ['ROLE_USER'],
         /** @var Collection<int, CheckIn> $checkIns */
         ?Collection         $checkIns = null,
@@ -212,6 +213,17 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFireBaseToken(?string $fireBaseToken): self
     {
         $this->fireBaseToken = $fireBaseToken;
+
+        return $this;
+    }
+
+    public function getBadgeFile(): ?string {
+        return $this->badgeFile;
+    }
+
+    public function setBadgeFile(string $badgeFile): self
+    {
+        $this->badgeFile = $badgeFile;
 
         return $this;
     }

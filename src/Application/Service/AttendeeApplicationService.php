@@ -15,8 +15,10 @@ use App\Domain\Enum\TShirtSize;
 use App\Domain\Service\AttendeeDomainService;
 use App\Domain\Service\SettingDomainService;
 use App\Domain\Service\TeamDomainService;
+use App\Util\BadgeGenerator;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 readonly class AttendeeApplicationService
 {
@@ -27,6 +29,8 @@ readonly class AttendeeApplicationService
         private EntityManagerInterface $entityManager,
         private SettingRepository      $settingRepository,
         private TeamDomainService      $teamDomainService,
+        private Filesystem             $filesystem,
+        private BadgeGenerator         $badgeGenerator,
     ) {
     }
 
@@ -96,5 +100,17 @@ readonly class AttendeeApplicationService
         $setting = $this->settingRepository->findOneBy(['name' => 'auto-assign-teams']);
 
         return $setting instanceof Setting && $setting->getValue() === '1';
+    }
+
+    public function getAttendeeBadge(Attendee $attendee): string
+    {
+        if ($attendee->getBadgeFile() !== null && $this->filesystem->exists($attendee->getBadgeFile())) {
+            return file_get_contents($attendee->getBadgeFile());
+        }
+
+        $badgeFile = $this->badgeGenerator->generate($attendee);
+        $this->entityManager->flush();
+
+        return file_get_contents($badgeFile);
     }
 }

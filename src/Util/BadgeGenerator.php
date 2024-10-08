@@ -7,11 +7,16 @@ use App\Domain\Entity\Attendee;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use GdImage;
 use jucksearm\barcode\QRcode;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 
 class BadgeGenerator
 {
     public function __construct(
-        private OrderRepository $orderRepository
+        private OrderRepository $orderRepository,
+        private string $projectDir,
+        private Filesystem $filesystem,
     ) {
     }
 
@@ -48,7 +53,7 @@ class BadgeGenerator
         }
 
         $fontFile = __DIR__.'/../../assets/badges/'.$data->font;
-        if (file_exists($fontFile)) {
+        if (file_exists($fontFile) && $attendee->getNickName()) {
             $fontSize = $this->getMaxFontSize($fontFile, $attendee->getNickName(), $data->nameWidth, $data->nameHeight);
             $color    = imagecolorallocate($image, 0, 0, 0);
             $boxSize  = imagettfbbox($fontSize, 0, $fontFile, $attendee->getNickName());
@@ -67,16 +72,17 @@ class BadgeGenerator
         $posY     = $data->qrY - $qrHeight;
         imagecopy($image, $qrCode, $posX, $posY, 0, 0, $qrWidth, $qrHeight);
 
-        ob_start();
-        imagepng($image);
-        $stringdata = ob_get_contents(); // read from buffer
-        ob_end_clean(); // delete buffer
+        $filename = $this->getFileName($attendee);
+
+        imagepng($image, $filename);
 
         imagedestroy($image);
         imagedestroy($ocImage);
         imagedestroy($qrCode);
 
-        return $stringdata;
+        $attendee->setBadgeFile($filename);
+
+        return $filename;
         /*
         $fontFile = __DIR__ . '/../../assets/badges/' . $data->font;
 
@@ -151,5 +157,11 @@ class BadgeGenerator
             ->setMargin(2)
             ->setSize($size)
             ->getQRcodePngData();
+    }
+
+    public function getFileName(Attendee $attendee): string {
+        $file = Path::join($this->projectDir, '/var/badges/', $attendee->getId() . '.png');
+        $this->filesystem->mkdir(Path::getDirectory($file));
+        return $file;
     }
 }
