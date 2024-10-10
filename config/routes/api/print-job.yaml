@@ -1,0 +1,19 @@
+api.print-job.pending:
+  path: /print-job/pending
+  controller: App\Controller\PrintJobController::getPendingJobs
+  methods: GET
+
+api.print-job.create:
+  path: /print-job/{attendee}
+  controller: App\Controller\PrintJobController::createPrintJob
+  methods: POST
+
+api.print-job.set-status:
+  path: /print-job/{id}/status
+  controller: App\Controller\PrintJobController::setPrintJobStatus
+  methods: PUT
+
+api.print-job.graphic:
+  path: /print-job/{id}/graphic
+  controller: App\Controller\PrintJobController::getPrintJobGraphic
+  methods: GET

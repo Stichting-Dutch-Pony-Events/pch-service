@@ -39,7 +39,17 @@
             <join-column name="team_id" on-delete="SET NULL"/>
         </many-to-one>
 
-        <one-to-many field="achievements" target-entity="App\Domain\Entity\AttendeeAchievement" mapped-by="attendee" fetch="EAGER"/>
+        <one-to-many field="achievements" target-entity="App\Domain\Entity\AttendeeAchievement" mapped-by="attendee" fetch="EAGER">
+            <cascade>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="printJobs" target-entity="App\Domain\Entity\PrintJob" mapped-by="attendee" fetch="LAZY">
+            <cascade>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
 
         <field name="createdAt" type="datetime">
             <gedmo:timestampable on="create"/>

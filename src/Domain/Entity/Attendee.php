@@ -22,6 +22,9 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     /** @var Collection<int, AttendeeAchievement> $achievements */
     private Collection $achievements;
 
+    /** @var Collection<int, PrintJob> $printJobs */
+    private Collection $printJobs;
+
     public function __construct(
         private string      $name,
         private ?string     $firstName,
@@ -46,9 +49,13 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
 
         /** @var Collection<int, AttendeeAchievement> $achievements */
         ?Collection         $achievements = null,
+
+        /** @var Collection<int, PrintJob> $printJobs */
+        ?Collection         $printJobs = null,
     ) {
         $this->checkIns = $checkIns ?? new ArrayCollection();
         $this->achievements = $achievements ?? new ArrayCollection();
+        $this->printJobs = $printJobs ?? new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -217,7 +224,8 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBadgeFile(): ?string {
+    public function getBadgeFile(): ?string
+    {
         return $this->badgeFile;
     }
 
@@ -273,6 +281,32 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->achievements->contains($achievement)) {
             $this->achievements->removeElement($achievement);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrintJob>
+     */
+    public function getPrintJobs(): Collection
+    {
+        return $this->printJobs;
+    }
+
+    public function addPrintJob(PrintJob $printJob): self
+    {
+        if (!$this->printJobs->contains($printJob)) {
+            $this->printJobs->add($printJob);
+        }
+
+        return $this;
+    }
+
+    public function removePrintJob(PrintJob $printJob): self
+    {
+        if ($this->printJobs->contains($printJob)) {
+            $this->printJobs->removeElement($printJob);
         }
 
         return $this;

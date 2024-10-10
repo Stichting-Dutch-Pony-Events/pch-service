@@ -1,0 +1,29 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+    <entity name="App\Domain\Entity\PrintJob" repository-class="App\DataAccessLayer\Repository\PrintJobRepository" table="print_job">
+        <id name="id" type="uuid" column="id">
+            <generator strategy="CUSTOM"/>
+            <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>
+        </id>
+
+        <field name="name"/>
+        <field name="productName"/>
+
+        <field name="status" enum-type="App\Domain\Enum\PrintJobStatusEnum">
+            <options>
+                <option name="default">PENDING</option>
+            </options>
+        </field>
+
+        <many-to-one field="attendee" target-entity="App\Domain\Entity\Attendee" fetch="EAGER" inversed-by="printJobs">
+            <join-column name="attendee_id" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <field name="createdAt" type="datetime">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" type="datetime">
+            <gedmo:timestampable on="update"/>
+        </field>
+    </entity>
+</doctrine-mapping>
