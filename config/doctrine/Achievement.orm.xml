@@ -15,6 +15,11 @@
                 <option name="default">1</option>
             </options>
         </field>
+        <field name="pointValue" type="integer">
+            <options>
+                <option name="default">1</option>
+            </options>
+        </field>
 
         <field name="createdAt" type="datetime">
             <gedmo:timestampable on="create"/>

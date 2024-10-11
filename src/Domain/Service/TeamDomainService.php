@@ -41,11 +41,26 @@ readonly class TeamDomainService
      */
     private function orderTeamsByLowestAttendeeNumber(array &$teams): void
     {
-        usort($teams, static fn (Team $a, Team $b) => $a->getAttendees()->count() <=> $b->getAttendees()->count());
+        usort($teams, static fn(Team $a, Team $b) => $a->getAttendees()->count() <=> $b->getAttendees()->count());
     }
 
     public function createTeam(string $name, string $description, string $identifier): Team
     {
         return new Team($name, $description, $identifier);
+    }
+
+    public function calculatePoints(Team $team): Team
+    {
+        $points = 0;
+
+        foreach ($team->getAttendees() as $attendee) {
+            foreach ($attendee->getAchievements() as $achievement) {
+                $points += $achievement->getAchievement()->getPointValue();
+            }
+        }
+
+        $team->setPoints($points);
+
+        return $team;
     }
 }

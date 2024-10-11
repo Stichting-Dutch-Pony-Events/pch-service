@@ -9,6 +9,12 @@
         <field name="name" length="200"/>
         <field name="description" nullable="true"/>
         <field name="identifier"/>
+        <field name="points" type="integer">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
+
         <one-to-many field="attendees" target-entity="App\Domain\Entity\Attendee" mapped-by="team"/>
 
         <field name="createdAt" type="datetime">

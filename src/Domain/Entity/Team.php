@@ -22,8 +22,9 @@ class Team
         private string $name,
         private string $description,
         private string $identifier,
+        private int    $points = 0,
         /** @var Collection<int, Attendee> $attendees */
-        Collection $attendees = null
+        Collection     $attendees = null
     ) {
         $this->attendees = $attendees ?? new ArrayCollection();
     }
@@ -65,6 +66,18 @@ class Team
     public function setIdentifier(string $identifier): self
     {
         $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getPoints(): int
+    {
+        return $this->points;
+    }
+
+    public function setPoints(int $points): self
+    {
+        $this->points = $points;
 
         return $this;
     }
