@@ -1,6 +1,8 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
-    <entity name="App\Domain\Entity\AttendeeAchievement" repository-class="App\DataAccessLayer\Repository\AchievementRepository" table="attendee_achievement">
+    <entity name="App\Domain\Entity\AttendeeAchievement"
+            repository-class="App\DataAccessLayer\Repository\AttendeeAchievementRepository"
+            table="attendee_achievement">
         <id name="id" type="uuid" column="id">
             <generator strategy="CUSTOM"/>
             <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>

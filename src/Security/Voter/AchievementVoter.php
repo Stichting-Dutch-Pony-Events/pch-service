@@ -23,6 +23,8 @@ class AchievementVoter extends Voter
             return false;
         }
 
-        return in_array('ROLE_VOLUNTEER', $user->getRoles(), true) || in_array('ROLE_ADMIN', $user->getRoles(), true);
+        return in_array('ROLE_VOLUNTEER', $user->getRoles(), true)
+            || in_array('ROLE_ADMIN', $user->getRoles(), true)
+            || in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
     }
 }
