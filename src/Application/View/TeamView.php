@@ -8,7 +8,8 @@ class TeamView
         public ?string $id,
         public string  $name,
         public string  $description,
-        public string  $identifier
+        public string  $identifier,
+        public string  $points
     ) {
     }
 }
