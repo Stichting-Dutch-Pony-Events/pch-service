@@ -30,9 +30,9 @@ class AttendeeView
         public ?array      $roles,
         public ?TeamView   $team,
 
-        /** @var Achievement[] $achievements */
-        #[Type('array<' . Achievement::class . '>')]
-        #[MapsMany(Achievement::class)]
+        /** @var AttendeeAchievementView[] $achievements */
+        #[Type('array<' . AttendeeAchievementView::class . '>')]
+        #[MapsMany(AttendeeAchievementView::class)]
         public array       $achievements
     ) {
     }

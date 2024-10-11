@@ -46,7 +46,7 @@ readonly class AchievementApplicationService
                 }
 
                 foreach ($attendee->getAchievements() as $attendeeAchievement) {
-                    if ($attendeeAchievement->getAchievementId() === $achievement->getId()) {
+                    if ($attendeeAchievement->getAchievement()->getId() === $achievement->getId()) {
                         throw new EntityNotUniqueException("Attendee already has this achievement");
                     }
                 }
