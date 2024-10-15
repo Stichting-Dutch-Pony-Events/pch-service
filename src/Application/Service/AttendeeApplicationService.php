@@ -116,7 +116,7 @@ readonly class AttendeeApplicationService
 
     public function find(string $identifier): Attendee
     {
-        $attendee = $this->attendeeRepository->loadUserByIdentifier($identifier);
+        $attendee = $this->attendeeRepository->findAttendeeByIdentifier($identifier);
 
         if (!$attendee instanceof Attendee)
         {
