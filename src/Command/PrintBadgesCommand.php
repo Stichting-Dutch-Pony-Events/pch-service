@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Application\Request\DispatchPrintJobRequest;
 use App\Application\Service\PrintJobApplicationService;
 use App\DataAccessLayer\Repository\AttendeeRepository;
 use App\Domain\Entity\Attendee;
@@ -66,6 +67,6 @@ class PrintBadgesCommand extends Command
 
     private function createPrintJob(Attendee $attendee): void
     {
-        $this->printJobApplicationService->createPrintJob($attendee);
+        $this->printJobApplicationService->createPrintJob(new DispatchPrintJobRequest($attendee->getMiniIdentifier()));
     }
 }

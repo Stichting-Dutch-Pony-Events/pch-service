@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Application\Request\AwardAchievementRequest;
+use App\Application\Request\DispatchPrintJobRequest;
 use App\Application\Request\SetPasswordRequest;
 use App\Application\Request\SetPrintJobStatusRequest;
 use App\Application\Service\AttendeeApplicationService;
@@ -66,13 +67,22 @@ class PrintJobController extends AbstractController
             )
         )
     )]
+    #[OA\RequestBody(
+        description: 'Dispatch Print Job Request',
+        required: true,
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: DispatchPrintJobRequest::class
+            )
+        )
+    )]
     #[OA\Tag(name: 'PrintJobs')]
     #[IsGranted(PrintJobVoter::CREATE)]
     public function createPrintJob(
-        #[MapEntity(id: 'attendee')] Attendee $attendee
+        #[MapRequestPayload] DispatchPrintJobRequest $dispatchPrintJobRequest
     ): Response {
         return $this->json(
-            Mapper::mapOne($this->printJobApplicationService->createPrintJob($attendee), PrintJobView::class),
+            Mapper::mapOne($this->printJobApplicationService->createPrintJob($dispatchPrintJobRequest), PrintJobView::class),
             Response::HTTP_CREATED
         );
     }

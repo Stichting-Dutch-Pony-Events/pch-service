@@ -4,7 +4,7 @@ api.print-job.pending:
   methods: GET
 
 api.print-job.create:
-  path: /print-job/{attendee}
+  path: /print-job
   controller: App\Controller\PrintJobController::createPrintJob
   methods: POST
 
