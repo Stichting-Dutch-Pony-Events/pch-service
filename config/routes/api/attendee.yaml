@@ -4,7 +4,7 @@ api.attendee.me:
   methods: GET
 
 api.attendee.find:
-  path: /attendee/me/{identifier}
+  path: /attendee/{identifier}
   controller: App\Controller\AttendeeController::find
   methods: GET
 
