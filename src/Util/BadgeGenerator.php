@@ -60,8 +60,8 @@ class BadgeGenerator
                 if ($ocImage) {
                     imagesavealpha($ocImage, true);
                     $ocImage = $this->resizeImage($ocImage, $data->profileWidth, $data->profileHeight);
-                    $posX = ($data->profileWidth - imagesx($ocImage)) / 2 + $data->profileX;
-                    $posY = ($data->profileHeight - imagesy($ocImage)) / 2 + $data->profileY;
+                    $posX = round(($data->profileWidth - imagesx($ocImage)) / 2) + $data->profileX;
+                    $posY = round(($data->profileHeight - imagesy($ocImage)) / 2) + $data->profileY;
 
                     imagecopy($image, $ocImage, $posX, $posY, 0, 0, imagesx($ocImage), imagesy($ocImage));
 
