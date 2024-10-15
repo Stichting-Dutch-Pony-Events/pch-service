@@ -6,6 +6,7 @@ use App\DataAccessLayer\Pretix\Repositories\OrderRepository;
 use App\Domain\Entity\Attendee;
 use App\Util\Exceptions\Exception\Common\InvalidInputException;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
+use Exception;
 use GdImage;
 use jucksearm\barcode\QRcode;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -56,20 +57,22 @@ class BadgeGenerator
                     throw new InvalidInputException("Image should be jpeg or png, this fucker aint getting a badge");
                 }
 
-                imagesavealpha($ocImage, true);
-                $ocImage = $this->resizeImage($ocImage, $data->profileWidth, $data->profileHeight);
-                $posX = ($data->profileWidth - imagesx($ocImage)) / 2 + $data->profileX;
-                $posY = ($data->profileHeight - imagesy($ocImage)) / 2 + $data->profileY;
+                if ($ocImage) {
+                    imagesavealpha($ocImage, true);
+                    $ocImage = $this->resizeImage($ocImage, $data->profileWidth, $data->profileHeight);
+                    $posX = ($data->profileWidth - imagesx($ocImage)) / 2 + $data->profileX;
+                    $posY = ($data->profileHeight - imagesy($ocImage)) / 2 + $data->profileY;
 
-                imagecopy($image, $ocImage, $posX, $posY, 0, 0, imagesx($ocImage), imagesy($ocImage));
+                    imagecopy($image, $ocImage, $posX, $posY, 0, 0, imagesx($ocImage), imagesy($ocImage));
 
-                $useDefault = false;
-            } catch (\Exception $e) {
+                    $useDefault = false;
+                }
+            } catch (Exception $e) {
                 $useDefault = true;
             }
         }
 
-        if($useDefault) {
+        if ($useDefault) {
             $ocPath = __DIR__ . '/../../assets/badges/unknown.png';
             $ocImage = imagecreatefrompng($ocPath);
 
@@ -88,8 +91,8 @@ class BadgeGenerator
             $boxSize = imagettfbbox($fontSize, 0, $fontFile, $attendee->getNickName());
             $width = $boxSize[2] - $boxSize[0];
             $height = $boxSize[1] - $boxSize[7];
-            $posX = ($data->nameWidth - $width) / 2 + $data->nameX;
-            $posY = ($data->nameHeight - $height) / 2 + $data->nameY + $fontSize;
+            $posX = round(($data->nameWidth - $width) / 2) + $data->nameX;
+            $posY = round(($data->nameHeight - $height) / 2) + $data->nameY + $fontSize;
 
             imagettftext($image, $fontSize, 0, $posX, $posY, $color, $fontFile, $attendee->getNickName());
         }
@@ -130,13 +133,13 @@ class BadgeGenerator
 
         # taller
         if ($height > $max_height) {
-            $width = ($max_height / $height) * $width;
+            $width = round(($max_height / $height) * $width);
             $height = $max_height;
         }
 
         # wider
         if ($width > $max_width) {
-            $height = ($max_width / $width) * $height;
+            $height = round(($max_width / $width) * $height);
             $width = $max_width;
         }
 
