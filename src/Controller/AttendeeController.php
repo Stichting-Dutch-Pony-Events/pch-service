@@ -51,6 +51,34 @@ class AttendeeController extends AbstractController
     }
 
     #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Attendee',
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: AttendeeView::class
+            )
+        )
+    )]
+    #[OA\Response(
+        response: Response::HTTP_NOT_FOUND,
+        description: 'Attendee Not Found',
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: PublicExceptionResponse::class
+            )
+        )
+    )]
+    #[OA\Tag(name: 'Attendee')]
+    #[IsGranted(AttendeeVoter::VIEW, subject: 'attendee')]
+    public function find(string $identifier): Response
+    {
+        return $this->json(
+            Mapper::mapOne($this->attendeeApplicationService->find($identifier), AttendeeView::class),
+            Response::HTTP_OK
+        );
+    }
+
+    #[OA\Response(
         response: 200,
         description: 'Attendee Image',
     )]

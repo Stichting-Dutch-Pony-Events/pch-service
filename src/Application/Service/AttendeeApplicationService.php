@@ -113,4 +113,16 @@ readonly class AttendeeApplicationService
 
         return file_get_contents($badgeFile);
     }
+
+    public function find(string $identifier): Attendee
+    {
+        $attendee = $this->attendeeRepository->loadUserByIdentifier($identifier);
+
+        if (!$attendee instanceof Attendee)
+        {
+            throw new EntityNotFoundException('Attendee not found');
+        }
+
+        return $attendee;
+    }
 }
