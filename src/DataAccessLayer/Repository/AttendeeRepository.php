@@ -64,4 +64,17 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
             ->getQuery()
             ->execute();
     }
+
+    /**
+     * @return Attendee[]
+     */
+    public function getAttendeesWithoutPrintJobs(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->leftJoin('a.printJobs', 'p')
+            ->where('SIZE(a.printJobs) = 0')
+            ->andWhere('a.nickName IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
 }

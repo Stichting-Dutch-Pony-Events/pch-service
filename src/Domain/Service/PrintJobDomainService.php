@@ -11,7 +11,7 @@ readonly class PrintJobDomainService
     public function createPrintJob(Attendee $attendee): PrintJob
     {
         return new PrintJob(
-            name: $attendee->getNickName(),
+            name: $attendee->getNickName() ?? 'Unknown Pony',
             productName: $attendee->getProduct()->getName(),
             attendee: $attendee,
             status: PrintJobStatusEnum::PENDING

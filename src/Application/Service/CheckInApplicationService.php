@@ -2,6 +2,7 @@
 
 namespace App\Application\Service;
 
+use App\Application\Enum\BadgeSourceEnum;
 use App\Application\Request\CheckInRequest;
 use App\Application\Response\CheckInResponse;
 use App\Application\View\AttendeeView;
@@ -16,7 +17,9 @@ use App\DataAccessLayer\Repository\CheckInListRepository;
 use App\Domain\Entity\Attendee;
 use App\Domain\Entity\CheckInList;
 use App\Domain\Enum\CheckInListType;
+use App\Domain\Enum\PrintJobStatusEnum;
 use App\Domain\Service\CheckInDomainService;
+use App\Domain\Service\PrintJobDomainService;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use App\Util\SymfonyUtils\Mapper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,7 +35,8 @@ readonly class CheckInApplicationService
         private CheckInDomainService       $checkInDomainService,
         private EntityManagerInterface     $entityManager,
         private OrderRepository            $orderRepository,
-        private ParameterBagInterface      $parameterBag
+        private ParameterBagInterface      $parameterBag,
+        private PrintJobDomainService      $printJobDomainService
     ) {
     }
 
@@ -43,7 +47,7 @@ readonly class CheckInApplicationService
             throw new EntityNotFoundException('No Active Check-In List Found');
         }
 
-        if($checkInRequest->listType === CheckInListType::MERCH && $checkInRequest->merchPreCheckIn) {
+        if ($checkInRequest->listType === CheckInListType::MERCH && $checkInRequest->merchPreCheckIn) {
             return $this->merchPreCheckin($checkInRequest, $activeCheckInList);
         }
 
@@ -52,7 +56,7 @@ readonly class CheckInApplicationService
         }
 
         $pretixCheckInRequest = new PretixCheckInRequest($checkInRequest->secret, [$activeCheckInList->getPretixId()]);
-        $checkIn              = $this->checkInRepository->checkIn($pretixCheckInRequest);
+        $checkIn = $this->checkInRepository->checkIn($pretixCheckInRequest);
 
         $checkInResponse = new CheckInResponse(
             status: $checkIn->getStatus(),
@@ -62,17 +66,21 @@ readonly class CheckInApplicationService
         );
 
         if ($checkIn->getOrderPosition() !== null) {
-            $checkInResponse = $this->checkInAttendee($checkIn->getOrderPosition(), $checkInResponse, $activeCheckInList);
+            $checkInResponse = $this->checkInAttendee(
+                $checkIn->getOrderPosition(),
+                $checkInResponse,
+                $activeCheckInList
+            );
         }
 
         return $checkInResponse;
     }
 
-    private function merchPreCheckin(CheckInRequest $checkInRequest, CheckInList $checkInList):? CheckInResponse
+    private function merchPreCheckin(CheckInRequest $checkInRequest, CheckInList $checkInList): ?CheckInResponse
     {
         $attendee = $this->attendeeRepository->findOneBy(['ticketSecret' => $checkInRequest->secret]);
 
-        if(!isset($attendee)) {
+        if (!isset($attendee)) {
             return new CheckInResponse(
                 status: CheckInStatus::ERROR,
                 errorReason: CheckInErrorReason::INVALID,
@@ -80,7 +88,7 @@ readonly class CheckInApplicationService
             );
         }
 
-        if(!$checkInList->getProducts()->contains($attendee->getProduct())) {
+        if (!$checkInList->getProducts()->contains($attendee->getProduct())) {
             return new CheckInResponse(
                 status: CheckInStatus::ERROR,
                 errorReason: CheckInErrorReason::PRODUCT,
@@ -126,13 +134,18 @@ readonly class CheckInApplicationService
         return $checkInResponse;
     }
 
-    private function checkInAttendee(OrderPosition $position, CheckInResponse $checkInResponse, CheckInList $checkInList): CheckInResponse {
+    private function checkInAttendee(
+        OrderPosition   $position,
+        CheckInResponse $checkInResponse,
+        CheckInList     $checkInList
+    ): CheckInResponse {
         $attendee = $this->attendeeApplicationService->createAttendeeFromOrderPosition(
             $position,
             $this->orderRepository->getOrderByCode($position->getOrder())
         );
 
         $checkInResponse->attendee = Mapper::mapOne($attendee, AttendeeView::class);
+        $checkInResponse->badgeSource = $this->createPrintJobIfNeeded($attendee);
 
         $checkInEntity = $this->checkInDomainService->createCheckIn(
             $checkInResponse,
@@ -146,5 +159,31 @@ readonly class CheckInApplicationService
         $this->entityManager->flush();
 
         return $checkInResponse;
+    }
+
+    private function createPrintJobIfNeeded(Attendee $attendee): BadgeSourceEnum
+    {
+        $needPrintJob = true;
+
+        foreach ($attendee->getPrintJobs() as $job) {
+            if ($job->getStatus() === PrintJobStatusEnum::COMPLETED) {
+                $needPrintJob = false;
+
+                return BadgeSourceEnum::BADGE_STASH;
+            }
+
+            if ($job->getStatus() === PrintJobStatusEnum::PRINTING || $job->getStatus(
+                ) === PrintJobStatusEnum::PENDING) {
+                $needPrintJob = false;
+            }
+        }
+
+        if ($needPrintJob) {
+            $printJob = $this->printJobDomainService->createPrintJob($attendee);
+
+            $this->entityManager->persist($printJob);
+        }
+
+        return BadgeSourceEnum::PRINTER;
     }
 }
