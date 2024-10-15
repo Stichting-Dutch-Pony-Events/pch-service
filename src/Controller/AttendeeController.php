@@ -69,11 +69,13 @@ class AttendeeController extends AbstractController
         )
     )]
     #[OA\Tag(name: 'Attendee')]
-    #[IsGranted(AttendeeVoter::VIEW, subject: 'attendee')]
     public function find(string $identifier): Response
     {
+        $attendee = $this->attendeeApplicationService->find($identifier);
+        $this->denyAccessUnlessGranted(AttendeeVoter::VIEW, $attendee);
+
         return $this->json(
-            Mapper::mapOne($this->attendeeApplicationService->find($identifier), AttendeeView::class),
+            Mapper::mapOne($attendee, AttendeeView::class),
             Response::HTTP_OK
         );
     }
