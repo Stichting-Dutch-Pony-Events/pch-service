@@ -50,7 +50,7 @@ class BadgeGenerator
                 $ocPath = $tmpPath;
 
                 if (str_ends_with($ocPath, '.png')) {
-                    $ocImage = imagecreatefrompng($ocPath);
+                    $ocImage = @imagecreatefrompng($ocPath);
                 } elseif (str_ends_with($ocPath, '.jpg') || str_ends_with($ocPath, '.jpeg')) {
                     $ocImage = imagecreatefromjpeg($ocPath);
                 } else {
