@@ -47,7 +47,8 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
                 'SELECT u
                 FROM App\Domain\Entity\Attendee u
                 WHERE u.miniIdentifier = :identifier
-                OR u.nfcTagId = :identifier'
+                OR u.nfcTagId = :identifier
+                OR u.ticketSecret = :identifier'
             )
             ->setParameter('identifier', $identifier)
             ->getOneOrNullResult();
