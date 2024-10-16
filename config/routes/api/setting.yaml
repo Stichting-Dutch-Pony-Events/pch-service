@@ -1,0 +1,9 @@
+api.setting.all:
+  path: /setting
+  controller: App\Controller\SettingController::all
+  methods: GET
+
+api.setting.set:
+  path: /setting
+  controller: App\Controller\SettingController::updateSetting
+  methods: PUT

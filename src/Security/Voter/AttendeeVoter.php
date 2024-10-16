@@ -47,7 +47,11 @@ class AttendeeVoter extends Voter
 
     private function canView(Attendee $attendee, Attendee $user): bool
     {
-        return $this->canEdit($attendee, $user);
+        if ($attendee->getId() === $user->getId()) {
+            return true;
+        }
+
+        return in_array('ROLE_VOLUNTEER', $user->getRoles(), true) || in_array('ROLE_ADMIN', $user->getRoles(), true);
     }
 
     private function canEdit(Attendee $attendee, Attendee $user): bool
@@ -56,7 +60,7 @@ class AttendeeVoter extends Voter
             return true;
         }
 
-        return in_array('ROLE_VOLUNTEER', $user->getRoles(), true) || in_array('ROLE_ADMIN', $user->getRoles(), true);
+        return in_array('ROLE_ADMIN', $user->getRoles(), true);
     }
 
     private function canEditRoles(Attendee $user): bool

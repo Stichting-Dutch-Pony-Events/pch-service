@@ -18,7 +18,7 @@ class CheckInVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        foreach (['ROLE_VOLUNTEER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] as $role) {
+        foreach (['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] as $role) {
             if (in_array($role, $token->getRoleNames(),true)) {
                 return true;
             }
