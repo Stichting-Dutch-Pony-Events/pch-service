@@ -27,7 +27,11 @@ class AttendeeView
         public ?string     $miniIdentifier,
         public ?TShirtSize $tShirtSize,
         public ?string     $fireBaseToken,
+
+        /** @var string[] $roles */
+        #[Type('array<string>')]
         public ?array      $roles,
+
         public ?TeamView   $team,
 
         /** @var AttendeeAchievementView[] $achievements */

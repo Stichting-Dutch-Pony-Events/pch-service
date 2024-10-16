@@ -3,6 +3,7 @@
 namespace App\Application\Service;
 
 use App\Application\Request\AttendeeRequest;
+use App\Application\Request\SetAttendeeRolesRequest;
 use App\Application\Request\SetPasswordRequest;
 use App\DataAccessLayer\Pretix\Views\Order;
 use App\DataAccessLayer\Pretix\Views\OrderPosition;
@@ -122,6 +123,15 @@ readonly class AttendeeApplicationService
         {
             throw new EntityNotFoundException('Attendee not found');
         }
+
+        return $attendee;
+    }
+
+    public function setAttendeeRoles(Attendee $attendee, SetAttendeeRolesRequest $setAttendeeRolesRequest): Attendee
+    {
+        $attendee = $this->attendeeDomainService->setAttendeeRoles($attendee, $setAttendeeRolesRequest);
+
+        $this->entityManager->flush();
 
         return $attendee;
     }

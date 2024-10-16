@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Application\Request\AttendeeRequest;
+use App\Application\Request\SetAttendeeRolesRequest;
 use App\Application\Request\SetPasswordRequest;
 use App\Application\Service\AttendeeApplicationService;
 use App\Application\View\AttendeeView;
@@ -184,6 +185,39 @@ class AttendeeController extends AbstractController
         return $this->json(
             Mapper::mapOne(
                 $this->attendeeApplicationService->updateAttendee($attendee, $attendeeRequest),
+                AttendeeView::class
+            )
+        );
+    }
+
+    #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Attendee Roles',
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: AttendeeView::class
+            )
+        )
+    )]
+    #[OA\RequestBody(
+        description: 'Set Attendee Roles Request',
+        required: true,
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: SetAttendeeRolesRequest::class
+            )
+        )
+    )]
+    #[OA\Tag(name: 'Attendee')]
+    #[IsGranted(AttendeeVoter::EDIT_ROLES, subject: 'attendee')]
+    public function setAttendeeRoles(
+        #[MapEntity(id: 'attendee')] Attendee        $attendee,
+        #[MapRequestPayload] SetAttendeeRolesRequest $setAttendeeRolesRequest,
+        Request                                      $request
+    ): Response {
+        return $this->json(
+            Mapper::mapOne(
+                $this->attendeeApplicationService->setAttendeeRoles($attendee, $setAttendeeRolesRequest),
                 AttendeeView::class
             )
         );

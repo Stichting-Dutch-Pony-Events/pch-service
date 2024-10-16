@@ -3,6 +3,7 @@
 namespace App\Domain\Service;
 
 use App\Application\Request\AttendeeRequest;
+use App\Application\Request\SetAttendeeRolesRequest;
 use App\Application\Request\SetPasswordRequest;
 use App\Domain\Entity\Attendee;
 use App\Domain\Entity\Product;
@@ -51,6 +52,11 @@ readonly class AttendeeDomainService
             ->setEmail($attendeeRequest->email)
             ->setNfcTagId($attendeeRequest->nfcTagId)
             ->setFireBaseToken($attendeeRequest->fireBaseToken);
+    }
+
+    public function setAttendeeRoles(Attendee $attendee, SetAttendeeRolesRequest $setAttendeeRolesRequest): Attendee
+    {
+        return $attendee->setRoles($setAttendeeRolesRequest->roles);
     }
 
     public function updatePassword(Attendee $attendee, SetPasswordRequest $setPasswordRequest): Attendee

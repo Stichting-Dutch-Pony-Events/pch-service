@@ -18,6 +18,11 @@ api.attendee.update:
   controller: App\Controller\AttendeeController::updateAttendee
   methods: PUT
 
+api.attendee.update_roles:
+  path: /attendee/{attendee}/roles
+  controller: App\Controller\AttendeeController::setAttendeeRoles
+  methods: PUT
+
 api.attendee.set-password:
   path: /attendee/me/password
   controller: App\Controller\AttendeeController::updatePassword

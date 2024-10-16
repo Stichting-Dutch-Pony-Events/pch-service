@@ -8,13 +8,14 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class AttendeeVoter extends Voter
 {
-    const VIEW = 'view';
-    const EDIT = 'edit';
+    public const VIEW = 'view';
+    public const EDIT = 'edit';
+    public const EDIT_ROLES = 'edit_roles';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
         // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::VIEW, self::EDIT])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::EDIT_ROLES])) {
             return false;
         }
 
@@ -39,6 +40,7 @@ class AttendeeVoter extends Voter
         return match ($attribute) {
             self::VIEW => $this->canView($attendee, $user),
             self::EDIT => $this->canEdit($attendee, $user),
+            self::EDIT_ROLES => $this->canEditRoles($user),
             default => throw new \LogicException('This code should not be reached!')
         };
     }
@@ -55,5 +57,10 @@ class AttendeeVoter extends Voter
         }
 
         return in_array('ROLE_VOLUNTEER', $user->getRoles(), true) || in_array('ROLE_ADMIN', $user->getRoles(), true);
+    }
+
+    private function canEditRoles(Attendee $user): bool
+    {
+        return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
     }
 }
