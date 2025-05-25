@@ -24,7 +24,7 @@ class SetAttendeePasswordCommand extends Command
         parent::__construct($name);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln([
             '<info>Create an api key</info>',

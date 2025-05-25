@@ -42,7 +42,7 @@ class GenerateStatsCommand extends Command
         parent::__construct($name);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln([
             '<info>Generating Stats</info>',
@@ -104,13 +104,13 @@ class GenerateStatsCommand extends Command
             $bLast = new DateTime("@0");
 
             foreach ($a->getAchievements() as $aAchievement) {
-                if($aAchievement->getCreatedAt() > $aLast) {
+                if ($aAchievement->getCreatedAt() > $aLast) {
                     $aLast = $aAchievement->getCreatedAt();
                 }
             }
 
             foreach ($b->getAchievements() as $bAchievement) {
-                if($bAchievement->getCreatedAt() > $bLast) {
+                if ($bAchievement->getCreatedAt() > $bLast) {
                     $bLast = $bAchievement->getCreatedAt();
                 }
             }
@@ -122,17 +122,20 @@ class GenerateStatsCommand extends Command
             $progressBar->advance();
             $this->currentRow++;
 
-            $this->worksheet->setCellValue($attendeeColumn . $this->currentRow, empty($attendee->getNickname()) ? 'Unknown Pony' : $attendee->getNickname());
+            $this->worksheet->setCellValue(
+                $attendeeColumn . $this->currentRow,
+                empty($attendee->getNickname()) ? 'Unknown Pony' : $attendee->getNickname()
+            );
             $this->worksheet->setCellValue($amountColumn . $this->currentRow, $attendee->getAchievements()->count());
 
             $lastAchievement = new DateTime("@0");
             foreach ($attendee->getAchievements() as $attendeeAchievement) {
-                if($attendeeAchievement->getCreatedAt() > $lastAchievement) {
+                if ($attendeeAchievement->getCreatedAt() > $lastAchievement) {
                     $lastAchievement = $attendeeAchievement->getCreatedAt();
                 }
             }
 
-            $diff = $lastAchievement->getTimestamp() - $startDate->getTimestamp();
+            $diff = $lastAchievement->getTimestamp() - $startDate?->getTimestamp() ?? 0;
 
             $this->worksheet->setCellValue($timeCompletedColumn . $this->currentRow, $this->seconds2human($diff));
         }
@@ -244,22 +247,22 @@ class GenerateStatsCommand extends Command
     private function getDate(
         InputInterface  $input,
         OutputInterface $output,
-        string          $question,
+        string          $questionText,
         int             $maxTries = 5
     ): ?DateTime {
         $helper = $this->getHelper('question');
-        $question = new Question($question, null);
+        $question = new Question($questionText, null);
         $question->setValidator(function ($answer) {
             if (preg_match(
-                    '/^(((\d{4})(-)(0[13578]|10|12)(-)(0[1-9]|[12][0-9]|3[01]))|((\d{4})(-)(0[469]|1‌​1)(-)([0][1-9]|[12][0-9]|30))|((\d{4})(-)(02)(-)(0[1-9]|1[0-9]|2[0-8]))|(([02468]‌​[048]00)(-)(02)(-)(29))|(([13579][26]00)(-)(02)(-)(29))|(([0-9][0-9][0][48])(-)(0‌​2)(-)(29))|(([0-9][0-9][2468][048])(-)(02)(-)(29))|(([0-9][0-9][13579][26])(-)(02‌​)(-)(29)))(\s([0-1][0-9]|2[0-4]):([0-5][0-9]):([0-5][0-9]))$/',
+                    '/^(((\d{4})(-)(0[13578]|10|12)(-)(0[1-9]|[12]\d|3[01]))|((\d{4})(-)(0[469]|1‌​1)(-)(0[1-9]|[12]\d|30))|((\d{4})(-)(02)(-)(0[1-9]|1\d|2[0-8]))|(([02468]‌​[048]00)(-)(02)(-)(29))|(([13579][26]00)(-)(02)(-)(29))|((\d\d0[48])(-)(0‌​2)(-)(29))|((\d\d[2468][048])(-)(02)(-)(29))|((\d\d[13579][26])(-)(02‌​)(-)(29)))(\s([0-1]\d|2[0-4]):([0-5]\d):([0-5]\d))$/u',
                     $answer
                 ) === 1) {
                 return Carbon::parse($answer);
-            } else {
-                throw new \RuntimeException(
-                    'Please enter a valid date in the format YYYY-MM-DD HH:MM:SS'
-                );
             }
+
+            throw new \RuntimeException(
+                'Please enter a valid date in the format YYYY-MM-DD HH:MM:SS'
+            );
         });
         $question->setMaxAttempts($maxTries);
 
@@ -272,10 +275,11 @@ class GenerateStatsCommand extends Command
         return null;
     }
 
-    private function seconds2human($ss): string {
-        $s = $ss%60;
-        $m = floor(($ss%3600)/60);
-        $h = floor(($ss)/3600);
+    private function seconds2human($ss): string
+    {
+        $s = $ss % 60;
+        $m = floor(($ss % 3600) / 60);
+        $h = floor(($ss) / 3600);
 
         return "$h hours, $m minutes, $s seconds";
     }

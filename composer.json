@@ -12,42 +12,40 @@
         "doctrine/doctrine-bundle": "^2.11",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^2.17",
-        "friendsofsymfony/elastica-bundle": "^6.4",
-        "friendsofsymfony/rest-bundle": "^3.6",
         "gedmo/doctrine-extensions": "^3.13",
-        "illuminate/contracts": "^9.0",
-        "illuminate/support": "^9.0",
-        "illuminate/validation": "^9.0",
+        "illuminate/contracts": "^v12",
+        "illuminate/support": "^v12",
+        "illuminate/validation": "^v12",
         "jms/serializer-bundle": "^5.3",
-        "jschaedl/iban-validation": "^1.8.2",
         "jucksearm/php-barcode": "^1.0",
-        "kreait/firebase-bundle": "^5.4",
-        "lexik/jwt-authentication-bundle": "^2.18",
+        "kreait/firebase-bundle": "^5.6",
+        "kreait/firebase-php": "^7.18.0",
+        "lexik/jwt-authentication-bundle": "^v3.1.1",
         "nelmio/api-doc-bundle": "^4.12",
-        "nesbot/carbon": "^2.71",
+        "nesbot/carbon": "^3.9.1",
         "phpdocumentor/reflection-docblock": "^5.3",
         "phpoffice/phpspreadsheet": "^3.3",
         "phpstan/phpdoc-parser": "^1.24",
         "stof/doctrine-extensions-bundle": "^1.9",
-        "symfony/asset": "6.4.*",
-        "symfony/console": "6.4.*",
-        "symfony/doctrine-messenger": "6.4.*",
-        "symfony/dotenv": "6.4.*",
+        "symfony/asset": "7.2.*",
+        "symfony/console": "7.2.*",
+        "symfony/doctrine-messenger": "7.2.*",
+        "symfony/dotenv": "7.2.*",
         "symfony/flex": "^2",
-        "symfony/framework-bundle": "6.4.*",
-        "symfony/http-client": "6.4.*",
-        "symfony/messenger": "6.4.*",
+        "symfony/framework-bundle": "7.2.*",
+        "symfony/http-client": "7.2.*",
+        "symfony/messenger": "7.2.*",
         "symfony/monolog-bundle": "^3.10",
-        "symfony/password-hasher": "6.4.*",
-        "symfony/property-access": "6.4.*",
-        "symfony/property-info": "6.4.*",
-        "symfony/runtime": "6.4.*",
-        "symfony/scheduler": "6.4.*",
-        "symfony/security-bundle": "6.4.*",
-        "symfony/serializer": "6.4.*",
-        "symfony/twig-bundle": "6.4.*",
-        "symfony/uid": "6.4.*",
-        "symfony/yaml": "6.4.*",
+        "symfony/password-hasher": "7.2.*",
+        "symfony/property-access": "7.2.*",
+        "symfony/property-info": "7.2.*",
+        "symfony/runtime": "7.2.*",
+        "symfony/scheduler": "7.2.*",
+        "symfony/security-bundle": "7.2.*",
+        "symfony/serializer": "7.2.*",
+        "symfony/twig-bundle": "7.2.*",
+        "symfony/uid": "7.2.*",
+        "symfony/yaml": "7.2.*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
     },
@@ -62,11 +60,6 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "App\\Tests\\": "tests/"
         }
     },
     "replace": {
@@ -96,7 +89,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.4.*"
+            "require": "7.2.*"
         }
     },
     "require-dev": {

@@ -15,7 +15,7 @@ class CreateTeamCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly TeamDomainService $teamDomainService,
+        private readonly TeamDomainService      $teamDomainService,
     ) {
         parent::__construct();
     }
@@ -23,7 +23,7 @@ class CreateTeamCommand extends Command
     protected function execute(
         InputInterface  $input,
         OutputInterface $output
-    ) {
+    ): int {
         $helper = $this->getHelper('question');
 
         $output->writeln([
@@ -34,7 +34,7 @@ class CreateTeamCommand extends Command
 
         $name = $helper->ask($input, $output, new Question("What is the name of the team?", null));
         $description = $helper->ask($input, $output, new Question("What is the description of the team?"));
-        $identifier  = $helper->ask($input, $output, new Question("What is the ID of the team?"));
+        $identifier = $helper->ask($input, $output, new Question("What is the ID of the team?"));
 
         $team = $this->teamDomainService->createTeam($name, $description, $identifier);
 

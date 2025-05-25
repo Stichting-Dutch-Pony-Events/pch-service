@@ -26,7 +26,7 @@ class ImportAttendees extends Command
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $helper = $this->getHelper('question');
 
@@ -65,7 +65,7 @@ class ImportAttendees extends Command
         $progressBar->finish();
 
         $output->writeln('');
-        $output->writeln('<info>Imported '.$attendeeCount.' Attendees</info>');
+        $output->writeln('<info>Imported ' . $attendeeCount . ' Attendees</info>');
 
         return Command::SUCCESS;
     }

@@ -16,14 +16,14 @@ use Symfony\Component\Console\Question\Question;
 class CreateAchievementCommand extends Command
 {
     public function __construct(
-        private AchievementRepository  $achievementRepository,
+        private AchievementRepository $achievementRepository,
         private EntityManagerInterface $entityManager,
-        ?string                        $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln([
             '<info>Create a team</info>',
@@ -33,16 +33,37 @@ class CreateAchievementCommand extends Command
 
         $helper = $this->getHelper('question');
 
-        $name = $helper->ask($input, $output, new Question("<question>What is the name of the achievement?</question> "));
-        $description = $helper->ask($input, $output, new Question("<question>What is the description of the achievement?</question> "));
-        $pointValue = (int)$helper->ask($input, $output, new Question("<question>What is the point value?</question> "), 1);
+        $name = $helper->ask(
+            $input,
+            $output,
+            new Question("<question>What is the name of the achievement?</question> ")
+        );
+        $description = $helper->ask(
+            $input,
+            $output,
+            new Question("<question>What is the description of the achievement?</question> ")
+        );
+        $pointValue = (int)$helper->ask(
+            $input,
+            $output,
+            new Question("<question>What is the point value?</question> "),
+            1
+        );
         $isEveningActivity = $helper->ask(
             $input,
             $output,
             new ConfirmationQuestion("<question>Is this an Saturday Evening Activity? (yes/no):</question> ", false)
         );
-        $unlockCode = $helper->ask($input, $output, new Question("<question>What is the unlock code?</question> ", null));
-        $identifier = $helper->ask($input, $output, new Question("<question>What is the ID of the achievement?</question> "));
+        $unlockCode = $helper->ask(
+            $input,
+            $output,
+            new Question("<question>What is the unlock code?</question> ", null)
+        );
+        $identifier = $helper->ask(
+            $input,
+            $output,
+            new Question("<question>What is the ID of the achievement?</question> ")
+        );
 
         $achievement = $this->achievementRepository->findOneBy(['identifier' => $identifier]);
 

@@ -17,15 +17,15 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 class SetupProductsCommand extends Command
 {
     public function __construct(
-        private readonly ItemRepository         $pretixItemRepository,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ProductRepository      $productRepository,
+        private readonly ItemRepository            $pretixItemRepository,
+        private readonly EntityManagerInterface    $entityManager,
+        private readonly ProductRepository         $productRepository,
         private readonly ProductApplicationService $productApplicationService
     ) {
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $helper = $this->getHelper('question');
 
