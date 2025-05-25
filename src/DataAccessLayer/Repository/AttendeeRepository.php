@@ -27,7 +27,7 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
         for ($i = 0; $i < self::MINI_IDENTIFIER_MAX_ATTEMPTS; $i++) {
             $charactersLength = strlen(self::MINI_IDENTIFIER_CHARACTERS);
             $randomString     = '';
-            for ($j = 0; $j < 4; $j++) {
+            for ($j = 0; $j < 10; $j++) {
                 $randomString .= self::MINI_IDENTIFIER_CHARACTERS[random_int(0, $charactersLength - 1)];
             }
 

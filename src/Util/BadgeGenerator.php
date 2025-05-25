@@ -186,8 +186,9 @@ class BadgeGenerator
     {
         return QRcode::factory()
             ->setCode($miniIdentifier)
-            ->setMargin(2)
+            ->setMargin(5)
             ->setSize($size)
+            ->setLevel('H')
             ->getQRcodePngData();
     }
 

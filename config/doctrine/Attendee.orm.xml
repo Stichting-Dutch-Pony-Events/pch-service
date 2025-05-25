@@ -18,7 +18,7 @@
 
         <field name="tShirtSize" enum-type="App\Domain\Enum\TShirtSize" nullable="true"/>
         <field name="nfcTagId" nullable="true"/>
-        <field name="miniIdentifier" type="string" length="4" nullable="true"/>
+        <field name="miniIdentifier" type="string" length="10" nullable="true"/>
         <field name="password" type="string" nullable="false"/>
         <field name="fireBaseToken" type="string" length="255" nullable="true"/>
         <field name="badgeFile" type="string" length="255" nullable="true"/>
