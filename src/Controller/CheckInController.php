@@ -5,16 +5,12 @@ namespace App\Controller;
 use App\Application\Request\CheckInRequest;
 use App\Application\Response\CheckInResponse;
 use App\Application\Service\CheckInApplicationService;
-use App\Domain\Enum\CheckInListType;
 use App\Security\Voter\CheckInVoter;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
-use App\Util\Validator\Validator;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -60,17 +56,7 @@ class CheckInController extends AbstractController
     #[IsGranted(CheckInVoter::CHECK_IN)]
     public function checkIn(
         #[MapRequestPayload] CheckInRequest $checkInRequest,
-        Request                             $request
     ): Response {
-        Validator::validate($request, [
-            'secret'   => 'required|string',
-            'listType' => [
-                'required',
-                'string',
-                Rule::enum(CheckInListType::class)
-            ]
-        ]);
-
         return $this->json($this->checkInApplicationService->performCheckIn($checkInRequest));
     }
 }

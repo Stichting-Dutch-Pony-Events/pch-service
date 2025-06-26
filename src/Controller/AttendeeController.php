@@ -9,11 +9,9 @@ use App\Application\Service\AttendeeApplicationService;
 use App\Application\View\AttendeeView;
 use App\Domain\Entity\Attendee;
 use App\Security\Voter\AttendeeVoter;
-use App\Util\BadgeGenerator;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
 use App\Util\SymfonyUtils\Mapper;
-use App\Util\Validator\Validator;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -92,7 +90,7 @@ class AttendeeController extends AbstractController
     ): Response {
         return new Response($this->attendeeApplicationService->getAttendeeBadge($attendee), Response::HTTP_OK, [
             'Content-Type'        => 'image/png',
-            'Content-Disposition' => 'inline; filename="' . $attendee->getId() . '.png"'
+            'Content-Disposition' => 'inline; filename="'.$attendee->getId().'.png"'
         ]);
     }
 
