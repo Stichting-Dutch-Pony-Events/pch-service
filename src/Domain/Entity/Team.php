@@ -24,7 +24,7 @@ class Team
         private string $identifier,
         private int    $points = 0,
         /** @var Collection<int, Attendee> $attendees */
-        Collection     $attendees = null
+        ?Collection     $attendees = null
     ) {
         $this->attendees = $attendees ?? new ArrayCollection();
     }

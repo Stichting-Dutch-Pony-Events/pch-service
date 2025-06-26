@@ -121,14 +121,7 @@ class AttendeeController extends AbstractController
     #[OA\Tag(name: 'Attendee')]
     public function updatePassword(
         #[MapRequestPayload] SetPasswordRequest $setPasswordRequest,
-        Request                                 $request
     ): Response {
-        Validator::validate($request, [
-            'password'             => 'required|string|numeric|min:4',
-            'passwordConfirmation' => 'required|string|numeric|min:4',
-            'currentPassword'      => 'required|string',
-        ]);
-
         $user = $this->getUser();
 
         if (!$user instanceof Attendee) {

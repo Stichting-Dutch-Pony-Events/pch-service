@@ -93,7 +93,7 @@ class Order
         return $confirmedPayments;
     }
 
-    public function importInEboekhouden(PretixApi $api = null) {
+    public function importInEboekhouden(?PretixApi $api = null) {
         if($api === null)
             $api = new PretixApi();
         /** @var Invoice[] $invoices */
