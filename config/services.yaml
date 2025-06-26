@@ -36,12 +36,5 @@ services:
             $event: '%pretix.event%'
             $organiser: '%pretix.organiser%'
 
-    App\Util\Validator\Listener\ValidationExceptionListener:
-        tags:
-            - { name: kernel.event_listener, event: kernel.exception, priority: 10000 }
-    App\Util\Validator\Listener\ControllerEventListener:
-        tags:
-            - { name: kernel.event_listener, event: kernel.controller_arguments, priority: 0, }
-
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
