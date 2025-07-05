@@ -1,18 +1,13 @@
 <?php
 
-namespace App\Application\View;
+namespace App\Application\Request;
 
-use App\Application\View\Trait\EntityViewTrait;
-
-class TeamView
+class TeamRequest
 {
-    use EntityViewTrait;
-
     public function __construct(
         public string $name,
         public string $description,
         public string $identifier,
-        public int    $points
     ) {
     }
 }

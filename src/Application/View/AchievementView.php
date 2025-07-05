@@ -2,10 +2,13 @@
 
 namespace App\Application\View;
 
+use App\Application\View\Trait\EntityViewTrait;
+
 class AchievementView
 {
+    use EntityViewTrait;
+
     public function __construct(
-        public string $id,
         public string $name,
         public string $description,
         public string $identifier,

@@ -4,15 +4,13 @@ namespace App\Domain\Entity;
 
 use App\DataAccessLayer\Pretix\Enum\CheckInErrorReason;
 use App\DataAccessLayer\Pretix\Enum\CheckInStatus;
+use App\Domain\Entity\Trait\HasUuidTrait;
 use DateTime;
 use Gedmo\Timestampable\Traits\Timestampable;
-use Symfony\Component\Uid\Uuid;
 
 class CheckIn
 {
-    use Timestampable;
-
-    private ?Uuid $id = null;
+    use Timestampable, HasUuidTrait;
 
     public function __construct(
         private Attendee            $attendee,
@@ -22,11 +20,6 @@ class CheckIn
         private ?string             $reasonExplanation,
         private DateTime            $checkInTime,
     ) {
-    }
-
-    public function getId(): ?string
-    {
-        return $this->id?->toRfc4122();
     }
 
     public function getAttendee(): Attendee

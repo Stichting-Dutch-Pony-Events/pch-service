@@ -2,16 +2,16 @@
 
 namespace App\Application\View;
 
-use App\Domain\Entity\Achievement;
+use App\Application\View\Trait\EntityViewTrait;
 use App\Domain\Enum\TShirtSize;
 use App\Util\SymfonyUtils\Attribute\MapsMany;
-use DateTime;
 use JMS\Serializer\Annotation\Type;
 
 class AttendeeView
 {
+    use EntityViewTrait;
+
     public function __construct(
-        public ?string     $id,
         public string      $name,
         public ?string     $firstName,
         public ?string     $middleName,
@@ -21,8 +21,6 @@ class AttendeeView
         public string      $orderCode,
         public int         $ticketId,
         public ProductView $product,
-        public DateTime    $createdAt,
-        public DateTime    $updatedAt,
         public ?string     $nfcTagId,
         public ?string     $miniIdentifier,
         public ?TShirtSize $tShirtSize,
