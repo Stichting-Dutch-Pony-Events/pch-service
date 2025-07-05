@@ -52,7 +52,7 @@ class Mapper
         array            $typeResolvers = [],
         ?string          $supportedTypeResolverInterface = null
     ): array {
-        $mapper  = new static($typeResolvers);
+        $mapper = new static($typeResolvers);
         $results = [];
 
         foreach ($entityObjects as $entityObject) {
@@ -105,7 +105,7 @@ class Mapper
         $viewInstance = $reflectedView->newInstanceWithoutConstructor();
 
         foreach ($reflectedView->getProperties() as $property) {
-            $type      = $property->getType();
+            $type = $property->getType();
             $isBuiltin = $type instanceof ReflectionNamedType && $type->isBuiltin();
 
             if ($property->getType() === null) {
@@ -148,9 +148,9 @@ class Mapper
      */
     private function handleMapsMany(mixed $object, ReflectionProperty $property, mixed $viewInstance)
     {
-        $typeName              = $property->getType()->getName();
+        $typeName = $property->getType()?->getName();
         $reflectedPropertyType = null;
-        $isCollection          = false;
+        $isCollection = false;
 
         $propertyValue = $this->getPropertyValue($object, $property, $viewInstance) ?? [];
 
@@ -162,7 +162,7 @@ class Mapper
 
         if ($typeName !== 'array') {
             $reflectedPropertyType = new ReflectionClass($typeName);
-            $isCollection          = $reflectedPropertyType->implementsInterface(Collection::class);
+            $isCollection = $reflectedPropertyType->implementsInterface(Collection::class);
         }
 
         return $isCollection ? $reflectedPropertyType->newInstance($propertyValue) : $propertyValue;
@@ -174,8 +174,8 @@ class Mapper
      */
     private function getPropertyValue(mixed $object, ReflectionProperty $property, mixed $viewInstance)
     {
-        $getter              = null;
-        $propertyValue       = null;
+        $getter = null;
+        $propertyValue = null;
         $pascalCasedProperty = ucfirst($property->getName());
 
         if (is_object($object)) {
@@ -212,13 +212,15 @@ class Mapper
         }
 
         // When input and output types are the same
-        if (is_object($propertyValue) && $property->getType() instanceof ReflectionNamedType && get_class($propertyValue) === $property->getType()?->getName()) {
+        if (is_object($propertyValue) && $property->getType() instanceof ReflectionNamedType && get_class(
+                $propertyValue
+            ) === $property->getType()?->getName()) {
             return $propertyValue;
         }
 
         if (is_array($propertyValue) || $propertyValue instanceof Collection) {
-            $viewClass                      = null;
-            $useCustomResolver              = false;
+            $viewClass = null;
+            $useCustomResolver = false;
             $supportedTypeResolverInterface = null;
 
             if ($propertyValue instanceof Collection) {
@@ -233,7 +235,7 @@ class Mapper
                 $attributeInstance = $mapsManyAttribute->newInstance();
 
                 if ($attributeInstance->useTypeResolver) {
-                    $useCustomResolver              = true;
+                    $useCustomResolver = true;
                     $supportedTypeResolverInterface = $attributeInstance->supportedTypeResolverInterface;
                 } else {
                     $viewClass = $attributeInstance->viewClass;
@@ -384,7 +386,8 @@ class Mapper
     {
         $reflectedMethod = new ReflectionMethod($object, $method);
 
-        return !(is_null($reflectedMethod->getReturnType()) || $reflectedMethod->getReturnType()->getName() === 'void');
+        return !(is_null($reflectedMethod->getReturnType()) || $reflectedMethod->getReturnType()?->getName(
+            ) === 'void');
     }
 
     /**
@@ -392,7 +395,7 @@ class Mapper
      */
     private function handleBuiltIn(mixed $object, ReflectionProperty $property, mixed $viewInstance): mixed
     {
-        $value   = $this->getPropertyValue($object, $property, $viewInstance);
+        $value = $this->getPropertyValue($object, $property, $viewInstance);
         $default = $value;
 
         // destructure associative array
@@ -404,11 +407,11 @@ class Mapper
             return $property->getDefaultValue();
         }
 
-        if (is_null($default) && $property->getType()->allowsNull()) {
+        if (is_null($default) && $property->getType()?->allowsNull()) {
             return null;
         }
 
-        return match ($property->getType()->getName()) {
+        return match ($property->getType()?->getName()) {
             'bool' => (bool)$value,
             'int' => (int)$value,
             'float' => (float)$value,
