@@ -1,0 +1,14 @@
+api.quiz.questions:
+  path: /quiz/questions
+  controller: App\Controller\QuizController::all
+  methods: GET
+
+api.quiz.question:
+  path: /quiz/questions/{question}
+  controller: App\Controller\QuizController::getQuizQuestion
+  methods: GET
+
+api.quiz.question.create:
+  path: /quiz/questions
+  controller: App\Controller\QuizController::createQuestion
+  methods: POST
