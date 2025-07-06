@@ -1,40 +1,41 @@
 # config/packages/security.yaml
 security:
-    providers:
-        users:
-            entity:
-                # the class of the entity that represents users
-                class: 'App\Domain\Entity\Attendee'
+  providers:
+    users:
+      entity:
+        # the class of the entity that represents users
+        class: 'App\Domain\Entity\Attendee'
 
-    password_hashers:
-        # auto hasher with default options for the User class (and children)
-        App\Domain\Entity\Attendee: 'auto'
+  password_hashers:
+    # auto hasher with default options for the User class (and children)
+    App\Domain\Entity\Attendee: 'auto'
 
-    role_hierarchy:
-        ROLE_VOLUNTEER: ROLE_USER
-        ROLE_ADMIN: ROLE_VOLUNTEER
-        ROLE_SUPER_ADMIN: [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
+  role_hierarchy:
+    ROLE_VOLUNTEER: ROLE_USER
+    ROLE_ADMIN: ROLE_VOLUNTEER
+    ROLE_SUPER_ADMIN: [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
 
-    firewalls:
-        doc:
-            pattern: ^/api/doc
+  firewalls:
+    doc:
+      pattern: ^/api/doc
 
-        login:
-            pattern: ^/api/login
-            stateless: true
-            json_login:
-                check_path: /api/login_check
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+    login:
+      pattern: ^/api/login
+      stateless: true
+      json_login:
+        check_path: /api/login_check
+        success_handler: lexik_jwt_authentication.handler.authentication_success
+        failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-        api:
-            pattern:   ^/api
-            stateless: true
-            jwt: ~
-            custom_authenticators:
-                - App\Security\ApiKeyAuthenticator
+    api:
+      pattern: ^/api
+      stateless: true
+      jwt: ~
+      custom_authenticators:
+        - App\Security\ApiKeyAuthenticator
+        - App\Security\OidcAuthenticator
 
-    access_control:
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/doc, roles: PUBLIC_ACCESS }
-        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+  access_control:
+    - { path: ^/api/login, roles: PUBLIC_ACCESS }
+    - { path: ^/api/doc, roles: PUBLIC_ACCESS }
+    - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
