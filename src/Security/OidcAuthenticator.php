@@ -21,7 +21,7 @@ class OidcAuthenticator extends AbstractAuthenticator
     public function __construct(private string $issuer)
     {
         $this->issuer = rtrim($this->issuer, '/') . '/';
-        $this->jwksUri = $this->issuer . 'jwks';
+        $this->jwksUri = $this->issuer . 'jwks/';
     }
 
     public function supports(Request $request): ?bool

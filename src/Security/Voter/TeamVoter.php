@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use App\Domain\Entity\Attendee;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -17,12 +16,8 @@ class TeamVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        $user = $token->getUser();
+        $roles = $token->getRoleNames();
 
-        if (!$user instanceof Attendee) {
-            return false;
-        }
-
-        return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
+        return in_array('ROLE_SUPER_ADMIN', $roles, true);
     }
 }
