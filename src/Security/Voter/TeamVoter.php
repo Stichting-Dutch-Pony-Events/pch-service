@@ -12,7 +12,7 @@ class TeamVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return $attribute === self::CREATE_TEAM;
+        return in_array($attribute, [self::CREATE_TEAM, self::EDIT_TEAM]);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
