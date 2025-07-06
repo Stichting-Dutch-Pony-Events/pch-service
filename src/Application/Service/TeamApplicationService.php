@@ -28,4 +28,18 @@ readonly class TeamApplicationService
 
         return $team;
     }
+
+    public function updateTeam(Team $team, TeamRequest $teamRequest): Team
+    {
+        $team = $this->teamDomainService->updateTeam(
+            team: $team,
+            name: $teamRequest->name,
+            description: $teamRequest->description,
+            identifier: $teamRequest->identifier
+        );
+
+        $this->entityManager->flush();
+
+        return $team;
+    }
 }

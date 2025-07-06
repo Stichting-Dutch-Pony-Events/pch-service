@@ -7,7 +7,6 @@ namespace App\Domain\Service;
 use App\DataAccessLayer\Repository\TeamRepository;
 use App\Domain\Entity\Attendee;
 use App\Domain\Entity\Team;
-use Doctrine\Common\Collections\Collection;
 
 readonly class TeamDomainService
 {
@@ -47,6 +46,14 @@ readonly class TeamDomainService
     public function createTeam(string $name, string $description, string $identifier): Team
     {
         return new Team($name, $description, $identifier);
+    }
+
+    public function updateTeam(Team $team, string $name, string $description, string $identifier): Team
+    {
+        return $team
+            ->setName($name)
+            ->setDescription($description)
+            ->setIdentifier($identifier);
     }
 
     public function calculatePoints(Team $team): Team

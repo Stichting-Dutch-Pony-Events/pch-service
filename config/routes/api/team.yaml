@@ -7,3 +7,8 @@ api.team.create:
   path: /team
   controller: App\Controller\TeamController::createTeam
   methods: POST
+
+api.team.update:
+  path: /team/{team}
+  controller: App\Controller\TeamController::updateTeam
+  methods: PUT
