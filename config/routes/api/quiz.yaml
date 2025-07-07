@@ -1,14 +1,19 @@
 api.quiz.questions:
   path: /quiz/questions
-  controller: App\Controller\QuizController::all
-  methods: GET
-
-api.quiz.question:
-  path: /quiz/questions/{question}
-  controller: App\Controller\QuizController::getQuizQuestion
+  controller: App\Controller\QuizQuestionController::all
   methods: GET
 
 api.quiz.question.create:
   path: /quiz/questions
-  controller: App\Controller\QuizController::createQuestion
+  controller: App\Controller\QuizQuestionController::createQuestion
   methods: POST
+
+api.quiz.question:
+  path: /quiz/questions/{question}
+  controller: App\Controller\QuizQuestionController::getQuizQuestion
+  methods: GET
+
+api.quiz.question.update:
+  path: /quiz/questions/{question}
+  controller: App\Controller\QuizQuestionController::updateQuestion
+  methods: PUT

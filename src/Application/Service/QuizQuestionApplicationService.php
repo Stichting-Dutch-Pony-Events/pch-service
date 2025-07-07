@@ -15,9 +15,6 @@ readonly class QuizQuestionApplicationService
 {
     public function __construct(
         private QuizQuestionDomainService         $quizQuestionDomainService,
-        private QuizAnswerDomainService           $quizAnswerDomainService,
-        private QuizAnswerTeamWeightDomainService $quizAnswerTeamWeightDomainService,
-        private TeamRepository                    $teamRepository,
         private EntityManagerInterface            $entityManager,
     ) {
     }
@@ -27,22 +24,18 @@ readonly class QuizQuestionApplicationService
         return $this->entityManager->wrapInTransaction(function () use ($quizQuestionRequest): QuizQuestion {
             $question = $this->quizQuestionDomainService->createQuestion($quizQuestionRequest->question);
 
-            foreach ($quizQuestionRequest->answers as $answer) {
-                $quizAnswer = $this->quizAnswerDomainService->createAnswer($answer, $question);
-
-                if ($this->quizAnswerTeamWeightDomainService->validateTeamWeights($answer->teamWeights)) {
-                    foreach ($answer->teamWeights as $teamWeight) {
-                        $team = $this->teamRepository->find($teamWeight->teamId);
-                        if ($team === null) {
-                            throw new InvalidInputException("Team not found");
-                        }
-
-                        $this->quizAnswerTeamWeightDomainService->createTeamWeight($quizAnswer, $team, $teamWeight);
-                    }
-                }
-            }
-
             $this->entityManager->persist($question);
+            $this->entityManager->flush();
+
+            return $question;
+        });
+    }
+
+    public function updateQuizQuestion(QuizQuestion $quizQuestion, QuizQuestionRequest $quizQuestionRequest): QuizQuestion
+    {
+        return $this->entityManager->wrapInTransaction(function () use ($quizQuestion, $quizQuestionRequest): QuizQuestion {
+            $question = $this->quizQuestionDomainService->updateQuestion($quizQuestion, $quizQuestionRequest->question);
+
             $this->entityManager->flush();
 
             return $question;

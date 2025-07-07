@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Application\Request\QuizQuestionRequest;
 use App\Application\Service\QuizQuestionApplicationService;
-use App\Application\View\QuizQuestionDetailedView;
 use App\Application\View\QuizQuestionView;
 use App\DataAccessLayer\Repository\QuizQuestionRepository;
 use App\Domain\Entity\QuizQuestion;
@@ -19,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class QuizController extends AbstractController
+class QuizQuestionController extends AbstractController
 {
     public function __construct(
         private QuizQuestionRepository         $quizQuestionRepository,
@@ -53,7 +52,7 @@ class QuizController extends AbstractController
         description: 'Character Quiz Question',
         content: new OA\JsonContent(
             ref: new Model(
-                type: QuizQuestionDetailedView::class
+                type: QuizQuestionView::class
             )
         )
     )]
@@ -62,7 +61,7 @@ class QuizController extends AbstractController
         #[MapEntity(id: 'question')] QuizQuestion $quizQuestion
     ): Response {
         return $this->json(
-            Mapper::mapOne($quizQuestion, QuizQuestionDetailedView::class),
+            Mapper::mapOne($quizQuestion, QuizQuestionView::class),
             Response::HTTP_OK
         );
     }
@@ -72,7 +71,7 @@ class QuizController extends AbstractController
         description: 'Create Quiz Question',
         content: new OA\JsonContent(
             ref: new Model(
-                type: QuizQuestionDetailedView::class
+                type: QuizQuestionView::class
             )
         )
     )]
@@ -102,9 +101,50 @@ class QuizController extends AbstractController
         return $this->json(
             Mapper::mapOne(
                 $this->quizQuestionApplicationService->createQuizQuestion($quizQuestionRequest),
-                QuizQuestionDetailedView::class
+                QuizQuestionView::class
             ),
             Response::HTTP_CREATED
+        );
+    }
+
+    #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Update Quiz Question',
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: QuizQuestionView::class
+            )
+        )
+    )]
+    #[OA\Response(
+        response: Response::HTTP_BAD_REQUEST,
+        description: 'Invalid Input',
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: PublicExceptionResponse::class
+            )
+        )
+    )]
+    #[OA\RequestBody(
+        description: 'Quiz Question Request',
+        required: true,
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: QuizQuestionRequest::class
+            )
+        )
+    )]
+    #[OA\Tag(name: 'Character Quiz')]
+    #[IsGranted(QuizQuestionVoter::EDIT_QUESTION, subject: 'question')]
+    public function updateQuestion(
+        #[MapEntity(id: 'question')] QuizQuestion $question,
+        #[MapRequestPayload] QuizQuestionRequest  $quizQuestionRequest,
+    ): Response {
+        return $this->json(
+            Mapper::mapOne(
+                $this->quizQuestionApplicationService->updateQuizQuestion($question, $quizQuestionRequest),
+                QuizQuestionView::class
+            )
         );
     }
 }

@@ -21,22 +21,22 @@ class QuizQuestionRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('cqq')
             ->orderBy('cqq.order', 'ASC')
-            ->leftJoin('cqq.answers', 'cqa')
             ->getQuery()
             ->getResult();
     }
 
     public function getNextOrder(): int
     {
-        $result = $this->createQueryBuilder('cqq')
-            ->select('MAX(cqq.order) AS maxOrder')
+        $order = 0;
+        $result = $this->createQueryBuilder('qq')
+            ->select('MAX(qq.order) AS maxOrder')
             ->getQuery()
             ->getSingleScalarResult();
 
-        if (!is_int($result)) {
-            throw new RuntimeException("ORDER value is not an integer.");
+        if (is_numeric($result)) {
+            $order = (int) $result;
         }
 
-        return $result + 1;
+        return $order + 1;
     }
 }

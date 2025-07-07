@@ -19,4 +19,9 @@ readonly class QuizQuestionDomainService
             order: $this->quizQuestionRepository->getNextOrder(),
         );
     }
+
+    public function updateQuestion(QuizQuestion $quizQuestion, string $question): QuizQuestion
+    {
+        return $quizQuestion->setQuestion($question);
+    }
 }
