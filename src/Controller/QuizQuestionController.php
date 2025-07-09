@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Application\Request\ChangeOrderRequest;
 use App\Application\Request\QuizQuestionRequest;
 use App\Application\Service\QuizQuestionApplicationService;
 use App\Application\View\QuizQuestionView;
@@ -146,5 +147,37 @@ class QuizQuestionController extends AbstractController
                 QuizQuestionView::class
             )
         );
+    }
+
+    #[OA\Response(
+        response: Response::HTTP_NO_CONTENT,
+        description: 'Change Quiz Question Order',
+    )]
+    #[OA\Response(
+        response: Response::HTTP_BAD_REQUEST,
+        description: 'Bad Request',
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: PublicExceptionResponse::class
+            )
+        )
+    )]
+    #[OA\RequestBody(
+        description: 'Change Order Request',
+        required: true,
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: ChangeOrderRequest::class
+            )
+        )
+    )]
+    #[OA\Tag(name: 'Character Quiz')]
+    #[IsGranted(QuizQuestionVoter::EDIT_QUESTION)]
+    public function changeOrder(
+        #[MapRequestPayload] ChangeOrderRequest $changeOrderRequest
+    ): Response {
+        $this->quizQuestionApplicationService->changeOrder($changeOrderRequest);
+
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 }

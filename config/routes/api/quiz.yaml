@@ -17,3 +17,8 @@ api.quiz.question.update:
   path: /quiz/questions/{question}
   controller: App\Controller\QuizQuestionController::updateQuestion
   methods: PUT
+
+api.quiz.question.change-order:
+  path: /quiz/questions/change-order
+  controller: App\Controller\QuizQuestionController::changeOrder
+  methods: PATCH
