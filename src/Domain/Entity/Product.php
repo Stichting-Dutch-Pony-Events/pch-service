@@ -2,16 +2,14 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Entity\Trait\HasUuidTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
-use Symfony\Component\Uid\Uuid;
 
 class Product
 {
-    use Timestampable;
-
-    private ?Uuid $id = null;
+    use Timestampable, HasUuidTrait;
 
     /** @var Collection<int, CheckInList> */
     private Collection $checkInLists;
@@ -26,11 +24,6 @@ class Product
         $this->checkInLists = $checkInLists ?? new ArrayCollection();
     }
 
-    public function getId(): ?string
-    {
-        return $this->id?->toRfc4122();
-    }
-
     /**
      * @return Collection<int, CheckInList>
      */
@@ -41,15 +34,16 @@ class Product
 
     public function addCheckInList(CheckInList $checkInList): self
     {
-        if(!$this->checkInLists->contains($checkInList)) {
+        if (!$this->checkInLists->contains($checkInList)) {
             $this->checkInLists->add($checkInList);
         }
 
         return $this;
     }
 
-    public function removeCheckInList(CheckInList $checkInList): self {
-        if($this->checkInLists->contains($checkInList)) {
+    public function removeCheckInList(CheckInList $checkInList): self
+    {
+        if ($this->checkInLists->contains($checkInList)) {
             $this->checkInLists->removeElement($checkInList);
         }
 

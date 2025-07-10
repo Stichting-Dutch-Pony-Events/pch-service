@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Domain\Entity\Attendee;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class AttendeeVoter extends Voter
 {
@@ -30,7 +31,7 @@ class AttendeeVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (!$user instanceof Attendee) {
+        if (!$user instanceof UserInterface) {
             return false;
         }
 
@@ -45,25 +46,25 @@ class AttendeeVoter extends Voter
         };
     }
 
-    private function canView(Attendee $attendee, Attendee $user): bool
+    private function canView(Attendee $attendee, UserInterface $user): bool
     {
-        if ($attendee->getId() === $user->getId()) {
+        if (($user instanceof Attendee) && $attendee->getId() === $user->getId()) {
             return true;
         }
 
         return in_array('ROLE_VOLUNTEER', $user->getRoles(), true) || in_array('ROLE_ADMIN', $user->getRoles(), true);
     }
 
-    private function canEdit(Attendee $attendee, Attendee $user): bool
+    private function canEdit(Attendee $attendee, UserInterface $user): bool
     {
-        if ($attendee->getId() === $user->getId()) {
+        if (($user instanceof Attendee) && $attendee->getId() === $user->getId()) {
             return true;
         }
 
         return in_array('ROLE_ADMIN', $user->getRoles(), true);
     }
 
-    private function canEditRoles(Attendee $user): bool
+    private function canEditRoles(UserInterface $user): bool
     {
         return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
     }

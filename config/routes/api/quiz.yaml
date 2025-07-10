@@ -1,0 +1,24 @@
+api.quiz.questions:
+  path: /quiz/questions
+  controller: App\Controller\QuizQuestionController::all
+  methods: GET
+
+api.quiz.question.create:
+  path: /quiz/questions
+  controller: App\Controller\QuizQuestionController::createQuestion
+  methods: POST
+
+api.quiz.question:
+  path: /quiz/questions/{question}
+  controller: App\Controller\QuizQuestionController::getQuizQuestion
+  methods: GET
+
+api.quiz.question.update:
+  path: /quiz/questions/{question}
+  controller: App\Controller\QuizQuestionController::updateQuestion
+  methods: PUT
+
+api.quiz.question.change-order:
+  path: /quiz/questions/change-order
+  controller: App\Controller\QuizQuestionController::changeOrder
+  methods: PATCH

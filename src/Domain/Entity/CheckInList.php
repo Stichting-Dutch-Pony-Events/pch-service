@@ -2,18 +2,16 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Entity\Trait\HasUuidTrait;
 use App\Domain\Enum\CheckInListType;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
-use Symfony\Component\Uid\Uuid;
 
 class CheckInList
 {
-    use Timestampable;
-
-    private ?Uuid $id;
+    use Timestampable, HasUuidTrait;
 
     /** @var Collection<int, Product> $products */
     private Collection $products;
@@ -30,11 +28,6 @@ class CheckInList
         ?Collection             $products = null,
     ) {
         $this->products = $products ?? new ArrayCollection();
-    }
-
-    public function getId(): ?string
-    {
-        return $this->id?->toRfc4122();
     }
 
     public function getName(): string
@@ -106,7 +99,7 @@ class CheckInList
 
     public function addProduct(Product $product): self
     {
-        if(!$this->products->contains($product)) {
+        if (!$this->products->contains($product)) {
             $this->products->add($product);
         }
 
@@ -115,7 +108,7 @@ class CheckInList
 
     public function removeProduct(Product $product): self
     {
-        if($this->products->contains($product)) {
+        if ($this->products->contains($product)) {
             $this->products->removeElement($product);
         }
 

@@ -2,14 +2,17 @@
 
 namespace App\Application\View;
 
+use App\Application\View\Trait\EntityViewTrait;
+
 class TeamView
 {
+    use EntityViewTrait;
+
     public function __construct(
-        public ?string $id,
-        public string  $name,
-        public string  $description,
-        public string  $identifier,
-        public string  $points
+        public string $name,
+        public string $description,
+        public string $identifier,
+        public int    $points
     ) {
     }
 }

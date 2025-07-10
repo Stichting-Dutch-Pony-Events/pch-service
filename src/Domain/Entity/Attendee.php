@@ -2,19 +2,17 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Entity\Trait\HasUuidTrait;
 use App\Domain\Enum\TShirtSize;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Uid\Uuid;
 
 class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    use Timestampable;
-
-    private ?Uuid $id = null;
+    use Timestampable, HasUuidTrait;
 
     /** @var Collection<int, CheckIn> $checkIns */
     private Collection $checkIns;
@@ -56,11 +54,6 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
         $this->checkIns = $checkIns ?? new ArrayCollection();
         $this->achievements = $achievements ?? new ArrayCollection();
         $this->printJobs = $printJobs ?? new ArrayCollection();
-    }
-
-    public function getId(): ?string
-    {
-        return $this->id?->toRfc4122();
     }
 
     public function getName(): string

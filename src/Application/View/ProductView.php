@@ -2,16 +2,15 @@
 
 namespace App\Application\View;
 
-use DateTime;
+use App\Application\View\Trait\EntityViewTrait;
 
 class ProductView
 {
+    use EntityViewTrait;
+
     public function __construct(
-        public ?string  $id,
-        public string   $name,
-        public int      $pretixId,
-        public DateTime $createdAt,
-        public DateTime $updatedAt,
+        public string $name,
+        public int    $pretixId,
     ) {
     }
 }

@@ -2,24 +2,17 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Entity\Trait\HasUuidTrait;
 use Gedmo\Timestampable\Traits\Timestampable;
-use Symfony\Component\Uid\Uuid;
 
 class ApiKey
 {
-    use Timestampable;
-
-    private ?Uuid $id = null;
+    use Timestampable, HasUuidTrait;
 
     public function __construct(
         public string   $key,
         public Attendee $attendee,
     ) {
-    }
-
-    public function getId(): ?string
-    {
-        return $this->id?->toRfc4122();
     }
 
     public function getKey(): string

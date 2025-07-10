@@ -1,0 +1,32 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+    <entity name="App\Domain\Entity\QuizAnswerTeamWeight"
+            table="quiz_answer_team_weight">
+        <id name="id" type="uuid" column="id">
+            <generator strategy="CUSTOM"/>
+            <custom-id-generator class="doctrine.uuid_generator"/>
+        </id>
+
+        <field name="weight" type="integer">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
+
+        <many-to-one field="quizAnswer" target-entity="App\Domain\Entity\QuizAnswer"
+                     inversed-by="quizAnswerTeamWeights">
+            <join-column name="quiz_answer_id" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <many-to-one field="team" target-entity="App\Domain\Entity\Team">
+            <join-column name="team_id" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <field name="createdAt" type="datetime">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" type="datetime">
+            <gedmo:timestampable on="update"/>
+        </field>
+    </entity>
+</doctrine-mapping>

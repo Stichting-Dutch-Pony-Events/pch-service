@@ -10,7 +10,7 @@ class InvoicesRepository extends PretixBaseRepository
      * @param  string|null  $order
      * @return Invoice[]
      */
-    public function getInvoices(string $order = null): array
+    public function getInvoices(?string $order = null): array
     {
         $parameters = [];
         if ($order !== null) {

@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Domain\Entity;
 
+use App\Domain\Entity\Trait\HasUuidTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
-use Symfony\Component\Uid\Uuid;
 
 class Team
 {
-    use Timestampable;
-
-    private ?Uuid $id = null;
+    use Timestampable, HasUuidTrait;
 
     /** @var Collection<int, Attendee> $attendees */
     private Collection $attendees;
@@ -24,14 +22,9 @@ class Team
         private string $identifier,
         private int    $points = 0,
         /** @var Collection<int, Attendee> $attendees */
-        Collection     $attendees = null
+        ?Collection    $attendees = null
     ) {
         $this->attendees = $attendees ?? new ArrayCollection();
-    }
-
-    public function getId(): ?string
-    {
-        return $this->id?->toRfc4122();
     }
 
     public function getName(): string

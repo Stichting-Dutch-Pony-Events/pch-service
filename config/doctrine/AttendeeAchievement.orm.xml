@@ -5,7 +5,7 @@
             table="attendee_achievement">
         <id name="id" type="uuid" column="id">
             <generator strategy="CUSTOM"/>
-            <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>
+            <custom-id-generator class="doctrine.uuid_generator"/>
         </id>
 
         <many-to-one field="achievement" target-entity="App\Domain\Entity\Achievement" fetch="EAGER">

@@ -2,14 +2,14 @@
 
 namespace App\Application\View;
 
-use DateTime;
+use App\Application\View\Trait\EntityViewTrait;
 
 class AttendeeAchievementView
 {
+    use EntityViewTrait;
+
     public function __construct(
-        public string   $id,
-        public string   $achievementId,
-        public DateTime $createdAt,
+        public string $achievementId,
     ) {
     }
 }
