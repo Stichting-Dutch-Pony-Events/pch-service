@@ -16,6 +16,7 @@ class QuizAnswer
 
     public function __construct(
         private QuizQuestion $question,
+        private string       $title,
         private string       $answer,
         private int          $order,
         ?Collection          $quizAnswerTeamWeights = null
@@ -27,6 +28,17 @@ class QuizAnswer
     public function getQuestion(): QuizQuestion
     {
         return $this->question;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+        return $this;
     }
 
     public function getAnswer(): string

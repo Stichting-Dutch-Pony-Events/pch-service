@@ -15,6 +15,7 @@ class QuizQuestion
     private Collection $answers;
 
     public function __construct(
+        private string $title,
         private string $question,
         private int    $order,
         ?Collection    $answers = null
@@ -22,12 +23,23 @@ class QuizQuestion
         $this->answers = $answers ?? new ArrayCollection();
     }
 
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+        return $this;
+    }
+
     public function getQuestion(): string
     {
         return $this->question;
     }
 
-    public function setQuestion(string $question): QuizQuestion
+    public function setQuestion(string $question): self
     {
         $this->question = $question;
         return $this;
@@ -38,7 +50,7 @@ class QuizQuestion
         return $this->order;
     }
 
-    public function setOrder(int $order): QuizQuestion
+    public function setOrder(int $order): self
     {
         $this->order = $order;
         return $this;

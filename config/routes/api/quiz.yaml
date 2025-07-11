@@ -22,3 +22,8 @@ api.quiz.question.change-order:
   path: /quiz/questions/change-order
   controller: App\Controller\QuizQuestionController::changeOrder
   methods: PATCH
+
+api.quiz.answers:
+  path: /quiz/questions/{question}/answers
+  controller: App\Controller\QuizAnswerController::getAnswers
+  methods: GET

@@ -7,6 +7,11 @@
             <custom-id-generator class="doctrine.uuid_generator"/>
         </id>
 
+        <field name="title" type="text">
+            <options>
+                <option name="default">Untitled Answer</option>
+            </options>
+        </field>
         <field name="answer" type="text"/>
         <field name="order" type="integer" column="`order`">
             <options>
