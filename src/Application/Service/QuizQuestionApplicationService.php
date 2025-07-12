@@ -56,8 +56,8 @@ readonly class QuizQuestionApplicationService
     public function changeOrder(ChangeOrderRequest $changeOrderRequest): void
     {
         $this->entityManager->wrapInTransaction(function () use ($changeOrderRequest): void {
-            for ($index = 0, $indexMax = count($changeOrderRequest->ids); $index < $indexMax; $index++) {
-                $question = $this->quizQuestionRepository->find($changeOrderRequest->ids[$index]);
+            foreach ($changeOrderRequest->ids as $index => $indexValue) {
+                $question = $this->quizQuestionRepository->find($indexValue);
                 if (!$question) {
                     continue;
                 }
@@ -66,6 +66,13 @@ readonly class QuizQuestionApplicationService
             }
 
             $this->entityManager->flush();
+        });
+    }
+
+    public function deleteQuestion(QuizQuestion $question): void
+    {
+        $this->entityManager->wrapInTransaction(function () use ($question): void {
+            $this->entityManager->remove($question);
         });
     }
 }

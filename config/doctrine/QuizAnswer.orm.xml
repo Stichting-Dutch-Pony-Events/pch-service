@@ -1,6 +1,7 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
     <entity name="App\Domain\Entity\QuizAnswer"
+            repository-class="App\DataAccessLayer\Repository\QuizAnswerRepository"
             table="quiz_answer">
         <id name="id" type="uuid" column="id">
             <generator strategy="CUSTOM"/>

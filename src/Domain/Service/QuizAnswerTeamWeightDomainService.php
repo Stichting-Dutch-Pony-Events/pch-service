@@ -18,6 +18,7 @@ readonly class QuizAnswerTeamWeightDomainService
     public function validateTeamWeights(array $answerTeamWeightRequest): bool
     {
         $totalWeight = 0;
+        $teamIds = [];
 
         foreach ($answerTeamWeightRequest as $teamWeight) {
             if ($teamWeight->weight < 0 || $teamWeight->weight > 100) {
@@ -26,6 +27,12 @@ readonly class QuizAnswerTeamWeightDomainService
                 );
             }
             $totalWeight += $teamWeight->weight;
+
+            if (in_array($teamWeight->teamId, $teamIds, true)) {
+                throw new InvalidInputException("Duplicate team ID found: {$teamWeight->teamId}.");
+            }
+
+            $teamIds[] = $teamWeight->teamId;
         }
 
         if ($totalWeight !== 100) {
@@ -44,5 +51,15 @@ readonly class QuizAnswerTeamWeightDomainService
             team: $team,
             weight: $quizAnswerTeamWeightRequest->weight
         );
+    }
+
+    public function updateTeamWeight(
+        QuizAnswerTeamWeight        $quizAnswerTeamWeight,
+        Team                        $team,
+        QuizAnswerTeamWeightRequest $quizAnswerTeamWeightRequest
+    ): QuizAnswerTeamWeight {
+        return $quizAnswerTeamWeight
+            ->setTeam($team)
+            ->setWeight($quizAnswerTeamWeightRequest->weight);
     }
 }

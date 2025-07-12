@@ -180,4 +180,26 @@ class QuizQuestionController extends AbstractController
 
         return new Response('', Response::HTTP_NO_CONTENT);
     }
+
+    #[OA\Response(
+        response: Response::HTTP_NO_CONTENT,
+        description: 'Quiz Question Deleted',
+    )]
+    #[OA\Response(
+        response: Response::HTTP_BAD_REQUEST,
+        description: 'Invalid Input',
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: PublicExceptionResponse::class
+            )
+        )
+    )]
+    #[OA\Tag(name: 'Character Quiz')]
+    #[IsGranted(QuizQuestionVoter::DELETE_QUESTION, subject: 'question')]
+    public function deleteQuestion(
+        #[MapEntity(id: 'question')] QuizQuestion $question,
+    ): Response {
+        $this->quizQuestionApplicationService->deleteQuestion($question);
+        return new Response("", Response::HTTP_NO_CONTENT);
+    }
 }
