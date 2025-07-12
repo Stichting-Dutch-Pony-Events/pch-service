@@ -21,7 +21,10 @@ readonly class QuizQuestionApplicationService
     public function createQuizQuestion(QuizQuestionRequest $quizQuestionRequest): QuizQuestion
     {
         return $this->entityManager->wrapInTransaction(function () use ($quizQuestionRequest): QuizQuestion {
-            $question = $this->quizQuestionDomainService->createQuestion($quizQuestionRequest->question);
+            $question = $this->quizQuestionDomainService->createQuestion(
+                title: $quizQuestionRequest->title,
+                question: $quizQuestionRequest->question
+            );
 
             $this->entityManager->persist($question);
             $this->entityManager->flush();
@@ -38,7 +41,11 @@ readonly class QuizQuestionApplicationService
             $quizQuestion,
             $quizQuestionRequest
         ): QuizQuestion {
-            $question = $this->quizQuestionDomainService->updateQuestion($quizQuestion, $quizQuestionRequest->question);
+            $question = $this->quizQuestionDomainService->updateQuestion(
+                quizQuestion: $quizQuestion,
+                title: $quizQuestionRequest->title,
+                question: $quizQuestionRequest->question
+            );
 
             $this->entityManager->flush();
 
@@ -49,8 +56,8 @@ readonly class QuizQuestionApplicationService
     public function changeOrder(ChangeOrderRequest $changeOrderRequest): void
     {
         $this->entityManager->wrapInTransaction(function () use ($changeOrderRequest): void {
-            for ($index = 0; $index < count($changeOrderRequest->ids); $index++) {
-                $question = $this->quizQuestionRepository->find($changeOrderRequest->ids[$index]);
+            foreach ($changeOrderRequest->ids as $index => $indexValue) {
+                $question = $this->quizQuestionRepository->find($indexValue);
                 if (!$question) {
                     continue;
                 }
@@ -59,6 +66,13 @@ readonly class QuizQuestionApplicationService
             }
 
             $this->entityManager->flush();
+        });
+    }
+
+    public function deleteQuestion(QuizQuestion $question): void
+    {
+        $this->entityManager->wrapInTransaction(function () use ($question): void {
+            $this->entityManager->remove($question);
         });
     }
 }

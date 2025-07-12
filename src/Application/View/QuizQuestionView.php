@@ -10,6 +10,7 @@ class QuizQuestionView
 {
     use EntityViewTrait;
 
+    public string $title;
     public string $question;
     public int $order;
 

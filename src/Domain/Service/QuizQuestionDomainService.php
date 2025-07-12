@@ -12,16 +12,19 @@ readonly class QuizQuestionDomainService
     ) {
     }
 
-    public function createQuestion(string $question): QuizQuestion
+    public function createQuestion(string $title, string $question): QuizQuestion
     {
         return new QuizQuestion(
+            title: $title,
             question: $question,
             order: $this->quizQuestionRepository->getNextOrder(),
         );
     }
 
-    public function updateQuestion(QuizQuestion $quizQuestion, string $question): QuizQuestion
+    public function updateQuestion(QuizQuestion $quizQuestion, string $title, string $question): QuizQuestion
     {
-        return $quizQuestion->setQuestion($question);
+        return $quizQuestion
+            ->setTitle($title)
+            ->setQuestion($question);
     }
 }

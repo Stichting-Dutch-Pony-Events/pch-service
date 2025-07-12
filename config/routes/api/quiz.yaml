@@ -18,7 +18,37 @@ api.quiz.question.update:
   controller: App\Controller\QuizQuestionController::updateQuestion
   methods: PUT
 
+api.quiz.question.delete:
+  path: /quiz/questions/{question}
+  controller: App\Controller\QuizQuestionController::deleteQuestion
+  methods: DELETE
+
 api.quiz.question.change-order:
   path: /quiz/questions/change-order
   controller: App\Controller\QuizQuestionController::changeOrder
+  methods: PATCH
+
+api.quiz.answer:
+  path: /quiz/questions/{question}/answers
+  controller: App\Controller\QuizAnswerController::getAnswers
+  methods: GET
+
+api.quiz.answer.create:
+  path: /quiz/questions/{question}/answers
+  controller: App\Controller\QuizAnswerController::createAnswer
+  methods: POST
+
+api.quiz.answer.update:
+  path: /quiz/questions/{question}/answers/{answer}
+  controller: App\Controller\QuizAnswerController::updateAnswer
+  methods: PUT
+
+api.quiz.answer.delete:
+  path: /quiz/questions/{question}/answers/{answer}
+  controller: App\Controller\QuizAnswerController::deleteAnswer
+  methods: DELETE
+
+api.quiz.answer.change-order:
+  path: /quiz/questions/{question}/answers/change-order
+  controller: App\Controller\QuizAnswerController::changeOrder
   methods: PATCH
