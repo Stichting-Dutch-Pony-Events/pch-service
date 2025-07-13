@@ -1,0 +1,53 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+    <entity name="App\Domain\Entity\TimetableItem"
+            repository-class="App\DataAccessLayer\Repository\TimetableItemRepository"
+            table="timetable_item">
+        <id name="id" type="uuid" column="id">
+            <generator strategy="CUSTOM"/>
+            <custom-id-generator class="doctrine.uuid_generator"/>
+        </id>
+
+        <field name="title">
+            <options>
+                <option name="default">Untitled Item</option>
+            </options>
+        </field>
+
+        <field name="description" type="text" nullable="true"/>
+
+        <field name="startTime" type="datetime"/>
+        <field name="endTime" type="datetime"/>
+
+        <many-to-one
+                field="timetableDay"
+                target-entity="App\Domain\Entity\TimetableDay"
+                inversed-by="timetableItems"
+        >
+            <join-column name="timetable_day_id" on-delete="CASCADE" nullable="false"/>
+        </many-to-one>
+
+        <many-to-one
+                field="timetableLocation"
+                target-entity="App\Domain\Entity\TimetableLocation"
+                inversed-by="timetableItems"
+        >
+            <join-column name="timetable_location_id" on-delete="CASCADE" nullable="false"/>
+        </many-to-one>
+
+        <many-to-one field="volunteer" target-entity="App\Domain\Entity\Attendee" inversed-by="timetableItems">
+            <join-column name="volunteer_id" on-delete="SET NULL"/>
+        </many-to-one>
+
+        <field name="createdAt" type="datetime">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" type="datetime">
+            <gedmo:timestampable on="update"/>
+        </field>
+
+        <indexes>
+            <index name="timetable_item_start_time_idx" columns="start_time"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

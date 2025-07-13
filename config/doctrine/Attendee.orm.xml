@@ -48,6 +48,16 @@
             </cascade>
         </one-to-many>
 
+        <one-to-many field="timetableItems" target-entity="App\Domain\Entity\TimetableItem" mapped-by="volunteer">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+            <order-by>
+                <order-by-field name="startTime"/>
+            </order-by>
+        </one-to-many>
+
         <field name="createdAt" type="datetime">
             <gedmo:timestampable on="create"/>
         </field>
