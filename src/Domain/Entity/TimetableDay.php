@@ -22,6 +22,7 @@ class TimetableDay
      * @param string $title
      * @param DateTime $startsAt
      * @param DateTime $endsAt
+     * @param int $order
      * @param Collection<array-key, TimetableLocation>|null $timetableLocations
      */
     public function __construct(
@@ -29,7 +30,7 @@ class TimetableDay
         private DateTime $startsAt,
         private DateTime $endsAt,
         private int      $order = 0,
-        ?Collection      $timetableLocations,
+        ?Collection      $timetableLocations = null,
     ) {
         $this->timetableLocations = $timetableLocations ?? new ArrayCollection();
         $this->timetableItems = new ArrayCollection();

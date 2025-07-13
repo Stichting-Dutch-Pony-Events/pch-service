@@ -15,4 +15,30 @@ class TimetableDayRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, TimetableDay::class);
     }
+
+    /**
+     * @return TimetableDay[]
+     */
+    public function getOrdered(): array
+    {
+        return $this->createQueryBuilder('td')
+            ->orderBy('td.order', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getNextOrder(): int
+    {
+        $order = 0;
+        $result = $this->createQueryBuilder('td')
+            ->select('MAX(td.order) AS maxOrder')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if (is_numeric($result)) {
+            $order = (int)$result;
+        }
+
+        return $order + 1;
+    }
 }

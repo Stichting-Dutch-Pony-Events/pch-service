@@ -1,0 +1,24 @@
+api.time-table-day.all:
+  path: /timetable/days
+  controller: App\Controller\TimetableDayController::all
+  methods: GET
+
+api.time-table-day.create:
+  path: /timetable/days
+  controller: App\Controller\TimetableDayController::createTimetableDay
+  methods: POST
+
+api.time-table-day.update:
+  path: /timetable/days/{timetableDay}
+  controller: App\Controller\TimetableDayController::updateTimetableDay
+  methods: PUT
+
+api.quiz.question.delete:
+  path: /timetable/days/{timetableDay}
+  controller: App\Controller\TimetableDayController::deleteTimetableDay
+  methods: DELETE
+
+api.time-table-day.change-order:
+  path: /timetable/days/change-order
+  controller: App\Controller\TimetableDayController::changeOrder
+  methods: PATCH
