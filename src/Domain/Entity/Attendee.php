@@ -23,6 +23,9 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     /** @var Collection<int, PrintJob> $printJobs */
     private Collection $printJobs;
 
+    /** @var Collection<array-key, TimetableItem> $timetableItems */
+    private Collection $timetableItems;
+
     public function __construct(
         private string      $name,
         private ?string     $firstName,
@@ -54,6 +57,7 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
         $this->checkIns = $checkIns ?? new ArrayCollection();
         $this->achievements = $achievements ?? new ArrayCollection();
         $this->printJobs = $printJobs ?? new ArrayCollection();
+        $this->timetableItems = new ArrayCollection();
     }
 
     public function getName(): string
@@ -300,6 +304,32 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->printJobs->contains($printJob)) {
             $this->printJobs->removeElement($printJob);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<array-key, TimetableItem>
+     */
+    public function getTimetableItems(): Collection
+    {
+        return $this->timetableItems;
+    }
+
+    public function addTimetableItem(TimetableItem $timetableItem): self
+    {
+        if (!$this->timetableItems->contains($timetableItem) && $timetableItem->getVolunteer() === $this) {
+            $this->timetableItems->add($timetableItem);
+        }
+
+        return $this;
+    }
+
+    public function removeTimetableItem(TimetableItem $timetableItem): self
+    {
+        if ($this->timetableItems->contains($timetableItem)) {
+            $this->timetableItems->removeElement($timetableItem);
         }
 
         return $this;

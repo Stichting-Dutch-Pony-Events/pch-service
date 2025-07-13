@@ -1,8 +1,8 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
-    <entity name="App\Domain\Entity\QuizAnswer"
-            repository-class="App\DataAccessLayer\Repository\QuizAnswerRepository"
-            table="quiz_answer">
+    <entity name="App\Domain\Entity\TimetableDay"
+            repository-class="App\DataAccessLayer\Repository\TimetableDayRepository"
+            table="timetable_day">
         <id name="id" type="uuid" column="id">
             <generator strategy="CUSTOM"/>
             <custom-id-generator class="doctrine.uuid_generator"/>
@@ -10,26 +10,37 @@
 
         <field name="title">
             <options>
-                <option name="default">Untitled Answer</option>
+                <option name="default">Untitled Timetable Day</option>
             </options>
         </field>
-        <field name="answer" type="text"/>
+
+        <field name="startsAt" type="datetime"/>
+        <field name="endsAt" type="datetime"/>
+
         <field name="order" type="integer" column="`order`">
             <options>
                 <option name="default">0</option>
             </options>
         </field>
 
-        <many-to-one field="question" target-entity="App\Domain\Entity\QuizQuestion" inversed-by="answers">
-            <join-column name="quiz_question_id" on-delete="CASCADE"/>
-        </many-to-one>
+        <many-to-many
+                field="timetableLocations"
+                target-entity="App\Domain\Entity\TimetableLocation"
+                mapped-by="timetableDays"
+        >
+            <order-by>
+                <order-by-field name="order"/>
+            </order-by>
+        </many-to-many>
 
-        <one-to-many field="quizAnswerTeamWeights" target-entity="App\Domain\Entity\QuizAnswerTeamWeight"
-                     mapped-by="quizAnswer" orphan-removal="true">
+        <one-to-many field="timetableItems" target-entity="App\Domain\Entity\TimetableItem" mapped-by="timetableDay">
             <cascade>
                 <cascade-persist/>
                 <cascade-remove/>
             </cascade>
+            <order-by>
+                <order-by-field name="startTime"/>
+            </order-by>
         </one-to-many>
 
         <field name="createdAt" type="datetime">
@@ -38,5 +49,9 @@
         <field name="updatedAt" type="datetime">
             <gedmo:timestampable on="update"/>
         </field>
+
+        <indexes>
+            <index name="timetable_day_order_idx" columns="`order`"/>
+        </indexes>
     </entity>
 </doctrine-mapping>
