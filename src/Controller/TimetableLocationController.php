@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Application\Request\ChangeOrderRequest;
-use App\Application\Request\TimetableDayRequest;
-use App\Application\Service\TimetableDayApplicationService;
-use App\Application\View\TimetableDayView;
-use App\DataAccessLayer\Repository\TimetableDayRepository;
-use App\Domain\Entity\TimetableDay;
-use App\Security\Voter\TimetableDayVoter;
+use App\Application\Request\TimetableLocationRequest;
+use App\Application\Service\TimetableLocationApplicationService;
+use App\Application\View\TimetableLocationView;
+use App\DataAccessLayer\Repository\TimetableLocationRepository;
+use App\Domain\Entity\TimetableLocation;
+use App\Domain\Enum\TimetableLocationType;
+use App\Security\Voter\TimetableLocationVoter;
+use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
 use App\Util\SymfonyUtils\Mapper;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -19,41 +21,44 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class TimetableDayController extends AbstractController
+class TimetableLocationController extends AbstractController
 {
     public function __construct(
-        private readonly TimetableDayRepository         $timetableDayRepository,
-        private readonly TimetableDayApplicationService $timetableDayApplicationService,
+        private readonly TimetableLocationRepository         $timetableLocationRepository,
+        private readonly TimetableLocationApplicationService $timetableLocationApplicationService,
     ) {
     }
 
     #[OA\Response(
         response: 200,
-        description: 'Timetable Days (all)',
+        description: 'Timetable Locations (by type)',
         content: new OA\JsonContent(
             type: 'array',
             items: new OA\Items(
                 ref: new Model(
-                    type: TimetableDay::class
+                    type: TimetableLocationView::class
                 )
             )
         )
     )]
+    #[IsGranted(TimetableLocationVoter::VIEW_LOCATION, subject: 'locationType')]
     #[OA\Tag(name: 'Timetable')]
-    public function all(): Response
+    public function listTimetableLocations(TimetableLocationType $locationType): Response
     {
         return $this->json(
-            Mapper::mapMany($this->timetableDayRepository->getOrdered(), TimetableDayView::class),
-            Response::HTTP_OK
+            Mapper::mapMany(
+                $this->timetableLocationRepository->getByType($locationType),
+                TimetableLocationView::class
+            )
         );
     }
 
     #[OA\Response(
         response: Response::HTTP_CREATED,
-        description: 'Create Timetable Day',
+        description: 'Create Timetable Location',
         content: new OA\JsonContent(
             ref: new Model(
-                type: TimetableDayView::class
+                type: TimetableLocationView::class
             )
         )
     )]
@@ -66,24 +71,33 @@ class TimetableDayController extends AbstractController
             )
         )
     )]
+    #[OA\Response(
+        response: Response::HTTP_NOT_FOUND,
+        description: 'Timetable Day Not Found',
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: EntityNotFoundException::class
+            )
+        )
+    )]
     #[OA\RequestBody(
-        description: 'Timetable Day Request',
+        description: 'Timetable Location Request',
         required: true,
         content: new OA\JsonContent(
             ref: new Model(
-                type: TimetableDayRequest::class
+                type: TimetableLocationRequest::class
             )
         )
     )]
     #[OA\Tag(name: 'Timetable')]
-    #[IsGranted(TimetableDayVoter::CREATE_DAY)]
-    public function createTimetableDay(
-        #[MapRequestPayload] TimetableDayRequest $timetableDayRequest
+    #[IsGranted(TimetableLocationVoter::CREATE_LOCATION)]
+    public function createTimetableLocation(
+        #[MapRequestPayload] TimetableLocationRequest $timetableLocationRequest
     ): Response {
         return $this->json(
             Mapper::mapOne(
-                $this->timetableDayApplicationService->createTimetableDay($timetableDayRequest),
-                TimetableDayView::class
+                $this->timetableLocationApplicationService->createTimetableLocation($timetableLocationRequest),
+                TimetableLocationView::class
             ),
             Response::HTTP_CREATED
         );
@@ -91,10 +105,10 @@ class TimetableDayController extends AbstractController
 
     #[OA\Response(
         response: Response::HTTP_OK,
-        description: 'Update Timetable Day',
+        description: 'Update Timetable Location',
         content: new OA\JsonContent(
             ref: new Model(
-                type: TimetableDayView::class
+                type: TimetableLocationView::class
             )
         )
     )]
@@ -108,31 +122,34 @@ class TimetableDayController extends AbstractController
         )
     )]
     #[OA\RequestBody(
-        description: 'Timetable Day Request',
+        description: 'Timetable Location Request',
         required: true,
         content: new OA\JsonContent(
             ref: new Model(
-                type: TimetableDayRequest::class
+                type: TimetableLocationRequest::class
             )
         )
     )]
     #[OA\Tag(name: 'Timetable')]
-    #[IsGranted(TimetableDayVoter::EDIT_DAY, subject: 'timetableDay')]
-    public function updateTimetableDay(
-        #[MapEntity(id: 'timetableDay')] TimetableDay $timetableDay,
-        #[MapRequestPayload] TimetableDayRequest      $timetableDayRequest,
+    #[IsGranted(TimetableLocationVoter::EDIT_LOCATION, subject: 'timetableLocation')]
+    public function updateTimetableLocation(
+        #[MapEntity(id: 'timetableLocation')] TimetableLocation $timetableLocation,
+        #[MapRequestPayload] TimetableLocationRequest           $timetableLocationRequest,
     ): Response {
         return $this->json(
             Mapper::mapOne(
-                $this->timetableDayApplicationService->updateTimetableDay($timetableDay, $timetableDayRequest),
-                TimetableDayView::class
+                $this->timetableLocationApplicationService->updateTimetableLocation(
+                    $timetableLocation,
+                    $timetableLocationRequest
+                ),
+                TimetableLocationView::class
             )
         );
     }
 
     #[OA\Response(
         response: Response::HTTP_NO_CONTENT,
-        description: 'Change Timetable Day Order',
+        description: 'Change Timetable Location Order',
     )]
     #[OA\Response(
         response: Response::HTTP_BAD_REQUEST,
@@ -153,18 +170,18 @@ class TimetableDayController extends AbstractController
         )
     )]
     #[OA\Tag(name: 'Timetable')]
-    #[IsGranted(TimetableDayVoter::EDIT_DAY)]
+    #[IsGranted(TimetableLocationVoter::CREATE_LOCATION)]
     public function changeOrder(
         #[MapRequestPayload] ChangeOrderRequest $changeOrderRequest
     ): Response {
-        $this->timetableDayApplicationService->changeOrder($changeOrderRequest);
+        $this->timetableLocationApplicationService->changeOrder($changeOrderRequest);
 
         return new Response('', Response::HTTP_NO_CONTENT);
     }
 
     #[OA\Response(
         response: Response::HTTP_NO_CONTENT,
-        description: 'Timetable Day Deleted',
+        description: 'Timetable Location Deleted',
     )]
     #[OA\Response(
         response: Response::HTTP_BAD_REQUEST,
@@ -176,11 +193,11 @@ class TimetableDayController extends AbstractController
         )
     )]
     #[OA\Tag(name: 'Timetable')]
-    #[IsGranted(TimetableDayVoter::DELETE_DAY, subject: 'timetableDay')]
-    public function deleteTimetableDay(
-        #[MapEntity(id: 'timetableDay')] TimetableDay $timetableDay,
+    #[IsGranted(TimetableLocationVoter::DELETE_LOCATION, subject: 'timetableLocation')]
+    public function deleteTimetableLocation(
+        #[MapEntity(id: 'timetableLocation')] TimetableLocation $timetableLocation,
     ): Response {
-        $this->timetableDayApplicationService->deleteTimetableDay($timetableDay);
+        $this->timetableLocationApplicationService->deleteTimetableLocation($timetableLocation);
         return new Response("", Response::HTTP_NO_CONTENT);
     }
 }

@@ -1,0 +1,24 @@
+api.timetable-location.list:
+  path: /timetable/location/{locationType}
+  controller: App\Controller\TimetableLocationController::listTimetableLocations
+  methods: GET
+
+api.timetable-location.create:
+  path: /timetable/location
+  controller: App\Controller\TimetableLocationController::createTimetableLocation
+  methods: POST
+
+api.timetable-location.update:
+  path: /timetable/location/{timetableLocation}
+  controller: App\Controller\TimetableLocationController::updateTimetableLocation
+  methods: PUT
+
+api.timetable-location.delete:
+  path: /timetable/location/{timetableLocation}
+  controller: App\Controller\TimetableLocationController::deleteTimetableLocation
+  methods: DELETE
+
+api.timetable-location.change-order:
+  path: /timetable/location/change-order
+  controller: App\Controller\TimetableLocationController::changeOrder
+  methods: PATCH

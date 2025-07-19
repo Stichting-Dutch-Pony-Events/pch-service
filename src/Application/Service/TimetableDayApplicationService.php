@@ -52,8 +52,6 @@ readonly class TimetableDayApplicationService
 
                 $timetableDay->setOrder($index + 1);
             }
-
-            $this->entityManager->flush();
         });
     }
 
