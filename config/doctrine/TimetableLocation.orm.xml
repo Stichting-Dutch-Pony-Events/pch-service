@@ -24,7 +24,6 @@
                 field="timetableDays"
                 target-entity="App\Domain\Entity\TimetableDay"
                 inversed-by="timetableLocations"
-                orphan-removal="true"
         >
             <join-table name="timetable_location_timetable_day">
                 <join-columns>
