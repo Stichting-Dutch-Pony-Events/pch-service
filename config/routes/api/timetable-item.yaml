@@ -1,0 +1,19 @@
+api.time-table-item.list:
+  path: /timetable/item
+  controller: App\Controller\TimetableItemController::listTimetableItems
+  methods: GET
+
+api.time-table-item.create:
+  path: /timetable/item
+  controller: App\Controller\TimetableItemController::createTimetableItem
+  methods: POST
+
+api.time-table-item.update:
+  path: /timetable/item/{timetableItem}
+  controller: App\Controller\TimetableItemController::updateTimetableItem
+  methods: PUT
+
+api.time-table-item.delete:
+  path: /timetable/item/{timetableItem}
+  controller: App\Controller\TimetableItemController::deleteTimetableItem
+  methods: DELETE

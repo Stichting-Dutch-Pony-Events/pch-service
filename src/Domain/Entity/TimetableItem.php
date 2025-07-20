@@ -29,6 +29,11 @@ class TimetableItem
         return $this->timetableLocation;
     }
 
+    public function getTimetableLocationId(): string
+    {
+        return $this->timetableLocation->getId();
+    }
+
     public function getTimetableDay(): TimetableDay
     {
         return $this->timetableDay;
