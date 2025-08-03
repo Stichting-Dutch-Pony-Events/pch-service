@@ -11,7 +11,7 @@ use App\Domain\Entity\TimetableDay;
 use App\Security\Voter\TimetableDayVoter;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
 use App\Util\SymfonyUtils\Mapper;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

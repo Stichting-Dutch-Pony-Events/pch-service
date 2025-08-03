@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Application\Request\AdminCommandRequest;
-use App\Application\Request\SetPasswordRequest;
 use App\Application\Service\AdminCommandApplicationService;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,8 +16,7 @@ class AdminCommandController extends AbstractController
 {
     public function __construct(
         private readonly AdminCommandApplicationService $adminCommandApplicationService
-    )
-    {
+    ) {
     }
 
     #[OA\Response(
@@ -37,8 +35,7 @@ class AdminCommandController extends AbstractController
     #[OA\Tag(name: 'Admin')]
     public function runAdminCommand(
         #[MapRequestPayload] AdminCommandRequest $request
-    ): Response
-    {
+    ): Response {
         $this->denyAccessUnlessGranted($request->commandType->value);
 
         $this->adminCommandApplicationService->executeAdminCommand($request);

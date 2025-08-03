@@ -2,23 +2,15 @@
 
 namespace App\Controller;
 
-use App\Application\Request\AttendeeRequest;
 use App\Application\Request\SettingRequest;
 use App\Application\Service\SettingApplicationService;
-use App\Application\View\AttendeeView;
 use App\Application\View\SettingView;
 use App\DataAccessLayer\Repository\SettingRepository;
-use App\Domain\Entity\Attendee;
-use App\Security\Voter\AttendeeVoter;
 use App\Security\Voter\SettingVoter;
-use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
-use App\Util\Exceptions\Response\PublicExceptionResponse;
 use App\Util\SymfonyUtils\Mapper;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Security\Http\Attribute\IsGranted;

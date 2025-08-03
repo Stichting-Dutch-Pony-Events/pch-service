@@ -2,11 +2,16 @@
 
 namespace App\DataAccessLayer\Repository;
 
+use App\Application\Request\AttendeeSearchRequest;
+use App\Application\Response\AttendeeSearchResponse;
 use App\Domain\Entity\Attendee;
+use App\Util\SymfonyUtils\Exception\WrongTypeException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use ReflectionException;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @template-extends ServiceEntityRepository<Attendee>
@@ -26,7 +31,7 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
     {
         for ($i = 0; $i < self::MINI_IDENTIFIER_MAX_ATTEMPTS; $i++) {
             $charactersLength = strlen(self::MINI_IDENTIFIER_CHARACTERS);
-            $randomString     = '';
+            $randomString = '';
             for ($j = 0; $j < 10; $j++) {
                 $randomString .= self::MINI_IDENTIFIER_CHARACTERS[random_int(0, $charactersLength - 1)];
             }
@@ -44,22 +49,31 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
         $entityManager = $this->getEntityManager();
 
         return $entityManager->createQuery(
-                'SELECT u
+            'SELECT u
                 FROM App\Domain\Entity\Attendee u
                 WHERE u.miniIdentifier = :identifier
                 OR u.nfcTagId = :identifier'
-            )
+        )
             ->setParameter('identifier', $identifier)
             ->getOneOrNullResult();
     }
 
     public function findAttendeeByIdentifier(string $identifier): ?Attendee
     {
-        return $this->createQueryBuilder('a')
-            ->where('a.miniIdentifier = :identifier')
-            ->orWhere('a.nfcTagId = :identifier')
-            ->orWhere('a.ticketSecret = :identifier')
-            ->setParameter(':identifier', $identifier)
+        $qb = $this->createQueryBuilder('a');
+        
+        if (Uuid::isValid($identifier)) {
+            $uuid = Uuid::fromRfc4122($identifier)->toBinary();
+            $qb->where('a.id = :identifier')
+                ->setParameter(':identifier', $uuid);
+        } else {
+            $qb->where('a.miniIdentifier = :identifier')
+                ->orWhere('a.nfcTagId = :identifier')
+                ->orWhere('a.ticketSecret = :identifier')
+                ->setParameter(':identifier', $identifier);
+        }
+
+        return $qb
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -87,5 +101,77 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
             ->andWhere('a.nickName IS NOT NULL')
             ->getQuery()
             ->getResult();
+    }
+
+    private function getSortField(string $field): ?string
+    {
+        return match ($field) {
+            'name' => 'a.name',
+            'email' => 'a.email',
+            'product.name' => 'p.name',
+        };
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws WrongTypeException
+     */
+    public function searchAttendees(AttendeeSearchRequest $attendeeSearchRequest): AttendeeSearchResponse
+    {
+        $searchQuery = $this->buildSearchQuery(
+            $this->createQueryBuilder('a')->select('a', 'p'),
+            $attendeeSearchRequest
+        );
+        $countQuery = $this->buildSearchQuery(
+            $this->createQueryBuilder('a')->select('COUNT(a.id)'),
+            $attendeeSearchRequest,
+            true
+        );
+
+        $totalItems = (int)$countQuery->getQuery()->getSingleScalarResult();
+        $attendees = $searchQuery->getQuery()->getResult();
+
+        return new AttendeeSearchResponse(
+            items: $attendees,
+            total: $totalItems,
+            page: $attendeeSearchRequest->page,
+            itemsPerPage: $attendeeSearchRequest->itemsPerPage
+        );
+    }
+
+    public function buildSearchQuery(
+        QueryBuilder          $qb,
+        AttendeeSearchRequest $attendeeSearchRequest,
+        bool                  $disableLimit = false
+    ): QueryBuilder {
+        $qb->leftJoin('a.product', 'p');
+
+        $qb->where('a.name LIKE :query')
+            ->orWhere('a.email LIKE :query')
+            ->orWhere('a.nickName LIKE :query')
+            ->setParameter('query', '%' . $attendeeSearchRequest->query . '%');
+
+        if (!empty($attendeeSearchRequest->productId)) {
+            $qb->andWhere('a.product = :productId')
+                ->setParameter('productId', Uuid::fromRfc4122($attendeeSearchRequest->productId)->toBinary());
+        }
+
+        if ($attendeeSearchRequest->sortBy) {
+            foreach ($attendeeSearchRequest->getSorts() as $sortItem) {
+                $sortField = $this->getSortField($sortItem->key);
+                if ($sortField) {
+                    $qb->addOrderBy($sortField, $sortItem->direction);
+                }
+            }
+        } else {
+            $qb->addOrderBy('a.name', 'ASC');
+        }
+
+        if (!$disableLimit) {
+            $qb->setFirstResult(($attendeeSearchRequest->page - 1) * $attendeeSearchRequest->itemsPerPage)
+                ->setMaxResults($attendeeSearchRequest->itemsPerPage);
+        }
+
+        return $qb;
     }
 }

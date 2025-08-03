@@ -1,0 +1,4 @@
+api.products:
+  path: /products
+  controller: App\Controller\ProductController::all
+  methods: GET

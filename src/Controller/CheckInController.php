@@ -8,7 +8,7 @@ use App\Application\Service\CheckInApplicationService;
 use App\Security\Voter\CheckInVoter;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
 use Illuminate\Validation\ValidationException;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

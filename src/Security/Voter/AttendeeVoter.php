@@ -20,7 +20,7 @@ class AttendeeVoter extends Voter
             return false;
         }
 
-        if (!$subject instanceof Attendee) {
+        if ($subject !== null && !$subject instanceof Attendee) {
             return false;
         }
 
@@ -35,7 +35,7 @@ class AttendeeVoter extends Voter
             return false;
         }
 
-        /** @var Attendee $attendee */
+        /** @var Attendee|null $attendee */
         $attendee = $subject;
 
         return match ($attribute) {
@@ -46,13 +46,16 @@ class AttendeeVoter extends Voter
         };
     }
 
-    private function canView(Attendee $attendee, UserInterface $user): bool
+    private function canView(?Attendee $attendee, UserInterface $user): bool
     {
-        if (($user instanceof Attendee) && $attendee->getId() === $user->getId()) {
+        if ($attendee !== null && ($user instanceof Attendee) && $attendee->getId() === $user->getId()) {
             return true;
         }
 
-        return in_array('ROLE_VOLUNTEER', $user->getRoles(), true) || in_array('ROLE_ADMIN', $user->getRoles(), true);
+        return
+            in_array('ROLE_VOLUNTEER', $user->getRoles(), true) ||
+            in_array('ROLE_ADMIN', $user->getRoles(), true) ||
+            in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
     }
 
     private function canEdit(Attendee $attendee, UserInterface $user): bool

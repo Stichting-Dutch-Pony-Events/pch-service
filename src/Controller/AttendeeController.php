@@ -3,28 +3,35 @@
 namespace App\Controller;
 
 use App\Application\Request\AttendeeRequest;
+use App\Application\Request\AttendeeSearchRequest;
 use App\Application\Request\SetAttendeeRolesRequest;
 use App\Application\Request\SetPasswordRequest;
+use App\Application\Response\AttendeeSearchResponse;
 use App\Application\Service\AttendeeApplicationService;
 use App\Application\View\AttendeeView;
+use App\DataAccessLayer\Repository\AttendeeRepository;
 use App\Domain\Entity\Attendee;
 use App\Security\Voter\AttendeeVoter;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
+use App\Util\SymfonyUtils\Exception\WrongTypeException;
 use App\Util\SymfonyUtils\Mapper;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
+use ReflectionException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AttendeeController extends AbstractController
 {
     public function __construct(
-        private readonly AttendeeApplicationService $attendeeApplicationService
+        private readonly AttendeeApplicationService $attendeeApplicationService,
+        private readonly AttendeeRepository         $attendeeRepository
     ) {
     }
 
@@ -79,6 +86,76 @@ class AttendeeController extends AbstractController
         );
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws WrongTypeException
+     */
+    #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Attendees',
+        content: new OA\JsonContent(
+            ref: new Model(
+                type: AttendeeSearchResponse::class
+            )
+        )
+    )]
+    #[OA\QueryParameter(
+        name: 'query',
+        description: 'Search query, filter by name, email or nickname',
+        required: true,
+        schema: new OA\Schema(
+            type: 'string',
+        )
+    )]
+    #[OA\QueryParameter(
+        name: 'productId',
+        description: 'Filter by product ID',
+        required: true,
+        schema: new OA\Schema(
+            type: 'string',
+            format: 'uuid',
+            example: '01987001-4494-743e-8497-95f3c416cc53'
+        )
+    )]
+    #[OA\QueryParameter(
+        name: 'page',
+        description: 'Page number for pagination',
+        required: true,
+        schema: new OA\Schema(
+            type: 'integer',
+            default: 1
+        )
+    )]
+    #[OA\QueryParameter(
+        name: 'itemsPerPage',
+        description: 'Number of results per page',
+        required: true,
+        schema: new OA\Schema(
+            type: 'integer',
+            default: 10
+        )
+    )]
+    #[OA\QueryParameter(
+        name: 'sortBy',
+        description: 'Field to sort by',
+        required: false,
+        schema: new OA\Schema(
+            type: 'string',
+            default: 'name:asc',
+            example: 'name:asc,email:desc'
+        )
+    )]
+    #[OA\Tag(name: 'Attendee')]
+    #[IsGranted(AttendeeVoter::VIEW)]
+    public function listAttendees(
+        #[MapQueryString] AttendeeSearchRequest $attendeeSearchRequest,
+    ): Response {
+        return $this->json(
+            $this->attendeeRepository->searchAttendees($attendeeSearchRequest),
+            Response::HTTP_OK
+        );
+    }
+
     #[OA\Response(
         response: 200,
         description: 'Attendee Image',
@@ -90,7 +167,7 @@ class AttendeeController extends AbstractController
     ): Response {
         return new Response($this->attendeeApplicationService->getAttendeeBadge($attendee), Response::HTTP_OK, [
             'Content-Type'        => 'image/png',
-            'Content-Disposition' => 'inline; filename="'.$attendee->getId().'.png"'
+            'Content-Disposition' => 'inline; filename="' . $attendee->getId() . '.png"'
         ]);
     }
 

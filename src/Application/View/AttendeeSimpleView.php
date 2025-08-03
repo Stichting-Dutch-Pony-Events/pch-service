@@ -10,14 +10,15 @@ class AttendeeSimpleView
     use EntityViewTrait;
 
     public function __construct(
-        public string  $name,
-        public ?string $firstName,
-        public ?string $nickName,
-        public ?string $email,
+        public string      $name,
+        public ?string     $firstName,
+        public ?string     $nickName,
+        public ?string     $email,
+        public ProductView $product,
 
         /** @var string[] $roles */
         #[Type('array<string>')]
-        public ?array  $roles,
+        public ?array      $roles,
     ) {
     }
 }
