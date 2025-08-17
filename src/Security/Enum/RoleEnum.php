@@ -10,6 +10,9 @@ enum RoleEnum: string
     case STAFF = 'ROLE_STAFF';
     case SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
 
+    /**
+     * @return RoleEnum[]
+     */
     public function getRoles(): array
     {
         return match ($this) {
@@ -32,6 +35,10 @@ enum RoleEnum: string
         };
     }
 
+    /**
+     * @param RoleEnum[] $roles
+     * @return RoleEnum[]
+     */
     public static function deduplicate(array $roles): array
     {
         return array_values(

@@ -3,6 +3,7 @@
 namespace App\Application\View;
 
 use App\Application\View\Trait\EntityViewTrait;
+use App\Security\Enum\RoleEnum;
 use JMS\Serializer\Annotation\Type;
 
 class AttendeeSimpleView
@@ -16,9 +17,9 @@ class AttendeeSimpleView
         public ?string     $email,
         public ProductView $product,
 
-        /** @var string[] $roles */
-        #[Type('array<string>')]
-        public ?array      $roles,
+        /** @var RoleEnum[] $userRoles */
+        #[Type('array<' . RoleEnum::class . '>')]
+        public ?array      $userRoles,
     ) {
     }
 }

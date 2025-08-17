@@ -23,6 +23,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -40,8 +41,8 @@ class AttendeeController extends AbstractController
         description: 'Attendee (self)',
         content: new OA\JsonContent(
             ref: new Model(
-                type: AttendeeView::class
-            )
+                     type: AttendeeView::class
+                 )
         )
     )]
     #[OA\Tag(name: 'Attendee')]
@@ -61,8 +62,8 @@ class AttendeeController extends AbstractController
         description: 'Attendee',
         content: new OA\JsonContent(
             ref: new Model(
-                type: AttendeeView::class
-            )
+                     type: AttendeeView::class
+                 )
         )
     )]
     #[OA\Response(
@@ -70,8 +71,8 @@ class AttendeeController extends AbstractController
         description: 'Attendee Not Found',
         content: new OA\JsonContent(
             ref: new Model(
-                type: PublicExceptionResponse::class
-            )
+                     type: PublicExceptionResponse::class
+                 )
         )
     )]
     #[OA\Tag(name: 'Attendee')]
@@ -95,8 +96,8 @@ class AttendeeController extends AbstractController
         description: 'Attendees',
         content: new OA\JsonContent(
             ref: new Model(
-                type: AttendeeSearchResponse::class
-            )
+                     type: AttendeeSearchResponse::class
+                 )
         )
     )]
     #[OA\QueryParameter(
@@ -112,8 +113,8 @@ class AttendeeController extends AbstractController
         description: 'Filter by product ID',
         required: true,
         schema: new OA\Schema(
-            type: 'string',
-            format: 'uuid',
+            type:    'string',
+            format:  'uuid',
             example: '01987001-4494-743e-8497-95f3c416cc53'
         )
     )]
@@ -122,7 +123,7 @@ class AttendeeController extends AbstractController
         description: 'Page number for pagination',
         required: true,
         schema: new OA\Schema(
-            type: 'integer',
+            type:    'integer',
             default: 1
         )
     )]
@@ -131,7 +132,7 @@ class AttendeeController extends AbstractController
         description: 'Number of results per page',
         required: true,
         schema: new OA\Schema(
-            type: 'integer',
+            type:    'integer',
             default: 10
         )
     )]
@@ -140,7 +141,7 @@ class AttendeeController extends AbstractController
         description: 'Field to sort by',
         required: false,
         schema: new OA\Schema(
-            type: 'string',
+            type:    'string',
             default: 'name:asc',
             example: 'name:asc,email:desc'
         )
@@ -163,7 +164,8 @@ class AttendeeController extends AbstractController
     #[OA\Tag(name: 'Attendee')]
     #[IsGranted(AttendeeVoter::VIEW, subject: 'attendee')]
     public function getAttendeeImage(
-        #[MapEntity(id: 'attendee')] Attendee $attendee
+        #[MapEntity(id: 'attendee')] Attendee $attendee,
+        #[MapQueryParameter('cache')] bool    $cache = true
     ): Response {
         return new Response($this->attendeeApplicationService->getAttendeeBadge($attendee), Response::HTTP_OK, [
             'Content-Type'        => 'image/png',
@@ -180,8 +182,8 @@ class AttendeeController extends AbstractController
         description: 'Invalid Input',
         content: new OA\JsonContent(
             ref: new Model(
-                type: PublicExceptionResponse::class
-            )
+                     type: PublicExceptionResponse::class
+                 )
         )
     )]
     #[OA\RequestBody(
@@ -189,8 +191,8 @@ class AttendeeController extends AbstractController
         required: true,
         content: new OA\JsonContent(
             ref: new Model(
-                type: SetPasswordRequest::class
-            )
+                     type: SetPasswordRequest::class
+                 )
         )
     )]
     #[OA\Tag(name: 'Attendee')]
@@ -213,8 +215,8 @@ class AttendeeController extends AbstractController
         description: 'Attendee',
         content: new OA\JsonContent(
             ref: new Model(
-                type: AttendeeView::class
-            )
+                     type: AttendeeView::class
+                 )
         )
     )]
     #[OA\Response(
@@ -222,8 +224,8 @@ class AttendeeController extends AbstractController
         description: 'Invalid Input',
         content: new OA\JsonContent(
             ref: new Model(
-                type: PublicExceptionResponse::class
-            )
+                     type: PublicExceptionResponse::class
+                 )
         )
     )]
     #[OA\RequestBody(
@@ -231,8 +233,8 @@ class AttendeeController extends AbstractController
         required: true,
         content: new OA\JsonContent(
             ref: new Model(
-                type: AttendeeRequest::class
-            )
+                     type: AttendeeRequest::class
+                 )
         )
     )]
     #[OA\Tag(name: 'Attendee')]
@@ -243,12 +245,6 @@ class AttendeeController extends AbstractController
         Request                               $request
     ): Response {
         $this->denyAccessUnlessGranted(AttendeeVoter::EDIT, $attendee);
-
-        $user = $this->getUser();
-
-        if (!$user instanceof Attendee) {
-            throw new EntityNotFoundException('Attendee not found');
-        }
 
         return $this->json(
             Mapper::mapOne(
@@ -263,8 +259,8 @@ class AttendeeController extends AbstractController
         description: 'Attendee Roles',
         content: new OA\JsonContent(
             ref: new Model(
-                type: AttendeeView::class
-            )
+                     type: AttendeeView::class
+                 )
         )
     )]
     #[OA\RequestBody(
@@ -272,8 +268,8 @@ class AttendeeController extends AbstractController
         required: true,
         content: new OA\JsonContent(
             ref: new Model(
-                type: SetAttendeeRolesRequest::class
-            )
+                     type: SetAttendeeRolesRequest::class
+                 )
         )
     )]
     #[OA\Tag(name: 'Attendee')]

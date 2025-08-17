@@ -32,11 +32,15 @@
             </cascade>
         </one-to-many>
 
-        <many-to-one field="product" target-entity="App\Domain\Entity\Product" fetch="EAGER">
+        <many-to-one field="product" target-entity="App\Domain\Entity\Product">
             <join-column name="product_id"/>
         </many-to-one>
 
-        <many-to-one field="team" target-entity="App\Domain\Entity\Team" fetch="EAGER" inversed-by="attendees">
+        <many-to-one field="overrideBadgeProduct" target-entity="App\Domain\Entity\Product">
+            <join-column name="override_badge_product_id" nullable="true" on-delete="SET NULL"/>
+        </many-to-one>
+
+        <many-to-one field="team" target-entity="App\Domain\Entity\Team" inversed-by="attendees">
             <join-column name="team_id" on-delete="SET NULL"/>
         </many-to-one>
 
