@@ -26,7 +26,7 @@ abstract class AbstractVoter extends Voter
             $roles = [...$roles, ...$role->getRoles()];
         }
 
-        return array_unique($roles);
+        return RoleEnum::deduplicate($roles);
     }
 
     public function userHasRole(TokenInterface|UserInterface $token, RoleEnum $role): bool

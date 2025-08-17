@@ -13,22 +13,36 @@ enum RoleEnum: string
     public function getRoles(): array
     {
         return match ($this) {
-            self::USER => [self::USER->value],
-            self::VOLUNTEER => [self::USER->value, self::VOLUNTEER->value],
-            self::INFOBOOTH => [self::USER->value, self::VOLUNTEER->value, self::INFOBOOTH->value],
+            self::USER => [self::USER],
+            self::VOLUNTEER => [self::USER, self::VOLUNTEER],
+            self::INFOBOOTH => [self::USER, self::VOLUNTEER, self::INFOBOOTH],
             self::STAFF => [
-                self::USER->value,
-                self::VOLUNTEER->value,
-                self::INFOBOOTH->value,
-                self::STAFF->value
+                self::USER,
+                self::VOLUNTEER,
+                self::INFOBOOTH,
+                self::STAFF
             ],
             self::SUPER_ADMIN => [
-                self::USER->value,
-                self::VOLUNTEER->value,
-                self::INFOBOOTH->value,
-                self::STAFF->value,
-                self::SUPER_ADMIN->value
+                self::USER,
+                self::VOLUNTEER,
+                self::INFOBOOTH,
+                self::STAFF,
+                self::SUPER_ADMIN
             ],
         };
+    }
+
+    public static function deduplicate(array $roles): array
+    {
+        return array_values(
+            array_reduce(
+                $roles,
+                static function (array $carry, RoleEnum $role) {
+                    $carry[$role->value] = $role;
+                    return $carry;
+                },
+                []
+            )
+        );
     }
 }
