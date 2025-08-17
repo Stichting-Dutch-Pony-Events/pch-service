@@ -119,6 +119,16 @@ class AttendeeController extends AbstractController
         )
     )]
     #[OA\QueryParameter(
+        name: 'role',
+        description: 'Filter by Role',
+        required: true,
+        schema: new OA\Schema(
+            type:    'string',
+            enum:    ['ROLE_USER', 'ROLE_VOLUNTEER', 'ROLE_INFOBOOTH', 'ROLE_STAFF', 'ROLE_SUPER_ADMIN'],
+            example: 'ROLE_VOLUNTEER'
+        )
+    )]
+    #[OA\QueryParameter(
         name: 'page',
         description: 'Page number for pagination',
         required: true,

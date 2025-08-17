@@ -61,7 +61,7 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
     public function findAttendeeByIdentifier(string $identifier): ?Attendee
     {
         $qb = $this->createQueryBuilder('a');
-        
+
         if (Uuid::isValid($identifier)) {
             $uuid = Uuid::fromRfc4122($identifier)->toBinary();
             $qb->where('a.id = :identifier')
@@ -132,9 +132,9 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
         $attendees = $searchQuery->getQuery()->getResult();
 
         return new AttendeeSearchResponse(
-            items: $attendees,
-            total: $totalItems,
-            page: $attendeeSearchRequest->page,
+            items:        $attendees,
+            total:        $totalItems,
+            page:         $attendeeSearchRequest->page,
             itemsPerPage: $attendeeSearchRequest->itemsPerPage
         );
     }
@@ -154,6 +154,11 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
         if (!empty($attendeeSearchRequest->productId)) {
             $qb->andWhere('a.product = :productId')
                 ->setParameter('productId', Uuid::fromRfc4122($attendeeSearchRequest->productId)->toBinary());
+        }
+
+        if (!empty($attendeeSearchRequest->role)) {
+            $qb->andWhere('a.roles LIKE :role')
+                ->setParameter('role', '%' . $attendeeSearchRequest->role->value . '%');
         }
 
         if ($attendeeSearchRequest->sortBy) {

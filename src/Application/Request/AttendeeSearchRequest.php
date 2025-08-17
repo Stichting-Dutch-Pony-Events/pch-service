@@ -2,19 +2,22 @@
 
 namespace App\Application\Request;
 
+use App\Security\Enum\RoleEnum;
+
 class AttendeeSearchRequest
 {
     public function __construct(
-        public string  $query,
-        public string  $productId,
-        public int     $page,
-        public int     $itemsPerPage,
-        public ?string $sortBy
+        public ?string   $query,
+        public ?string   $productId,
+        public ?RoleEnum $role,
+        public int       $page,
+        public int       $itemsPerPage,
+        public ?string   $sortBy
     ) {
     }
 
     /**
-     * @return SortItem[];
+     * @return SortItem[]
      */
     public function getSorts(): array
     {
@@ -31,7 +34,7 @@ class AttendeeSearchRequest
             }
 
             [$key, $direction] = explode(':', $sort);
-            $sortItems[] = new SortItem($key, $direction ?? 'asc');
+            $sortItems[] = new SortItem($key, empty($direction) ? 'asc' : $direction);
         }
 
         return $sortItems;
