@@ -3,6 +3,7 @@
 namespace App\Domain\Entity;
 
 use App\Domain\Entity\Trait\HasUuidTrait;
+use App\Security\Enum\RoleEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
@@ -15,11 +16,11 @@ class Product
     private Collection $checkInLists;
 
     public function __construct(
-        private string $name,
-        private int    $pretixId,
-        private string $defaultRole = 'ROLE_USER',
+        private string   $name,
+        private int      $pretixId,
+        private RoleEnum $defaultRole = RoleEnum::USER,
         /** @var Collection<int, CheckInList> $checkInLists */
-        ?Collection    $checkInLists = null,
+        ?Collection      $checkInLists = null,
     ) {
         $this->checkInLists = $checkInLists ?? new ArrayCollection();
     }
@@ -66,7 +67,7 @@ class Product
         return $this->pretixId;
     }
 
-    public function getDefaultRole(): string
+    public function getDefaultRole(): RoleEnum
     {
         return $this->defaultRole;
     }

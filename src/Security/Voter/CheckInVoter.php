@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Security\Voter;
 
+use App\Security\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class CheckInVoter extends Voter
+class CheckInVoter extends AbstractVoter
 {
     public const CHECK_IN = 'check_in';
 
@@ -18,12 +18,6 @@ class CheckInVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        foreach (['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] as $role) {
-            if (in_array($role, $token->getRoleNames(),true)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->userHasRole($token, RoleEnum::INFOBOOTH);
     }
 }

@@ -3,10 +3,10 @@
 namespace App\Security\Voter;
 
 use App\Domain\Entity\QuizAnswer;
+use App\Security\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class QuizAnswerVoter extends Voter
+class QuizAnswerVoter extends AbstractVoter
 {
     public const string CREATE_ANSWER = 'create_answer';
     public const string EDIT_ANSWER = 'edit_answer';
@@ -26,11 +26,8 @@ class QuizAnswerVoter extends Voter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         return match ($attribute) {
-            self::CREATE_ANSWER, self::EDIT_ANSWER =>
-                in_array('ROLE_ADMIN', $token->getRoleNames(), true) ||
-                in_array('ROLE_SUPER_ADMIN', $token->getRoleNames(), true),
-            self::DELETE_ANSWER =>
-                in_array('ROLE_SUPER_ADMIN', $token->getRoleNames(), true) && $subject instanceof QuizAnswer,
+            self::CREATE_ANSWER, self::EDIT_ANSWER => $this->userHasRole($token, RoleEnum::INFOBOOTH),
+            self::DELETE_ANSWER => $this->userHasRole($token, RoleEnum::STAFF),
             default => false,
         };
     }

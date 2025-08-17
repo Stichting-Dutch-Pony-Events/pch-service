@@ -3,10 +3,10 @@
 namespace App\Security\Voter;
 
 use App\Domain\Entity\PrintJob;
+use App\Security\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class PrintJobVoter extends Voter
+class PrintJobVoter extends AbstractVoter
 {
     public const VIEW = 'view-print-job';
     public const CREATE = 'create-print-job';
@@ -27,8 +27,6 @@ class PrintJobVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        $roles = $token->getRoleNames();
-
-        return in_array('ROLE_ADMIN', $roles, true) || in_array('ROLE_SUPER_ADMIN', $roles, true);
+        return $this->userHasRole($token, RoleEnum::INFOBOOTH);
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Security\Voter;
 
+use App\Security\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class AchievementVoter extends Voter
+class AchievementVoter extends AbstractVoter
 {
     public const AWARD_ACHIEVEMENT = 'AWARD_ACHIEVEMENT';
 
@@ -16,10 +16,6 @@ class AchievementVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        $roles = $token->getRoleNames();
-
-        return in_array('ROLE_VOLUNTEER', $roles, true)
-            || in_array('ROLE_ADMIN', $roles, true)
-            || in_array('ROLE_SUPER_ADMIN', $roles, true);
+        return $this->userHasRole($token, RoleEnum::VOLUNTEER);
     }
 }

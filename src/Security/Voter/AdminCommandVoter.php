@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Security\Voter;
 
 use App\Domain\Enum\AdminCommandType;
+use App\Security\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class AdminCommandVoter extends Voter
+class AdminCommandVoter extends AbstractVoter
 {
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -17,6 +17,6 @@ class AdminCommandVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        return in_array('ROLE_SUPER_ADMIN', $token->getRoleNames(), true);
+        return $this->userHasRole($token, RoleEnum::SUPER_ADMIN);
     }
 }

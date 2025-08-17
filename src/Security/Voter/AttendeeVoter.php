@@ -3,11 +3,11 @@
 namespace App\Security\Voter;
 
 use App\Domain\Entity\Attendee;
+use App\Security\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class AttendeeVoter extends Voter
+class AttendeeVoter extends AbstractVoter
 {
     public const VIEW = 'view';
     public const EDIT = 'edit';
@@ -52,10 +52,7 @@ class AttendeeVoter extends Voter
             return true;
         }
 
-        return
-            in_array('ROLE_VOLUNTEER', $user->getRoles(), true) ||
-            in_array('ROLE_ADMIN', $user->getRoles(), true) ||
-            in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
+        return $this->userHasRole($user, RoleEnum::VOLUNTEER);
     }
 
     private function canEdit(Attendee $attendee, UserInterface $user): bool
@@ -64,11 +61,11 @@ class AttendeeVoter extends Voter
             return true;
         }
 
-        return in_array('ROLE_ADMIN', $user->getRoles(), true);
+        return $this->userHasRole($user, RoleEnum::INFOBOOTH);
     }
 
     private function canEditRoles(UserInterface $user): bool
     {
-        return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
+        return $this->userHasRole($user, RoleEnum::STAFF);
     }
 }

@@ -4,10 +4,10 @@ namespace App\Security\Voter;
 
 use App\Domain\Entity\TimetableItem;
 use App\Domain\Enum\TimetableLocationType;
+use App\Security\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class TimetableItemVoter extends Voter
+class TimetableItemVoter extends AbstractVoter
 {
     public const VIEW_ITEM = 'view_item';
     public const string CREATE_ITEM = 'create_item';
@@ -44,18 +44,14 @@ class TimetableItemVoter extends Voter
                 return true;
             }
 
-            return in_array('ROLE_SUPER_ADMIN', $roles, true)
-                || in_array('ROLE_ADMIN', $roles, true)
-                || in_array('ROLE_VOLUNTEER', $roles, true);
+            return $this->userHasRole($token, RoleEnum::VOLUNTEER);
         }
 
         return match ($attribute) {
-            self::CREATE_ITEM => in_array('ROLE_SUPER_ADMIN', $token->getRoleNames(), true)
-                || in_array('ROLE_ADMIN', $roles, true),
-            self::EDIT_ITEM => (in_array('ROLE_SUPER_ADMIN', $token->getRoleNames(), true)
-                    || in_array('ROLE_ADMIN', $roles, true)) && $subject instanceof TimetableItem,
-            self::DELETE_ITEM => in_array('ROLE_SUPER_ADMIN', $token->getRoleNames(), true)
-                && $subject instanceof TimetableItem,
+            self::CREATE_ITEM => $this->userHasRole($token, RoleEnum::INFOBOOTH),
+            self::EDIT_ITEM => $this->userHasRole($token, RoleEnum::INFOBOOTH) && $subject instanceof TimetableItem,
+            self::DELETE_ITEM => $this->userHasRole($token, RoleEnum::STAFF) && $subject instanceof TimetableItem,
+            default => false,
         };
     }
 }

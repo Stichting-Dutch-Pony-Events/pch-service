@@ -4,6 +4,7 @@ namespace App\Application\View;
 
 use App\Application\View\Trait\EntityViewTrait;
 use App\Domain\Enum\TShirtSize;
+use App\Security\Enum\RoleEnum;
 use App\Util\SymfonyUtils\Attribute\MapsMany;
 use JMS\Serializer\Annotation\Type;
 
@@ -26,9 +27,9 @@ class AttendeeView
         public ?TShirtSize $tShirtSize,
         public ?string     $fireBaseToken,
 
-        /** @var string[] $roles */
-        #[Type('array<string>')]
-        public ?array      $roles,
+        /** @var RoleEnum[] $userRoles */
+        #[Type('array<' . RoleEnum::class . '>')]
+        public ?array      $userRoles,
 
         public ?TeamView   $team,
 

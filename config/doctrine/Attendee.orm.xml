@@ -23,7 +23,7 @@
         <field name="password" type="string" nullable="false"/>
         <field name="fireBaseToken" type="string" length="255" nullable="true"/>
         <field name="badgeFile" type="string" length="255" nullable="true"/>
-        <field name="roles" type="simple_array"/>
+        <field name="roles" type="role_enum_array"/>
 
         <one-to-many field="checkIns" target-entity="App\Domain\Entity\CheckIn" mapped-by="attendee">
             <cascade>

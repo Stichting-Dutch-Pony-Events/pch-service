@@ -9,7 +9,7 @@
 
         <field name="name" length="200"/>
         <field name="pretixId" type="integer" nullable="true" unique="true"/>
-        <field name="defaultRole">
+        <field name="defaultRole" enum-type="App\Security\Enum\RoleEnum">
             <options>
                 <option name="default">ROLE_USER</option>
             </options>
