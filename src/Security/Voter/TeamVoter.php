@@ -2,10 +2,10 @@
 
 namespace App\Security\Voter;
 
+use App\Security\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class TeamVoter extends Voter
+class TeamVoter extends AbstractVoter
 {
     public const CREATE_TEAM = 'CREATE_TEAM';
     public const EDIT_TEAM = 'EDIT_TEAM';
@@ -17,8 +17,6 @@ class TeamVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        $roles = $token->getRoleNames();
-
-        return in_array('ROLE_SUPER_ADMIN', $roles, true);
+        return $this->userHasRole($token, RoleEnum::STAFF);
     }
 }

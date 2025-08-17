@@ -14,7 +14,6 @@ use App\Domain\Entity\Attendee;
 use App\Domain\Entity\Setting;
 use App\Domain\Enum\TShirtSize;
 use App\Domain\Service\AttendeeDomainService;
-use App\Domain\Service\SettingDomainService;
 use App\Domain\Service\TeamDomainService;
 use App\Util\BadgeGenerator;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
@@ -46,19 +45,19 @@ readonly class AttendeeApplicationService
         $shirtSize = $orderPosition->getAnswer('t-shirt-size');
 
         $attendeeRequest = new AttendeeRequest(
-            name: $orderPosition->getAttendeeName(),
-            firstName: $orderPosition->getAttendeeNamePart('given'),
-            middleName: $orderPosition->getAttendeeNamePart('middle'),
-            familyName: $orderPosition->getAttendeeNamePart('family'),
-            nickName: $orderPosition->getAnswer('nickname'),
-            email: $orderPosition->getAttendeeEmail() ?? $order->email,
-            orderCode: $orderPosition->getOrder(),
-            ticketId: $orderPosition->getId(),
-            ticketSecret: $orderPosition->getSecret(),
-            productId: $product->getId(),
-            nfcTagId: null,
+            name:           $orderPosition->getAttendeeName() ?? '',
+            firstName:      $orderPosition->getAttendeeNamePart('given'),
+            middleName:     $orderPosition->getAttendeeNamePart('middle'),
+            familyName:     $orderPosition->getAttendeeNamePart('family'),
+            nickName:       $orderPosition->getAnswer('nickname'),
+            email:          $orderPosition->getAttendeeEmail() ?? $order->email,
+            orderCode:      $orderPosition->getOrder(),
+            ticketId:       $orderPosition->getId(),
+            ticketSecret:   $orderPosition->getSecret(),
+            productId:      $product->getId(),
+            nfcTagId:       null,
             miniIdentifier: $this->attendeeRepository->getFreeMiniIdentifier(),
-            tShirtSize: $shirtSize !== null ? TShirtSize::tryFrom(strtolower($shirtSize)) : null,
+            tShirtSize:     $shirtSize !== null ? TShirtSize::tryFrom(strtolower($shirtSize)) : null,
         );
 
         if (isset($attendee)) {
@@ -78,9 +77,20 @@ readonly class AttendeeApplicationService
         return $attendee;
     }
 
+    /**
+     * @throws EntityNotFoundException
+     */
     public function updateAttendee(Attendee $attendee, AttendeeRequest $attendeeRequest): Attendee
     {
-        $this->attendeeDomainService->updateAttendee($attendee, $attendeeRequest);
+        $overrideBadgeProduct = null;
+        if ($attendeeRequest->overrideBadgeProductId !== null) {
+            $overrideBadgeProduct = $this->productRepository->find($attendeeRequest->overrideBadgeProductId);
+            if (!$overrideBadgeProduct) {
+                throw new EntityNotFoundException('Override badge product not found');
+            }
+        }
+
+        $this->attendeeDomainService->updateAttendee($attendee, $attendeeRequest, $overrideBadgeProduct);
 
         $this->entityManager->flush();
 
@@ -103,24 +113,26 @@ readonly class AttendeeApplicationService
         return $setting instanceof Setting && $setting->getValue() === '1';
     }
 
-    public function getAttendeeBadge(Attendee $attendee): string
+    /**
+     * @throws EntityNotFoundException
+     */
+    public function getAttendeeBadge(Attendee $attendee, bool $cache = true): string
     {
-        if ($attendee->getBadgeFile() !== null && $this->filesystem->exists($attendee->getBadgeFile())) {
-            return file_get_contents($attendee->getBadgeFile());
+        if ($cache && $attendee->getBadgeFile() !== null && $this->filesystem->exists($attendee->getBadgeFile())) {
+            return $this->filesystem->readFile($attendee->getBadgeFile());
         }
 
         $badgeFile = $this->badgeGenerator->generate($attendee);
         $this->entityManager->flush();
 
-        return file_get_contents($badgeFile);
+        return $this->filesystem->readFile($badgeFile);
     }
 
     public function find(string $identifier): Attendee
     {
         $attendee = $this->attendeeRepository->findAttendeeByIdentifier($identifier);
 
-        if (!$attendee instanceof Attendee)
-        {
+        if (!$attendee instanceof Attendee) {
             throw new EntityNotFoundException('Attendee not found');
         }
 

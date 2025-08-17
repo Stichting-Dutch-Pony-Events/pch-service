@@ -3,11 +3,11 @@
 namespace App\Security\Voter;
 
 use App\Domain\Entity\Attendee;
+use App\Security\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class AttendeeVoter extends Voter
+class AttendeeVoter extends AbstractVoter
 {
     public const VIEW = 'view';
     public const EDIT = 'edit';
@@ -20,7 +20,7 @@ class AttendeeVoter extends Voter
             return false;
         }
 
-        if (!$subject instanceof Attendee) {
+        if ($subject !== null && !$subject instanceof Attendee) {
             return false;
         }
 
@@ -35,7 +35,7 @@ class AttendeeVoter extends Voter
             return false;
         }
 
-        /** @var Attendee $attendee */
+        /** @var Attendee|null $attendee */
         $attendee = $subject;
 
         return match ($attribute) {
@@ -46,13 +46,13 @@ class AttendeeVoter extends Voter
         };
     }
 
-    private function canView(Attendee $attendee, UserInterface $user): bool
+    private function canView(?Attendee $attendee, UserInterface $user): bool
     {
-        if (($user instanceof Attendee) && $attendee->getId() === $user->getId()) {
+        if ($attendee !== null && ($user instanceof Attendee) && $attendee->getId() === $user->getId()) {
             return true;
         }
 
-        return in_array('ROLE_VOLUNTEER', $user->getRoles(), true) || in_array('ROLE_ADMIN', $user->getRoles(), true);
+        return $this->userHasRole($user, RoleEnum::VOLUNTEER);
     }
 
     private function canEdit(Attendee $attendee, UserInterface $user): bool
@@ -61,11 +61,11 @@ class AttendeeVoter extends Voter
             return true;
         }
 
-        return in_array('ROLE_ADMIN', $user->getRoles(), true);
+        return $this->userHasRole($user, RoleEnum::INFOBOOTH);
     }
 
     private function canEditRoles(UserInterface $user): bool
     {
-        return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
+        return $this->userHasRole($user, RoleEnum::STAFF);
     }
 }

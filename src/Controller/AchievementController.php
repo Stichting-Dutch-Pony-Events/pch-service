@@ -13,7 +13,7 @@ use App\Domain\Entity\Attendee;
 use App\Security\Voter\AchievementVoter;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
 use App\Util\SymfonyUtils\Mapper;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

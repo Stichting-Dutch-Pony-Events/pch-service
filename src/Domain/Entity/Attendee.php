@@ -2,30 +2,54 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Entity\Contract\EnumUserInterface;
 use App\Domain\Entity\Trait\HasUuidTrait;
 use App\Domain\Enum\TShirtSize;
+use App\Security\Enum\RoleEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
-class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
+class Attendee implements EnumUserInterface, PasswordAuthenticatedUserInterface
 {
     use Timestampable, HasUuidTrait;
 
-    /** @var Collection<int, CheckIn> $checkIns */
+    /** @var Collection<array-key, CheckIn> $checkIns */
     private Collection $checkIns;
 
-    /** @var Collection<int, AttendeeAchievement> $achievements */
+    /** @var Collection<array-key, AttendeeAchievement> $achievements */
     private Collection $achievements;
 
-    /** @var Collection<int, PrintJob> $printJobs */
+    /** @var Collection<array-key, PrintJob> $printJobs */
     private Collection $printJobs;
 
     /** @var Collection<array-key, TimetableItem> $timetableItems */
     private Collection $timetableItems;
 
+    /**
+     * @param string $name
+     * @param string|null $firstName
+     * @param string|null $middleName
+     * @param string|null $familyName
+     * @param string|null $nickName
+     * @param string|null $email
+     * @param string $orderCode
+     * @param int $ticketId
+     * @param string $ticketSecret
+     * @param Product $product
+     * @param Team|null $team
+     * @param TShirtSize|null $tShirtSize
+     * @param string|null $nfcTagId
+     * @param string|null $miniIdentifier
+     * @param string|null $password
+     * @param string|null $fireBaseToken
+     * @param string|null $badgeFile
+     * @param RoleEnum[] $roles
+     * @param Collection<array-key, CheckIn>|null $checkIns
+     * @param Collection<array-key, Achievement>|null $achievements
+     * @param Collection<array-key, PrintJob>|null $printJobs
+     */
     public function __construct(
         private string      $name,
         private ?string     $firstName,
@@ -44,14 +68,10 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
         private ?string     $password = null,
         private ?string     $fireBaseToken = null,
         private ?string     $badgeFile = null,
-        private ?array      $roles = ['ROLE_USER'],
-        /** @var Collection<int, CheckIn> $checkIns */
+        private ?Product    $overrideBadgeProduct = null,
+        private array       $roles = [RoleEnum::USER],
         ?Collection         $checkIns = null,
-
-        /** @var Collection<int, AttendeeAchievement> $achievements */
         ?Collection         $achievements = null,
-
-        /** @var Collection<int, PrintJob> $printJobs */
         ?Collection         $printJobs = null,
     ) {
         $this->checkIns = $checkIns ?? new ArrayCollection();
@@ -168,7 +188,7 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, CheckIn>
+     * @return Collection<array-key, CheckIn>
      */
     public function getCheckIns(): Collection
     {
@@ -226,24 +246,58 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->badgeFile;
     }
 
-    public function setBadgeFile(string $badgeFile): self
+    public function setBadgeFile(?string $badgeFile): self
     {
-        $this->badgeFile = $badgeFile;
+        if ($this->badgeFile !== $badgeFile) {
+            if ($this->badgeFile !== null && file_exists($this->badgeFile)) {
+                unlink($this->badgeFile);
+            }
+
+            $this->badgeFile = $badgeFile;
+        }
 
         return $this;
     }
 
+    public function getOverrideBadgeProduct(): ?Product
+    {
+        return $this->overrideBadgeProduct;
+    }
+
+    public function setOverrideBadgeProduct(?Product $overrideBadgeProduct): self
+    {
+        $this->overrideBadgeProduct = $overrideBadgeProduct;
+
+        return $this;
+    }
+
+    /**
+     * @param RoleEnum[] $roles
+     * @return $this
+     */
     public function setRoles(array $roles): self
     {
-        if (!in_array('ROLE_USER', $roles, true)) {
-            $roles[] = 'ROLE_USER';
-        }
-
         $this->roles = $roles;
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
     public function getRoles(): array
+    {
+        $roles = [];
+        foreach ($this->roles as $role) {
+            $roles = [...$roles, ...$role->getRoles()];
+        }
+
+        return array_map(static fn(RoleEnum $role) => $role->value, RoleEnum::deduplicate($roles));
+    }
+
+    /**
+     * @return RoleEnum[]
+     */
+    public function getUserRoles(): array
     {
         return $this->roles;
     }
@@ -258,7 +312,7 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, AttendeeAchievement>
+     * @return Collection<array-key, AttendeeAchievement>
      */
     public function getAchievements(): Collection
     {
@@ -284,7 +338,7 @@ class Attendee implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, PrintJob>
+     * @return Collection<array-key, PrintJob>
      */
     public function getPrintJobs(): Collection
     {

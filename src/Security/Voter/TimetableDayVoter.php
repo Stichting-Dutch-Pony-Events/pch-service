@@ -3,10 +3,10 @@
 namespace App\Security\Voter;
 
 use App\Domain\Entity\TimetableDay;
+use App\Security\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class TimetableDayVoter extends Voter
+class TimetableDayVoter extends AbstractVoter
 {
     public const string CREATE_DAY = 'create_day';
     public const string EDIT_DAY = 'edit_day';
@@ -25,11 +25,6 @@ class TimetableDayVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        return match ($attribute) {
-            self::CREATE_DAY, self::EDIT_DAY => in_array('ROLE_SUPER_ADMIN', $token->getRoleNames(), true),
-            self::DELETE_DAY =>
-                in_array('ROLE_SUPER_ADMIN', $token->getRoleNames(), true) && $subject instanceof TimetableDay,
-            default => false,
-        };
+        return $this->userHasRole($token, RoleEnum::STAFF);
     }
 }

@@ -4,10 +4,10 @@ namespace App\Security\Voter;
 
 use App\Domain\Entity\TimetableLocation;
 use App\Domain\Enum\TimetableLocationType;
+use App\Security\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class TimetableLocationVoter extends Voter
+class TimetableLocationVoter extends AbstractVoter
 {
     public const VIEW_LOCATION = 'view_location';
     public const string CREATE_LOCATION = 'create_location';
@@ -44,17 +44,14 @@ class TimetableLocationVoter extends Voter
                 return true;
             }
 
-            return in_array('ROLE_SUPER_ADMIN', $roles, true)
-                || in_array('ROLE_ADMIN', $roles, true)
-                || in_array('ROLE_VOLUNTEER', $roles, true);
+            return $this->userHasRole($token, RoleEnum::VOLUNTEER);
         }
 
         return match ($attribute) {
-            self::CREATE_LOCATION => in_array('ROLE_SUPER_ADMIN', $token->getRoleNames(), true)
-                || in_array('ROLE_ADMIN', $roles, true),
-            self::EDIT_LOCATION => (in_array('ROLE_SUPER_ADMIN', $token->getRoleNames(), true)
-                    || in_array('ROLE_ADMIN', $roles, true)) && $subject instanceof TimetableLocation,
-            self::DELETE_LOCATION => in_array('ROLE_SUPER_ADMIN', $token->getRoleNames(), true)
+            self::CREATE_LOCATION => $this->userHasRole($token, RoleEnum::INFOBOOTH),
+            self::EDIT_LOCATION => $this->userHasRole($token, RoleEnum::INFOBOOTH)
+                && $subject instanceof TimetableLocation,
+            self::DELETE_LOCATION => $this->userHasRole($token, RoleEnum::STAFF)
                 && $subject instanceof TimetableLocation,
         };
     }

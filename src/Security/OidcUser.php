@@ -2,9 +2,10 @@
 
 namespace App\Security;
 
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Domain\Entity\Contract\EnumUserInterface;
+use App\Security\Enum\RoleEnum;
 
-class OidcUser implements UserInterface
+class OidcUser implements EnumUserInterface
 {
     public function __construct(
         private string $identifier,
@@ -26,6 +27,24 @@ class OidcUser implements UserInterface
     public function getRoles(): array
     {
         return $this->claims['roles'] ?? ['ROLE_USER'];
+    }
+
+    /**
+     * @return RoleEnum[]
+     */
+    public function getUserRoles(): array
+    {
+        $roles = $this->getRoles();
+        $roleEnums = [];
+
+        foreach ($roles as $role) {
+            $enumRole = RoleEnum::tryFrom($role);
+            if ($enumRole !== null) {
+                $roleEnums[] = $enumRole;
+            }
+        }
+
+        return $roleEnums;
     }
 
     public function eraseCredentials(): void

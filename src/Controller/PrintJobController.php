@@ -2,28 +2,21 @@
 
 namespace App\Controller;
 
-use App\Application\Request\AwardAchievementRequest;
 use App\Application\Request\DispatchPrintJobRequest;
-use App\Application\Request\SetPasswordRequest;
 use App\Application\Request\SetPrintJobStatusRequest;
 use App\Application\Service\AttendeeApplicationService;
 use App\Application\Service\PrintJobApplicationService;
-use App\Application\View\AttendeeAchievementView;
 use App\Application\View\PrintJobView;
-use App\Application\View\TeamView;
 use App\DataAccessLayer\Repository\PrintJobRepository;
-use App\Domain\Entity\Attendee;
 use App\Domain\Entity\PrintJob;
-use App\Security\Voter\AchievementVoter;
-use App\Security\Voter\AttendeeVoter;
 use App\Security\Voter\PrintJobVoter;
 use App\Util\Exceptions\Response\PublicExceptionResponse;
 use App\Util\SymfonyUtils\Mapper;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use OpenApi\Attributes as OA;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -82,7 +75,10 @@ class PrintJobController extends AbstractController
         #[MapRequestPayload] DispatchPrintJobRequest $dispatchPrintJobRequest
     ): Response {
         return $this->json(
-            Mapper::mapOne($this->printJobApplicationService->createPrintJob($dispatchPrintJobRequest), PrintJobView::class),
+            Mapper::mapOne(
+                $this->printJobApplicationService->createPrintJob($dispatchPrintJobRequest),
+                PrintJobView::class
+            ),
             Response::HTTP_CREATED
         );
     }
@@ -142,7 +138,7 @@ class PrintJobController extends AbstractController
             $this->attendeeApplicationService->getAttendeeBadge($printJob->getAttendee()),
             Response::HTTP_OK,
             [
-                'Content-Type' => 'image/png',
+                'Content-Type'        => 'image/png',
                 'Content-Disposition' => 'inline; filename="' . $printJob->getId() . '.png"'
             ]
         );

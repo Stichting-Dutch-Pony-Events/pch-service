@@ -19,18 +19,18 @@ readonly class AttendeeDomainService
     public function createAttendee(AttendeeRequest $attendeeRequest, Product $product): Attendee
     {
         $attendee = new Attendee(
-            name: $attendeeRequest->name,
-            firstName: $attendeeRequest->firstName,
-            middleName: $attendeeRequest->middleName,
-            familyName: $attendeeRequest->familyName,
-            nickName: $attendeeRequest->nickName,
-            email: $attendeeRequest->email,
-            orderCode: $attendeeRequest->orderCode,
-            ticketId: $attendeeRequest->ticketId,
-            ticketSecret: $attendeeRequest->ticketSecret,
-            product: $product,
-            tShirtSize: $attendeeRequest->tShirtSize,
-            nfcTagId: $attendeeRequest->nfcTagId,
+            name:           $attendeeRequest->name,
+            firstName:      $attendeeRequest->firstName,
+            middleName:     $attendeeRequest->middleName,
+            familyName:     $attendeeRequest->familyName,
+            nickName:       $attendeeRequest->nickName,
+            email:          $attendeeRequest->email,
+            orderCode:      $attendeeRequest->orderCode,
+            ticketId:       $attendeeRequest->ticketId,
+            ticketSecret:   $attendeeRequest->ticketSecret ?? '',
+            product:        $product,
+            tShirtSize:     $attendeeRequest->tShirtSize,
+            nfcTagId:       $attendeeRequest->nfcTagId,
             miniIdentifier: $attendeeRequest->miniIdentifier,
         );
 
@@ -42,8 +42,11 @@ readonly class AttendeeDomainService
         return $attendee;
     }
 
-    public function updateAttendee(Attendee $attendee, AttendeeRequest $attendeeRequest): Attendee
-    {
+    public function updateAttendee(
+        Attendee        $attendee,
+        AttendeeRequest $attendeeRequest,
+        ?Product        $overrideBadgeProduct = null
+    ): Attendee {
         return $attendee->setName($attendeeRequest->name)
             ->setFirstName($attendeeRequest->firstName)
             ->setMiddleName($attendeeRequest->middleName)
@@ -51,7 +54,9 @@ readonly class AttendeeDomainService
             ->setNickName($attendeeRequest->nickName)
             ->setEmail($attendeeRequest->email)
             ->setNfcTagId($attendeeRequest->nfcTagId)
-            ->setFireBaseToken($attendeeRequest->fireBaseToken);
+            ->setFireBaseToken($attendeeRequest->fireBaseToken)
+            ->setBadgeFile(null)
+            ->setOverrideBadgeProduct($overrideBadgeProduct);
     }
 
     public function setAttendeeRoles(Attendee $attendee, SetAttendeeRolesRequest $setAttendeeRolesRequest): Attendee
