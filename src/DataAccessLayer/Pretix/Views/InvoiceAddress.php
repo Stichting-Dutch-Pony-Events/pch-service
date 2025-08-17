@@ -21,7 +21,7 @@ class InvoiceAddress
     public function __construct($invAddObj)
     {
         try {
-            $this->lastModified = Carbon::parse($invAddObj->lastModified);
+            $this->lastModified = Carbon::parse($invAddObj->last_modified);
         } catch (\Exception) {
             $this->lastModified = null;
         }
