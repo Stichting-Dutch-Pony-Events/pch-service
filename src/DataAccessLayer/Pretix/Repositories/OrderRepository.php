@@ -9,13 +9,13 @@ class OrderRepository extends PretixBaseRepository
 {
     public function getOrderByCode(string $orderCode): Order
     {
-        $uri = "orders/".$orderCode;
+        $uri = "orders/" . $orderCode;
         return new Order($this->pretixApiClient->retrieve($uri));
     }
 
     public function getOrderPosition(int $id): OrderPosition
     {
-        $uri = "orderpositions/".$id;
+        $uri = "orderpositions/" . $id;
         return new OrderPosition($this->pretixApiClient->retrieve($uri));
     }
 
@@ -25,9 +25,25 @@ class OrderRepository extends PretixBaseRepository
         return $this->pretixApiClient->downloadImage($url, $path);
     }
 
-    public function getOrders()
+    /**
+     * @return array<Order>
+     */
+    public function getOrders(): array
     {
-        $orders   = $this->pretixApiClient->retrieveAll('orders', ['status' => 'p']);
+        $orders = $this->pretixApiClient->retrieveAll('orders', ['status' => 'p']);
+        $orderObj = [];
+        foreach ($orders as $order) {
+            $orderObj[] = new Order($order);
+        }
+        return $orderObj;
+    }
+
+    /**
+     * @return array<Order>
+     */
+    public function getCancelledOrders(): array
+    {
+        $orders = $this->pretixApiClient->retrieveAll('orders', ['status' => 'c']);
         $orderObj = [];
         foreach ($orders as $order) {
             $orderObj[] = new Order($order);

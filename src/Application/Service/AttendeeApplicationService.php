@@ -147,4 +147,13 @@ readonly class AttendeeApplicationService
 
         return $attendee;
     }
+
+    public function removeCancelledAttendee(OrderPosition $orderPosition): void
+    {
+        $attendee = $this->attendeeRepository->findOneBy(['ticketId' => $orderPosition->getId()]);
+        if ($attendee) {
+            $this->entityManager->remove($attendee);
+        }
+        $this->entityManager->flush();
+    }
 }

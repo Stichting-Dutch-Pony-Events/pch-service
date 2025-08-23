@@ -5,8 +5,6 @@ namespace App\Command;
 use App\Application\Service\AttendeeApplicationService;
 use App\DataAccessLayer\Pretix\Repositories\OrderRepository;
 use App\DataAccessLayer\Pretix\Views\Order;
-use App\DataAccessLayer\Repository\ProductRepository;
-use App\Domain\Entity\Product;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -30,14 +28,16 @@ class ImportAttendees extends Command
     {
         $helper = $this->getHelper('question');
 
-        $output->writeln([
-            '<info>Attendee Import</info>',
-            '============',
-            'This command will fetch all the Attendees from the backend.',
-            '<comment>This will delete all previous products config!</comment>',
-            '<comment>Make sure you ran the \'setup:check-in-lists\' and \'setup:products\' command first!</comment>',
-            ''
-        ]);
+        $output->writeln(
+            [
+                '<info>Attendee Import</info>',
+                '============',
+                'This command will fetch all the Attendees from the backend.',
+                '<comment>This will delete all previous products config!</comment>',
+                '<comment>Make sure you ran the \'setup:check-in-lists\' and \'setup:products\' command first!</comment>',
+                ''
+            ]
+        );
 
         $confirmationQuestion = new ConfirmationQuestion(
             '<question>Do you want to continue? (yes/no):</question> ',
@@ -51,7 +51,7 @@ class ImportAttendees extends Command
 
         $output->writeln('<comment>Retrieving Order from Pretix!</comment>');
         $orders = $this->orderRepository->getOrders();
-        $output->writeln('<info>Retrieved ' . count($orders) . ' Order from Pretix!</info>');
+        $output->writeln('<info>Retrieved ' . count($orders) . ' Orders from Pretix!</info>');
 
         $output->writeln('<comment>Importing Orders</comment>');
         $progressBar = new ProgressBar($output, count($orders));
@@ -67,6 +67,24 @@ class ImportAttendees extends Command
         $output->writeln('');
         $output->writeln('<info>Imported ' . $attendeeCount . ' Attendees</info>');
 
+        $output->writeln('<comment>Retrieving Cancelled Orders from Pretix!</comment>');
+        $cancelledOrders = $this->orderRepository->getCancelledOrders();
+        $output->writeln('<info>Retrieved ' . count($cancelledOrders) . ' Cancelled Orders from Pretix!</info>');
+
+        $output->writeln('<comment>Cleaning up cancelled orders</comment>');
+        $progressBar = new ProgressBar($output, count($cancelledOrders));
+        $cancelledAttendeeCount = 0;
+
+        foreach ($cancelledOrders as $order) {
+            $cancelledAttendeeCount += $this->importCancelledOrder($order);
+            $progressBar->advance();
+        }
+
+        $progressBar->finish();
+
+        $output->writeln('');
+        $output->writeln('<info>Cleaned up ' . $cancelledAttendeeCount . ' Cancelled Attendees</info>');
+
         return Command::SUCCESS;
     }
 
@@ -74,12 +92,37 @@ class ImportAttendees extends Command
     {
         $count = 0;
 
+        if (empty($order->positions)) {
+            return $count;
+        }
+
         foreach ($order->positions as $position) {
             try {
                 $this->attendeeApplicationService->createAttendeeFromOrderPosition($position, $order);
                 $count++;
             } catch (EntityNotFoundException $e) {
                 continue;
+            } catch (Exception $e) {
+                var_dump($e->getMessage());
+                continue;
+            }
+        }
+
+        return $count;
+    }
+
+    private function importCancelledOrder(Order $order): int
+    {
+        $count = 0;
+
+        if (empty($order->positions)) {
+            return $count;
+        }
+
+        foreach ($order->positions as $position) {
+            try {
+                $this->attendeeApplicationService->removeCancelledAttendee($position);
+                $count++;
             } catch (Exception $e) {
                 var_dump($e->getMessage());
                 continue;
