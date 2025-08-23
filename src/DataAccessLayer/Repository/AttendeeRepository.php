@@ -157,8 +157,18 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
         }
 
         if (!empty($attendeeSearchRequest->role)) {
-            $qb->andWhere('a.roles LIKE :role')
-                ->setParameter('role', '%' . $attendeeSearchRequest->role->value . '%');
+            if (str_contains($attendeeSearchRequest->role, ',')) {
+                $roles = explode(',', $attendeeSearchRequest->role);
+                $orX = $qb->expr()->orX();
+                foreach ($roles as $index => $role) {
+                    $orX->add($qb->expr()->like('a.roles', ':role' . $index));
+                    $qb->setParameter('role' . $index, '%' . trim($role) . '%');
+                }
+                $qb->andWhere($orX);
+            } else {
+                $qb->andWhere('a.roles LIKE :role')
+                    ->setParameter('role', '%' . $attendeeSearchRequest->role . '%');
+            }
         }
 
         if ($attendeeSearchRequest->sortBy) {

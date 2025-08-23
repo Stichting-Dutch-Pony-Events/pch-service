@@ -2,17 +2,15 @@
 
 namespace App\Application\Request;
 
-use App\Security\Enum\RoleEnum;
-
 class AttendeeSearchRequest
 {
     public function __construct(
-        public ?string   $query,
-        public ?string   $productId,
-        public ?RoleEnum $role,
-        public int       $page,
-        public int       $itemsPerPage,
-        public ?string   $sortBy
+        public ?string $query,
+        public ?string $productId,
+        public ?string $role,
+        public int     $page,
+        public int     $itemsPerPage,
+        public ?string $sortBy
     ) {
     }
 
