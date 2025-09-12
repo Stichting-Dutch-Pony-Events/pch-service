@@ -47,4 +47,19 @@ class TimetableLocationRepository extends ServiceEntityRepository
 
         return $order + 1;
     }
+
+    /**
+     * @return TimetableLocation[]
+     */
+    public function getPublicTimetableLocations(): array
+    {
+        return $this->createQueryBuilder('tl')
+            ->select('tl, ti')
+            ->leftJoin('tl.timetableItems', 'ti')
+            ->where('tl.timetableLocationType = :type')
+            ->setParameter('type', TimetableLocationType::ROOM->value)
+            ->orderBy('tl.order', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -6,3 +6,8 @@ api:
   prefix: /api/v1
   resource: 'routes/api'
   type: directory
+
+public_api:
+  prefix: /api/public/v1
+  resource: 'routes/public_api'
+  type: directory

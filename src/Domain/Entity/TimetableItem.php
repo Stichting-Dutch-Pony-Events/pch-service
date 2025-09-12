@@ -5,10 +5,14 @@ namespace App\Domain\Entity;
 use App\Domain\Entity\Trait\HasUuidTrait;
 use DateTime;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Uid\Uuid;
 
 class TimetableItem
 {
     use HasUuidTrait, Timestampable;
+
+    private Uuid $timetableLocationId;
+    private Uuid $timetableDayId;
 
     public function __construct(
         private TimetableLocation $timetableLocation,
@@ -24,14 +28,29 @@ class TimetableItem
         $this->volunteer?->addTimetableItem($this);
     }
 
+    public function getTimetableLocationId(): string
+    {
+        return $this->timetableLocationId->toRfc4122();
+    }
+
+    public function getTimetableLocationUuid(): Uuid
+    {
+        return $this->timetableLocationId;
+    }
+
+    public function getTimetableDayId(): string
+    {
+        return $this->timetableDayId->toRfc4122();
+    }
+
+    public function getTimetableDayUuid(): Uuid
+    {
+        return $this->timetableDayId;
+    }
+
     public function getTimetableLocation(): TimetableLocation
     {
         return $this->timetableLocation;
-    }
-
-    public function getTimetableLocationId(): string
-    {
-        return $this->timetableLocation->getId();
     }
 
     public function getTimetableDay(): TimetableDay

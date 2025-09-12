@@ -88,6 +88,14 @@ class TimetableDay
         return $this->timetableLocations;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getTimetableLocationIds(): array
+    {
+        return $this->timetableLocations->map(static fn(TimetableLocation $location) => $location->getId())->toArray();
+    }
+
     public function addTimetableLocation(TimetableLocation $timetableLocation): self
     {
         if (!$this->timetableLocations->contains($timetableLocation)) {

@@ -10,6 +10,7 @@ use App\Domain\Entity\TimetableLocation;
 use App\Domain\Service\TimetableLocationDomainService;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 readonly class TimetableLocationApplicationService
 {
@@ -18,6 +19,7 @@ readonly class TimetableLocationApplicationService
         private TimetableDayRepository         $timetableDayRepository,
         private TimetableLocationRepository    $timetableLocationRepository,
         private TimetableLocationDomainService $timetableLocationDomainService,
+        private CacheInterface                 $cache
     ) {
     }
 
@@ -40,6 +42,8 @@ readonly class TimetableLocationApplicationService
 
             $this->entityManager->persist($timetableLocation);
 
+            $this->cache->delete('public_timetable');
+
             return $timetableLocation;
         });
     }
@@ -59,11 +63,15 @@ readonly class TimetableLocationApplicationService
                     $timetableDays[] = $timetableDay;
                 }
 
-                return $this->timetableLocationDomainService->updateTimetableLocation(
+                $timetableLocation = $this->timetableLocationDomainService->updateTimetableLocation(
                     $timetableLocation,
                     $timetableLocationRequest,
                     $timetableDays
                 );
+
+                $this->cache->delete('public_timetable');
+
+                return $timetableLocation;
             }
         );
     }
@@ -79,6 +87,8 @@ readonly class TimetableLocationApplicationService
 
                 $timetableLocation->setOrder($index + 1);
             }
+
+            $this->cache->delete('public_timetable');
         });
     }
 
@@ -86,6 +96,8 @@ readonly class TimetableLocationApplicationService
     {
         $this->entityManager->wrapInTransaction(function () use ($timetableLocation): void {
             $this->entityManager->remove($timetableLocation);
+
+            $this->cache->delete('public_timetable');
         });
     }
 }

@@ -1,0 +1,4 @@
+public_api.time-table:
+  path: /timetable
+  methods: GET
+  controller: App\Controller\Public\TimetableController::getPublicTimetable

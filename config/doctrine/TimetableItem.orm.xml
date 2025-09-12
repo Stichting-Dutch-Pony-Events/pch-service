@@ -27,6 +27,13 @@
             <join-column name="timetable_day_id" on-delete="CASCADE" nullable="false"/>
         </many-to-one>
 
+        <field name="timetableDayId"
+               column="timetable_day_id"
+               type="uuid"
+               insertable="false"
+               updatable="false"
+               nullable="false"/>
+
         <many-to-one
                 field="timetableLocation"
                 target-entity="App\Domain\Entity\TimetableLocation"
@@ -34,6 +41,13 @@
         >
             <join-column name="timetable_location_id" on-delete="CASCADE" nullable="false"/>
         </many-to-one>
+
+        <field name="timetableLocationId"
+               column="timetable_location_id"
+               type="uuid"
+               insertable="false"
+               updatable="false"
+               nullable="false"/>
 
         <many-to-one field="volunteer" target-entity="App\Domain\Entity\Attendee" inversed-by="timetableItems">
             <join-column name="volunteer_id" on-delete="SET NULL"/>

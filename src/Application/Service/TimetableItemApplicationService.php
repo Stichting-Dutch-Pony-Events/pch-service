@@ -13,6 +13,7 @@ use App\Domain\Entity\TimetableLocation;
 use App\Domain\Service\TimetableItemDomainService;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 readonly class TimetableItemApplicationService
 {
@@ -22,6 +23,7 @@ readonly class TimetableItemApplicationService
         private TimetableLocationRepository $timetableLocationRepository,
         private AttendeeRepository          $attendeeRepository,
         private EntityManagerInterface      $entityManager,
+        private CacheInterface              $cache
     ) {
     }
 
@@ -55,6 +57,8 @@ readonly class TimetableItemApplicationService
 
             $this->entityManager->persist($timetableItem);
 
+            $this->cache->delete('public_timetable');
+
             return $timetableItem;
         });
     }
@@ -73,11 +77,15 @@ readonly class TimetableItemApplicationService
                     }
                 }
 
-                return $this->timetableItemDomainService->updateTimetableItem(
+                $timetableItem = $this->timetableItemDomainService->updateTimetableItem(
                     $timetableItem,
                     $timetableItemRequest,
                     $volunteer
                 );
+
+                $this->cache->delete('public_timetable');
+
+                return $timetableItem;
             }
         );
     }
@@ -86,6 +94,8 @@ readonly class TimetableItemApplicationService
     {
         $this->entityManager->wrapInTransaction(function () use ($timetableItem): void {
             $this->entityManager->remove($timetableItem);
+
+            $this->cache->delete('public_timetable');
         });
     }
 }

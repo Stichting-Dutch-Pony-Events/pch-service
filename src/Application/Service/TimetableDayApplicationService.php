@@ -9,13 +9,15 @@ use App\Domain\Entity\TimetableDay;
 use App\Domain\Service\TimetableDayDomainService;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 readonly class TimetableDayApplicationService
 {
     public function __construct(
         private TimetableDayRepository    $timetableDayRepository,
         private TimetableDayDomainService $timetableDayDomainService,
-        private EntityManagerInterface    $entityManager
+        private EntityManagerInterface    $entityManager,
+        private CacheInterface            $cache
     ) {
     }
 
@@ -25,6 +27,8 @@ readonly class TimetableDayApplicationService
             $timetableDay = $this->timetableDayDomainService->createTimetableDay($timetableDayRequest);
 
             $this->entityManager->persist($timetableDay);
+
+            $this->cache->delete('public_timetable');
 
             return $timetableDay;
         });
@@ -36,7 +40,14 @@ readonly class TimetableDayApplicationService
     ): TimetableDay {
         return $this->entityManager->wrapInTransaction(
             function () use ($timetableDay, $timetableDayRequest): TimetableDay {
-                return $this->timetableDayDomainService->updateTimetableDay($timetableDay, $timetableDayRequest);
+                $timetableDay = $this->timetableDayDomainService->updateTimetableDay(
+                    $timetableDay,
+                    $timetableDayRequest
+                );
+
+                $this->cache->delete('public_timetable');
+
+                return $timetableDay;
             }
         );
     }
@@ -52,6 +63,8 @@ readonly class TimetableDayApplicationService
 
                 $timetableDay->setOrder($index + 1);
             }
+
+            $this->cache->delete('public_timetable');
         });
     }
 
@@ -59,6 +72,8 @@ readonly class TimetableDayApplicationService
     {
         $this->entityManager->wrapInTransaction(function () use ($timetableDay): void {
             $this->entityManager->remove($timetableDay);
+
+            $this->cache->delete('public_timetable');
         });
     }
 }
