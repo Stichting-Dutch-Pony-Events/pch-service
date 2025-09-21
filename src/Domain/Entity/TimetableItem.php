@@ -26,6 +26,8 @@ class TimetableItem
         $this->timetableLocation->addTimetableItem($this);
         $this->timetableDay->addTimetableItem($this);
         $this->volunteer?->addTimetableItem($this);
+        $this->timetableLocationId = $this->timetableLocation->getUuid();
+        $this->timetableDayId = $this->timetableDay->getUuid();
     }
 
     public function getTimetableLocationId(): string

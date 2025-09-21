@@ -2,12 +2,14 @@
 
 namespace App\Application\View\PublicTimetable;
 
+use App\Application\View\Trait\EntityViewTrait;
 use DateTime;
 
 class TimetableItemView
 {
+    use EntityViewTrait;
+
     public function __construct(
-        public string   $id,
         public string   $title,
         public DateTime $startTime,
         public DateTime $endTime,

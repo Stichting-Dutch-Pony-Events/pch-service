@@ -2,15 +2,17 @@
 
 namespace App\Application\View\PublicTimetable;
 
+use App\Application\View\Trait\EntityViewTrait;
 use DateTime;
 
 class TimetableDayView
 {
+    use EntityViewTrait;
+
     /**
      * @param string[] $timetableLocationIds
      */
     public function __construct(
-        public string   $id,
         public string   $title,
         public DateTime $startsAt,
         public DateTime $endsAt,
