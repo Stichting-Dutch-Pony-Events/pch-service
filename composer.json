@@ -16,7 +16,6 @@
     "illuminate/contracts": "^v12",
     "illuminate/support": "^v12",
     "illuminate/validation": "^v12",
-    "jms/serializer-bundle": "^5.3",
     "jucksearm/php-barcode": "^1.0",
     "kreait/firebase-bundle": "^5.6",
     "kreait/firebase-php": "^7.18.0",

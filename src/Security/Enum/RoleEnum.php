@@ -2,6 +2,13 @@
 
 namespace App\Security\Enum;
 
+use OpenApi\Attributes as OA;
+
+#[OA\Schema(
+    schema: "RoleEnum",
+    type: "string",
+    enum: ["ROLE_USER", "ROLE_VOLUNTEER", "ROLE_INFOBOOTH", "ROLE_STAFF", "ROLE_SUPER_ADMIN"],
+)]
 enum RoleEnum: string
 {
     case USER = 'ROLE_USER';

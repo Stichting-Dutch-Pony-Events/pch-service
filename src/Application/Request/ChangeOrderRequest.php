@@ -2,15 +2,19 @@
 
 namespace App\Application\Request;
 
-use JMS\Serializer\Annotation\Type;
+use OpenApi\Attributes as OA;
 
 class ChangeOrderRequest
 {
     /**
-     * @param  string[]  $ids
+     * @param string[] $ids
      */
     public function __construct(
-        #[Type('array<string>')]
+        #[OA\Property(
+            type: "array",
+            items: new OA\Items(type: "string", format: "uuid"),
+            nullable: true
+        )]
         public array $ids
     ) {
     }

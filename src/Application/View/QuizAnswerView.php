@@ -4,7 +4,8 @@ namespace App\Application\View;
 
 use App\Application\View\Trait\EntityViewTrait;
 use App\Util\SymfonyUtils\Attribute\MapsMany;
-use JMS\Serializer\Annotation\Type;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 
 class QuizAnswerView
 {
@@ -15,7 +16,10 @@ class QuizAnswerView
     public int $order;
 
     /** @var QuizAnswerTeamWeightView[] */
-    #[Type('array<' . QuizAnswerTeamWeightView::class . '>')]
+    #[OA\Property(
+        type: "array",
+        items: new OA\Items(ref: new Model(type: QuizAnswerTeamWeightView::class))
+    )]
     #[MapsMany(QuizAnswerTeamWeightView::class)]
     public array $quizAnswerTeamWeights;
 }

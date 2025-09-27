@@ -7,13 +7,17 @@ use App\Domain\Entity\Attendee;
 use App\Util\SymfonyUtils\Attribute\MapsMany;
 use App\Util\SymfonyUtils\Exception\WrongTypeException;
 use App\Util\SymfonyUtils\Mapper;
-use JMS\Serializer\Annotation\Type;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use ReflectionException;
 
 class AttendeeSearchResponse extends BaseSearchResponse
 {
     /** @var AttendeeSimpleView[] $items */
-    #[Type('array<' . AttendeeSimpleView::class . '>')]
+    #[OA\Property(
+        type: "array",
+        items: new OA\Items(ref: new Model(type: AttendeeSimpleView::class))
+    )]
     #[MapsMany(AttendeeSimpleView::class)]
     public array $items = [];
 

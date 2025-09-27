@@ -6,12 +6,32 @@ use App\Application\View\Trait\EntityViewTrait;
 use App\Domain\Enum\TShirtSize;
 use App\Security\Enum\RoleEnum;
 use App\Util\SymfonyUtils\Attribute\MapsMany;
-use JMS\Serializer\Annotation\Type;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 
 class AttendeeView
 {
     use EntityViewTrait;
 
+    /**
+     * @param string $name
+     * @param string|null $firstName
+     * @param string|null $middleName
+     * @param string|null $familyName
+     * @param string|null $nickName
+     * @param string|null $email
+     * @param string $orderCode
+     * @param int $ticketId
+     * @param ProductView $product
+     * @param string|null $nfcTagId
+     * @param string|null $miniIdentifier
+     * @param TShirtSize|null $tShirtSize
+     * @param string|null $fireBaseToken
+     * @param ProductView|null $overrideBadgeProduct
+     * @param RoleEnum[]|null $userRoles
+     * @param TeamView|null $team
+     * @param AttendeeAchievementView[] $achievements
+     */
     public function __construct(
         public string       $name,
         public ?string      $firstName,
@@ -28,14 +48,19 @@ class AttendeeView
         public ?string      $fireBaseToken,
         public ?ProductView $overrideBadgeProduct,
 
-        /** @var RoleEnum[] $userRoles */
-        #[Type('array<' . RoleEnum::class . '>')]
+        #[OA\Property(
+            type: "array",
+            items: new OA\Items(ref: new Model(type: RoleEnum::class)),
+            nullable: true
+        )]
         public ?array       $userRoles,
 
         public ?TeamView    $team,
 
-        /** @var AttendeeAchievementView[] $achievements */
-        #[Type('array<' . AttendeeAchievementView::class . '>')]
+        #[OA\Property(
+            type: "array",
+            items: new OA\Items(ref: new Model(type: AttendeeAchievementView::class))
+        )]
         #[MapsMany(AttendeeAchievementView::class)]
         public array        $achievements
     ) {

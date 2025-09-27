@@ -5,7 +5,8 @@ namespace App\Application\View\PublicTimetable;
 use App\Application\View\Trait\EntityViewTrait;
 use App\Domain\Enum\TimetableLocationType;
 use App\Util\SymfonyUtils\Attribute\MapsMany;
-use JMS\Serializer\Annotation\Type;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 
 class TimetableLocationView
 {
@@ -21,7 +22,10 @@ class TimetableLocationView
         public string                $title,
         public TimetableLocationType $timetableLocationType,
         public int                   $order,
-        #[Type('array<' . TimetableItemView::class . '>')]
+        #[OA\Property(
+            type: "array",
+            items: new OA\Items(ref: new Model(type: TimetableItemView::class))
+        )]
         #[MapsMany(TimetableItemView::class)]
         public array                 $timetableItems
     ) {
