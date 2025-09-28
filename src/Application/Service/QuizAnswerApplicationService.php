@@ -13,6 +13,7 @@ use App\Domain\Service\QuizAnswerTeamWeightDomainService;
 use App\Util\Exceptions\Exception\Common\InvalidInputException;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 readonly class QuizAnswerApplicationService
 {
@@ -21,7 +22,8 @@ readonly class QuizAnswerApplicationService
         private QuizAnswerTeamWeightDomainService $teamWeightDomainService,
         private QuizAnswerRepository              $quizAnswerRepository,
         private TeamRepository                    $teamRepository,
-        private EntityManagerInterface            $entityManager
+        private EntityManagerInterface            $entityManager,
+        private CacheInterface                    $cache
     ) {
     }
 
@@ -41,6 +43,8 @@ readonly class QuizAnswerApplicationService
             }
 
             $this->entityManager->persist($quizAnswer);
+
+            $this->cache->delete('quiz');
 
             return $quizAnswer;
         });
@@ -92,6 +96,8 @@ readonly class QuizAnswerApplicationService
                 $this->teamWeightDomainService->updateTeamWeight($existingTeamWeight, $team, $teamWeight);
             }
 
+            $this->cache->delete('quiz');
+
             return $quizAnswer;
         });
     }
@@ -114,6 +120,8 @@ readonly class QuizAnswerApplicationService
             }
 
             $this->entityManager->flush();
+
+            $this->cache->delete('quiz');
         });
     }
 
@@ -122,9 +130,11 @@ readonly class QuizAnswerApplicationService
         if ($quizQuestion->getId() !== $quizAnswer->getQuestion()->getId()) {
             throw new InvalidInputException("Quiz question ID does not match the quiz answer's question ID.");
         }
-        
+
         $this->entityManager->wrapInTransaction(function () use ($quizAnswer): void {
             $this->entityManager->remove($quizAnswer);
         });
+
+        $this->cache->delete('quiz');
     }
 }
