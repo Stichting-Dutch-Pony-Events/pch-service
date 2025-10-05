@@ -19,6 +19,12 @@
         <field name="startTime" type="datetime"/>
         <field name="endTime" type="datetime"/>
 
+        <field name="colour" length="7">
+            <options>
+                <option name="default">#ff9e5a</option>
+            </options>
+        </field>
+
         <many-to-one
                 field="timetableDay"
                 target-entity="App\Domain\Entity\TimetableDay"

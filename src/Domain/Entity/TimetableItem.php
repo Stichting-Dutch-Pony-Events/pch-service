@@ -20,6 +20,7 @@ class TimetableItem
         private string            $title,
         private DateTime          $startTime,
         private DateTime          $endTime,
+        private string            $colour = '#ff9e5a',
         private ?string           $description = null,
         private ?Attendee         $volunteer = null,
     ) {
@@ -101,6 +102,17 @@ class TimetableItem
     public function setEndTime(DateTime $endTime): self
     {
         $this->endTime = $endTime;
+        return $this;
+    }
+
+    public function getColour(): string
+    {
+        return $this->colour;
+    }
+
+    public function setColour(string $colour): self
+    {
+        $this->colour = $colour;
         return $this;
     }
 

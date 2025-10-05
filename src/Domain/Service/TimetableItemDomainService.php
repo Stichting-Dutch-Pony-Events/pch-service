@@ -25,12 +25,13 @@ readonly class TimetableItemDomainService
 
         return new TimetableItem(
             timetableLocation: $timetableLocation,
-            timetableDay: $timetableDay,
-            title: $timetableItemRequest->title,
-            startTime: $timetableItemRequest->startTime,
-            endTime: $timetableItemRequest->endTime,
-            description: $timetableItemRequest->description,
-            volunteer: $volunteer,
+            timetableDay:      $timetableDay,
+            title:             $timetableItemRequest->title,
+            startTime:         $timetableItemRequest->startTime,
+            endTime:           $timetableItemRequest->endTime,
+            colour:            $timetableItemRequest->colour,
+            description:       $timetableItemRequest->description,
+            volunteer:         $volunteer,
         );
     }
 
@@ -38,9 +39,9 @@ readonly class TimetableItemDomainService
      * @throws InvalidInputException
      */
     public function updateTimetableItem(
-        TimetableItem $timetableItem,
+        TimetableItem        $timetableItem,
         TimetableItemRequest $timetableItemRequest,
-        ?Attendee $volunteer = null
+        ?Attendee            $volunteer = null
     ): TimetableItem {
         $this->checkInput(
             $timetableItemRequest,
@@ -54,6 +55,7 @@ readonly class TimetableItemDomainService
             ->setDescription($timetableItemRequest->description)
             ->setStartTime($timetableItemRequest->startTime)
             ->setEndTime($timetableItemRequest->endTime)
+            ->setColour($timetableItemRequest->colour)
             ->setVolunteer($volunteer);
     }
 
@@ -79,6 +81,10 @@ readonly class TimetableItemDomainService
             throw new InvalidInputException(
                 "Timetable item times must be within the timetable day's start and end times."
             );
+        }
+
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $timetableItemRequest->colour)) {
+            throw new InvalidInputException("Colour must be a valid hex code.");
         }
     }
 }

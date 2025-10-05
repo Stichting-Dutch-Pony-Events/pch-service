@@ -12,6 +12,7 @@ class TimetableItemRequest
         public string   $title,
         public DateTime $startTime,
         public DateTime $endTime,
+        public string   $colour = '#ff9e5a',
         public ?string  $description = null,
         public ?string  $volunteerId = null,
     ) {

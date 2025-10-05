@@ -13,6 +13,7 @@ class TimetableItemView
         public string              $title,
         public DateTime            $startTime,
         public DateTime            $endTime,
+        public string              $colour,
         public ?string             $description,
         public string              $timetableLocationId,
         public ?AttendeeSimpleView $volunteer,
