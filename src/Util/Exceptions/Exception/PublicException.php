@@ -2,21 +2,30 @@
 
 namespace App\Util\Exceptions\Exception;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class PublicException extends Exception implements CustomExceptionInterface
 {
-    public ParameterCollection $parameterCollection;
+    /** @var Collection<array-key, Parameter> $parameterCollection */
+    public Collection $parameterCollection;
 
+    /**
+     * @param string $message
+     * @param Collection<array-key, Parameter>|null $parameterCollection
+     * @param int $code
+     * @param Throwable|null $previous
+     */
     public function __construct(
-        string $message = "",
-        ?ParameterCollection $parameterCollection = null,
-        int $code = 0,
+        string         $message = "",
+        ?Collection    $parameterCollection = null,
+        int            $code = 0,
         Throwable|null $previous = null
     ) {
-        $this->parameterCollection = $parameterCollection ?? new ParameterCollection();
+        $this->parameterCollection = $parameterCollection ?? new ArrayCollection();
 
         parent::__construct($message, $code, $previous);
     }
@@ -26,12 +35,15 @@ class PublicException extends Exception implements CustomExceptionInterface
         return Response::HTTP_INTERNAL_SERVER_ERROR;
     }
 
+    /**
+     * @return array<array-key, Parameter>
+     */
     public function getData(): array
     {
         return $this->parameterCollection->toArray();
     }
 
-    public final function isPublicException(): bool
+    final public function isPublicException(): bool
     {
         return true;
     }

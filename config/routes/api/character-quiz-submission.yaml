@@ -1,0 +1,9 @@
+api.character-quiz-submission.my-last:
+  path: /character-quiz-submission/my-last
+  controller: App\Controller\CharacterQuizSubmissionController::getLastCharacterQuiz
+  methods: GET
+
+api.character-quiz-submission.submit:
+  path: /character-quiz-submission
+  controller: App\Controller\CharacterQuizSubmissionController::submitCharacterQuiz
+  methods: POST

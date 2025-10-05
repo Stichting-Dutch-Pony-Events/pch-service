@@ -16,6 +16,12 @@
         </field>
 
         <one-to-many field="attendees" target-entity="App\Domain\Entity\Attendee" mapped-by="team"/>
+        <one-to-many field="quizResults" target-entity="App\Domain\Entity\CharacterQuizSubmissionTeamResult"
+                     mapped-by="team" fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
 
         <field name="createdAt" type="datetime">
             <gedmo:timestampable on="create"/>

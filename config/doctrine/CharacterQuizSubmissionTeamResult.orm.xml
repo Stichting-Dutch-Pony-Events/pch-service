@@ -1,0 +1,38 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+    <entity name="App\Domain\Entity\CharacterQuizSubmissionTeamResult"
+            table="character_quiz_submission_team_result">
+        <id name="id" type="uuid" column="id">
+            <generator strategy="CUSTOM"/>
+            <custom-id-generator class="doctrine.uuid_generator"/>
+        </id>
+
+        <field name="percentage" type="integer">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
+
+        <field name="points" type="integer">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
+
+        <many-to-one field="submission" target-entity="App\Domain\Entity\CharacterQuizSubmission"
+                     inversed-by="teamResults">
+            <join-column name="submission_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <many-to-one field="team" target-entity="App\Domain\Entity\Team" inversed-by="quizResults">
+            <join-column name="team_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <field name="createdAt" type="datetime">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" type="datetime">
+            <gedmo:timestampable on="update"/>
+        </field>
+    </entity>
+</doctrine-mapping>

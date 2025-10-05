@@ -61,6 +61,13 @@
             </order-by>
         </one-to-many>
 
+        <one-to-many field="characterQuizSubmissions" target-entity="App\Domain\Entity\CharacterQuizSubmission"
+                     mapped-by="attendee" fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
         <field name="createdAt" type="datetime">
             <gedmo:timestampable on="create"/>
         </field>

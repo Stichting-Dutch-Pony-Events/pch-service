@@ -16,6 +16,9 @@ class Team
     /** @var Collection<int, Attendee> $attendees */
     private Collection $attendees;
 
+    /** @var Collection<array-key, CharacterQuizSubmissionTeamResult> $quizResults */
+    private Collection $quizResults;
+
     public function __construct(
         private string $name,
         private string $description,
@@ -25,6 +28,7 @@ class Team
         ?Collection    $attendees = null
     ) {
         $this->attendees = $attendees ?? new ArrayCollection();
+        $this->quizResults = new ArrayCollection();
     }
 
     public function getName(): string
@@ -93,6 +97,30 @@ class Team
     public function removeAttendee(Attendee $attendee): self
     {
         $this->attendees->removeElement($attendee);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<array-key, CharacterQuizSubmissionTeamResult>
+     */
+    public function getQuizResults(): Collection
+    {
+        return $this->quizResults;
+    }
+
+    public function addQuizResult(CharacterQuizSubmissionTeamResult $quizResult): self
+    {
+        if (!$this->quizResults->contains($quizResult)) {
+            $this->quizResults->add($quizResult);
+        }
+
+        return $this;
+    }
+
+    public function removeQuizResult(CharacterQuizSubmissionTeamResult $quizResult): self
+    {
+        $this->quizResults->removeElement($quizResult);
 
         return $this;
     }

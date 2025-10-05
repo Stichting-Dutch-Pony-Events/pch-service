@@ -27,6 +27,9 @@ class Attendee implements EnumUserInterface, PasswordAuthenticatedUserInterface
     /** @var Collection<array-key, TimetableItem> $timetableItems */
     private Collection $timetableItems;
 
+    /** @var Collection<array-key, CharacterQuizSubmission> $characterQuizSubmissions */
+    private Collection $characterQuizSubmissions;
+
     /**
      * @param string $name
      * @param string|null $firstName
@@ -45,6 +48,7 @@ class Attendee implements EnumUserInterface, PasswordAuthenticatedUserInterface
      * @param string|null $password
      * @param string|null $fireBaseToken
      * @param string|null $badgeFile
+     * @param Product|null $overrideBadgeProduct
      * @param RoleEnum[] $roles
      * @param Collection<array-key, CheckIn>|null $checkIns
      * @param Collection<array-key, Achievement>|null $achievements
@@ -384,6 +388,35 @@ class Attendee implements EnumUserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->timetableItems->contains($timetableItem)) {
             $this->timetableItems->removeElement($timetableItem);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<array-key, CharacterQuizSubmission>
+     */
+    public function getCharacterQuizSubmissions(): Collection
+    {
+        return $this->characterQuizSubmissions;
+    }
+
+    public function addCharacterQuizSubmission(CharacterQuizSubmission $characterQuizSubmission): self
+    {
+        if (
+            !$this->characterQuizSubmissions->contains($characterQuizSubmission)
+            && $characterQuizSubmission->getAttendee() === $this
+        ) {
+            $this->characterQuizSubmissions->add($characterQuizSubmission);
+        }
+
+        return $this;
+    }
+
+    public function removeCharacterQuizSubmission(CharacterQuizSubmission $characterQuizSubmission): self
+    {
+        if ($this->characterQuizSubmissions->contains($characterQuizSubmission)) {
+            $this->characterQuizSubmissions->removeElement($characterQuizSubmission);
         }
 
         return $this;

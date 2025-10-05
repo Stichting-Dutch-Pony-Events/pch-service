@@ -1,0 +1,38 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+    <entity name="App\Domain\Entity\CharacterQuizSubmission"
+            repository-class="App\DataAccessLayer\Repository\CharacterQuizSubmissionRepository"
+            table="character_quiz_submission">
+        <id name="id" type="uuid" column="id">
+            <generator strategy="CUSTOM"/>
+            <custom-id-generator class="doctrine.uuid_generator"/>
+        </id>
+        
+        <many-to-one field="attendee" target-entity="App\Domain\Entity\Attendee" inversed-by="characterQuizSubmissions">
+            <join-column name="attendee_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <one-to-many field="answers" target-entity="App\Domain\Entity\CharacterQuizSubmissionAnswer"
+                     mapped-by="submission">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="teamResults" target-entity="App\Domain\Entity\CharacterQuizSubmissionTeamResult"
+                     mapped-by="submission">
+            <cascade>
+                <cascade-remove/>
+                <cascade-persist/>
+            </cascade>
+        </one-to-many>
+
+        <field name="createdAt" type="datetime">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" type="datetime">
+            <gedmo:timestampable on="update"/>
+        </field>
+    </entity>
+</doctrine-mapping>
