@@ -14,6 +14,7 @@ class TimetableItemView
         public DateTime $startTime,
         public DateTime $endTime,
         public string   $description,
+        public string   $colour,
         public ?string  $timetableLocationId,
         public ?string  $timetableDayId,
     ) {
