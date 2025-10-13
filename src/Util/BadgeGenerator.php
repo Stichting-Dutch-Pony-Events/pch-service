@@ -102,7 +102,7 @@ class BadgeGenerator
         $fontFile = __DIR__ . '/../../assets/badges/' . $data->font;
         if (file_exists($fontFile) && $attendee->getNickName()) {
             $fontSize = $this->getMaxFontSize($fontFile, $attendee->getNickName(), $data->nameWidth, $data->nameHeight);
-            $color = imagecolorallocate($image, 0, 0, 0);
+            $color = imagecolorallocate($image, 50, 50, 50);
             if ($color === false) {
                 throw new InvalidInputException('Could not allocate color for nickname text');
             }

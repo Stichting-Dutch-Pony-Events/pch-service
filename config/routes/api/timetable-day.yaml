@@ -13,7 +13,7 @@ api.time-table-day.update:
   controller: App\Controller\TimetableDayController::updateTimetableDay
   methods: PUT
 
-api.quiz.question.delete:
+api.time-table-day:delete:
   path: /timetable/days/{timetableDay}
   controller: App\Controller\TimetableDayController::deleteTimetableDay
   methods: DELETE

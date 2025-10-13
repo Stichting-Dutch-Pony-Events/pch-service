@@ -421,4 +421,19 @@ class Attendee implements EnumUserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getLastCharacterQuiz(): ?CharacterQuizSubmission
+    {
+        $lastCharacterQuiz = null;
+        foreach ($this->getCharacterQuizSubmissions() as $characterQuizSubmission) {
+            if (
+                $lastCharacterQuiz === null ||
+                $characterQuizSubmission->getCreatedAt() > $lastCharacterQuiz->getCreatedAt()
+            ) {
+                $lastCharacterQuiz = $characterQuizSubmission;
+            }
+        }
+
+        return $lastCharacterQuiz;
+    }
 }

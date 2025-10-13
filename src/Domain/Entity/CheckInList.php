@@ -13,9 +13,18 @@ class CheckInList
 {
     use Timestampable, HasUuidTrait;
 
-    /** @var Collection<int, Product> $products */
+    /** @var Collection<array-key, Product> $products */
     private Collection $products;
 
+    /**
+     * @param string $name
+     * @param int|null $pretixId
+     * @param DateTime $startTime
+     * @param DateTime $endTime
+     * @param CheckInListType $type
+     * @param array|null $pretixProductIds
+     * @param Collection<array-key, Product>|null $products
+     */
     public function __construct(
         private string          $name,
         private ?int            $pretixId,
@@ -24,7 +33,6 @@ class CheckInList
         private CheckInListType $type,
         /** @var int[]|null $pretixProductIds */
         private ?array          $pretixProductIds,
-        /** @var Collection<int, Product> $products */
         ?Collection             $products = null,
     ) {
         $this->products = $products ?? new ArrayCollection();
@@ -91,7 +99,7 @@ class CheckInList
         return $this->pretixProductIds;
     }
 
-    /** @return Collection<int, Product> */
+    /** @return Collection<array-key, Product> */
     public function getProducts(): Collection
     {
         return $this->products;

@@ -13,18 +13,24 @@ class Team
 {
     use Timestampable, HasUuidTrait;
 
-    /** @var Collection<int, Attendee> $attendees */
+    /** @var Collection<array-key, Attendee> $attendees */
     private Collection $attendees;
 
     /** @var Collection<array-key, CharacterQuizSubmissionTeamResult> $quizResults */
     private Collection $quizResults;
 
+    /**
+     * @param string $name
+     * @param string $description
+     * @param string $identifier
+     * @param int $points
+     * @param Collection<array-key, Attendee>|null $attendees
+     */
     public function __construct(
         private string $name,
         private string $description,
         private string $identifier,
         private int    $points = 0,
-        /** @var Collection<int, Attendee> $attendees */
         ?Collection    $attendees = null
     ) {
         $this->attendees = $attendees ?? new ArrayCollection();
@@ -79,7 +85,7 @@ class Team
         return $this;
     }
 
-    /** @return Collection<int, Attendee> */
+    /** @return Collection<array-key, Attendee> */
     public function getAttendees(): Collection
     {
         return $this->attendees;

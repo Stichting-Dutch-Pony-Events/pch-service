@@ -14,6 +14,12 @@ class QuizQuestion
     /** @var Collection<array-key, QuizAnswer> $answers */
     private Collection $answers;
 
+    /**
+     * @param string $title
+     * @param string $question
+     * @param int $order
+     * @param Collection<array-key, QuizAnswer>|null $answers
+     */
     public function __construct(
         private string $title,
         private string $question,

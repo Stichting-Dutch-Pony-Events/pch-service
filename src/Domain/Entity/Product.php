@@ -12,14 +12,19 @@ class Product
 {
     use Timestampable, HasUuidTrait;
 
-    /** @var Collection<int, CheckInList> */
+    /** @var Collection<array-key, CheckInList> */
     private Collection $checkInLists;
 
+    /**
+     * @param string $name
+     * @param int $pretixId
+     * @param RoleEnum $defaultRole
+     * @param Collection<array-key, CheckInList>|null $checkInLists
+     */
     public function __construct(
         private string   $name,
         private int      $pretixId,
         private RoleEnum $defaultRole = RoleEnum::USER,
-        /** @var Collection<int, CheckInList> $checkInLists */
         ?Collection      $checkInLists = null,
     ) {
         $this->checkInLists = $checkInLists ?? new ArrayCollection();

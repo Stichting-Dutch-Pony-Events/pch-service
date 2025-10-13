@@ -3,12 +3,12 @@
   "profileY": 207,
   "profileWidth": 300,
   "profileHeight": 400,
-  "nameX": 511,
-  "nameY": 495,
-  "nameWidth": 460,
-  "nameHeight": 80,
+  "nameX": 585,
+  "nameY": 510,
+  "nameWidth": 411,
+  "nameHeight": 75,
   "qrX": 971,
-  "qrY": 454,
+  "qrY": 450,
   "qrSize": 128,
-  "font": "MatrixSans-Screen.ttf"
+  "font": "CupcakePastry-line.otf"
 }

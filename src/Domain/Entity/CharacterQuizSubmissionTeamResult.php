@@ -15,6 +15,7 @@ class CharacterQuizSubmissionTeamResult
         private int                     $percentage,
         private CharacterQuizSubmission $submission
     ) {
+        $this->submission->addTeamResult($this);
     }
 
     public function getTeam(): Team

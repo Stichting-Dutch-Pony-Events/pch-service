@@ -33,36 +33,37 @@ class AttendeeView
      * @param AttendeeAchievementView[] $achievements
      */
     public function __construct(
-        public string       $name,
-        public ?string      $firstName,
-        public ?string      $middleName,
-        public ?string      $familyName,
-        public ?string      $nickName,
-        public ?string      $email,
-        public string       $orderCode,
-        public int          $ticketId,
-        public ProductView  $product,
-        public ?string      $nfcTagId,
-        public ?string      $miniIdentifier,
-        public ?TShirtSize  $tShirtSize,
-        public ?string      $fireBaseToken,
-        public ?ProductView $overrideBadgeProduct,
+        public string                       $name,
+        public ?string                      $firstName,
+        public ?string                      $middleName,
+        public ?string                      $familyName,
+        public ?string                      $nickName,
+        public ?string                      $email,
+        public string                       $orderCode,
+        public int                          $ticketId,
+        public ProductView                  $product,
+        public ?string                      $nfcTagId,
+        public ?string                      $miniIdentifier,
+        public ?TShirtSize                  $tShirtSize,
+        public ?string                      $fireBaseToken,
+        public ?ProductView                 $overrideBadgeProduct,
+        public ?CharacterQuizSubmissionView $lastCharacterQuiz,
 
         #[OA\Property(
             type: "array",
             items: new OA\Items(ref: new Model(type: RoleEnum::class)),
             nullable: true
         )]
-        public ?array       $userRoles,
+        public ?array                       $userRoles,
 
-        public ?TeamView    $team,
+        public ?TeamView                    $team,
 
         #[OA\Property(
             type: "array",
             items: new OA\Items(ref: new Model(type: AttendeeAchievementView::class))
         )]
         #[MapsMany(AttendeeAchievementView::class)]
-        public array        $achievements
+        public array                        $achievements
     ) {
     }
 }

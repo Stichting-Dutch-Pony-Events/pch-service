@@ -9,16 +9,14 @@ use OpenApi\Attributes as OA;
 class CharacterQuizSubmissionView
 {
     /**
-     * @param bool $lastSubmission
      * @param CharacterQuizSubmissionTeamResultView[] $teamResults
      */
     public function __construct(
-        public bool  $lastSubmission,
         #[OA\Property(
             type: "array",
-            items: new OA\Items(ref: new Model(type: QuizAnswerTeamWeightView::class))
+            items: new OA\Items(ref: new Model(type: CharacterQuizSubmissionTeamResultView::class))
         )]
-        #[MapsMany(QuizAnswerTeamWeightView::class)]
+        #[MapsMany(CharacterQuizSubmissionTeamResultView::class)]
         public array $teamResults
     ) {
     }
