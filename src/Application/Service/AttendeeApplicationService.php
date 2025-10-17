@@ -41,27 +41,31 @@ readonly class AttendeeApplicationService
             throw new EntityNotFoundException('Product not found');
         }
 
-        $attendee = $this->attendeeRepository->findOneBy(['ticketId' => $orderPosition->getId()]);
+        $attendee  = $this->attendeeRepository->findOneBy(['ticketId' => $orderPosition->getId()]);
         $shirtSize = $orderPosition->getAnswer('t-shirt-size');
 
         $attendeeRequest = new AttendeeRequest(
-            name:           $orderPosition->getAttendeeName() ?? '',
-            firstName:      $orderPosition->getAttendeeNamePart('given'),
-            middleName:     $orderPosition->getAttendeeNamePart('middle'),
-            familyName:     $orderPosition->getAttendeeNamePart('family'),
-            nickName:       $orderPosition->getAnswer('nickname'),
-            email:          $orderPosition->getAttendeeEmail() ?? $order->email,
-            orderCode:      $orderPosition->getOrder(),
-            ticketId:       $orderPosition->getId(),
-            ticketSecret:   $orderPosition->getSecret(),
-            productId:      $product->getId(),
-            nfcTagId:       null,
+            name: $orderPosition->getAttendeeName() ?? '',
+            firstName: $orderPosition->getAttendeeNamePart('given'),
+            middleName: $orderPosition->getAttendeeNamePart('middle'),
+            familyName: $orderPosition->getAttendeeNamePart('family'),
+            nickName: $orderPosition->getAnswer('nickname'),
+            email: $orderPosition->getAttendeeEmail() ?? $order->email,
+            orderCode: $orderPosition->getOrder(),
+            ticketId: $orderPosition->getId(),
+            ticketSecret: $orderPosition->getSecret(),
+            productId: $product->getId(),
+            nfcTagId: null,
             miniIdentifier: $this->attendeeRepository->getFreeMiniIdentifier(),
-            tShirtSize:     $shirtSize !== null ? TShirtSize::tryFrom(strtolower($shirtSize)) : null,
+            tShirtSize: $shirtSize !== null ? TShirtSize::tryFrom(strtolower($shirtSize)) : null,
         );
 
         if (isset($attendee)) {
-            $this->attendeeDomainService->updateAttendee($attendee, $attendeeRequest);
+            $attendee = $this->attendeeDomainService->updateAttendee(
+                $attendee,
+                $attendeeRequest,
+                $attendee->getOverrideBadgeProduct()
+            );
         } else {
             $attendee = $this->attendeeDomainService->createAttendee($attendeeRequest, $product);
 
