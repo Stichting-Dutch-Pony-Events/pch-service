@@ -7,6 +7,7 @@ use App\Domain\Entity\Achievement;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
@@ -16,22 +17,26 @@ use Symfony\Component\Console\Question\Question;
 class CreateAchievementCommand extends Command
 {
     public function __construct(
-        private AchievementRepository $achievementRepository,
+        private AchievementRepository  $achievementRepository,
         private EntityManagerInterface $entityManager,
-        ?string $name = null
+        ?string                        $name = null
     ) {
         parent::__construct($name);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln([
-            '<info>Create a team</info>',
-            '============',
-            ''
-        ]);
+        $output->writeln(
+            [
+                '<info>Create a team</info>',
+                '============',
+                ''
+            ]
+        );
 
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
+
 
         $name = $helper->ask(
             $input,
@@ -46,14 +51,19 @@ class CreateAchievementCommand extends Command
         $pointValue = (int)$helper->ask(
             $input,
             $output,
-            new Question("<question>What is the point value?</question> "),
-            1
+            new Question("<question>What is the point value?</question> ", 1),
         );
         $isEveningActivity = $helper->ask(
             $input,
             $output,
             new ConfirmationQuestion("<question>Is this an Saturday Evening Activity? (yes/no):</question> ", false)
         );
+        $isHidden = $helper->ask(
+            $input,
+            $output,
+            new ConfirmationQuestion("<question>Is this achievement hidden? (yes/no):</question> ", false)
+        );
+
         $unlockCode = $helper->ask(
             $input,
             $output,
@@ -73,14 +83,16 @@ class CreateAchievementCommand extends Command
                 ->setDescription($description)
                 ->setUnlockCode($unlockCode)
                 ->setPointValue($pointValue)
-                ->setEveningActivity($isEveningActivity);
+                ->setEveningActivity($isEveningActivity)
+                ->setVisible(!$isHidden);
         } else {
             $achievement = new Achievement(
-                name: $name,
-                description: $description,
-                identifier: $identifier,
-                pointValue: $pointValue,
-                unlockCode: $unlockCode,
+                name:            $name,
+                description:     $description,
+                identifier:      $identifier,
+                pointValue:      $pointValue,
+                unlockCode:      $unlockCode,
+                visible:         !$isHidden,
                 eveningActivity: $isEveningActivity
             );
 
@@ -89,11 +101,13 @@ class CreateAchievementCommand extends Command
 
         $this->entityManager->flush();
 
-        $output->writeln([
-            '',
-            '<info>Achievement created with id: ' . $achievement->getId() . '</info>',
-            ''
-        ]);
+        $output->writeln(
+            [
+                '',
+                '<info>Achievement created with id: ' . $achievement->getId() . '</info>',
+                ''
+            ]
+        );
 
         return Command::SUCCESS;
     }

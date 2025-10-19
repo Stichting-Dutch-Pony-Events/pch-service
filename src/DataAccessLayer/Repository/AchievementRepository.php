@@ -7,7 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @template Achievement
+ * @extends ServiceEntityRepository<Achievement>
  * @template-extends ServiceEntityRepository<Achievement>
  */
 class AchievementRepository extends ServiceEntityRepository

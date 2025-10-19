@@ -211,8 +211,7 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
         return $this->createQueryBuilder('a')
             ->where('a.points > 0')
             ->andWhere('a.position IS NOT NULL')
-            ->orderBy('a.points', 'DESC')
-            ->addOrderBy('a.achievementsCompletedTime', 'ASC')
+            ->orderBy('a.position', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult();

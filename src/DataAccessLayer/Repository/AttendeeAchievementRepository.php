@@ -3,6 +3,7 @@
 namespace App\DataAccessLayer\Repository;
 
 use App\Domain\Entity\AttendeeAchievement;
+use DateMalformedStringException;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -18,10 +19,13 @@ class AttendeeAchievementRepository extends ServiceEntityRepository
         parent::__construct($registry, AttendeeAchievement::class);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function getTimeFirstAchievement(): DateTime
     {
         $res = $this->createQueryBuilder('aa')
-            ->select('MIN(aa.achievedAt)')
+            ->select('MIN(aa.createdAt)')
             ->getQuery()
             ->getSingleScalarResult();
 

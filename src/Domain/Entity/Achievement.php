@@ -15,6 +15,7 @@ class Achievement
         private string  $identifier,
         private int     $pointValue = 1,
         private ?string $unlockCode = null,
+        private bool    $visible = true,
         private bool    $eveningActivity = false,
     ) {
     }
@@ -68,6 +69,18 @@ class Achievement
     public function setUnlockCode(?string $unlockCode): self
     {
         $this->unlockCode = $unlockCode;
+
+        return $this;
+    }
+
+    public function getVisible(): bool
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(bool $visible): self
+    {
+        $this->visible = $visible;
 
         return $this;
     }
