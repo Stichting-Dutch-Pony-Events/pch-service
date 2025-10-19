@@ -73,6 +73,9 @@ class Attendee implements EnumUserInterface, PasswordAuthenticatedUserInterface
         private ?string     $fireBaseToken = null,
         private ?string     $badgeFile = null,
         private ?Product    $overrideBadgeProduct = null,
+        private int         $points = 0,
+        private int         $achievementsCompletedTime = 0,
+        private ?int        $position = null,
         private array       $roles = [RoleEnum::USER],
         ?Collection         $checkIns = null,
         ?Collection         $achievements = null,
@@ -272,6 +275,39 @@ class Attendee implements EnumUserInterface, PasswordAuthenticatedUserInterface
     {
         $this->overrideBadgeProduct = $overrideBadgeProduct;
 
+        return $this;
+    }
+
+    public function getPoints(): int
+    {
+        return $this->points;
+    }
+
+    public function setPoints(int $points): self
+    {
+        $this->points = $points;
+        return $this;
+    }
+
+    public function getAchievementsCompletedTime(): int
+    {
+        return $this->achievementsCompletedTime;
+    }
+
+    public function setAchievementsCompletedTime(int $achievementsCompletedTime): self
+    {
+        $this->achievementsCompletedTime = $achievementsCompletedTime;
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): self
+    {
+        $this->position = $position;
         return $this;
     }
 

@@ -5,11 +5,13 @@ namespace App\Application\Service;
 use App\Application\Request\AwardAchievementRequest;
 use App\Application\Request\UnlockAchievementRequest;
 use App\DataAccessLayer\Repository\AchievementRepository;
+use App\DataAccessLayer\Repository\AttendeeAchievementRepository;
 use App\DataAccessLayer\Repository\AttendeeRepository;
 use App\Domain\Entity\Achievement;
 use App\Domain\Entity\Attendee;
 use App\Domain\Entity\AttendeeAchievement;
 use App\Domain\Service\AchievementDomainService;
+use App\Domain\Service\AttendeeDomainService;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use App\Util\Exceptions\Exception\Entity\EntityNotUniqueException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,12 +24,14 @@ use Psr\Log\LoggerInterface;
 readonly class AchievementApplicationService
 {
     public function __construct(
-        private EntityManagerInterface   $entityManager,
-        private AttendeeRepository       $attendeeRepository,
-        private AchievementRepository    $achievementRepository,
-        private AchievementDomainService $achievementDomainService,
-        private Messaging                $firebaseMessaging,
-        private LoggerInterface          $logger,
+        private EntityManagerInterface        $entityManager,
+        private AttendeeRepository            $attendeeRepository,
+        private AchievementRepository         $achievementRepository,
+        private AttendeeAchievementRepository $attendeeAchievementRepository,
+        private AchievementDomainService      $achievementDomainService,
+        private AttendeeDomainService         $attendeeDomainService,
+        private Messaging                     $firebaseMessaging,
+        private LoggerInterface               $logger,
     ) {
     }
 
@@ -54,6 +58,9 @@ readonly class AchievementApplicationService
                 //Create achievement
                 $attendeeAchievement = $this->achievementDomainService->awardAchievement($achievement, $attendee);
                 $this->entityManager->persist($attendeeAchievement);
+
+                $timeFirstAchievement = $this->attendeeAchievementRepository->getTimeFirstAchievement();
+                $attendee = $this->attendeeDomainService->calculatePointsAndTime($attendee, $timeFirstAchievement);
 
                 $this->sendNotification($attendee, $achievement);
 
@@ -96,15 +103,17 @@ readonly class AchievementApplicationService
 
     private function sendNotification(Attendee $attendee, Achievement $achievement): void
     {
-        if ($attendee->getFireBaseToken() !== null) {
-            $message = CloudMessage::withTarget('token', $attendee->getFireBaseToken())
+        $token = $attendee->getFireBaseToken();
+        if (!empty($token)) {
+            $message = CloudMessage::new()
                 ->withNotification(
                     Notification::create(
                         "Achievement Unlocked!",
                         "You have unlocked the achievement " . $achievement->getName(),
                     )
                 )
-                ->withData(['refresh-user' => 'true']);
+                ->withData(['refresh-user' => 'true'])
+                ->toToken($token);
 
             try {
                 $this->firebaseMessaging->send($message);

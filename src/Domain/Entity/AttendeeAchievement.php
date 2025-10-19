@@ -13,6 +13,7 @@ class AttendeeAchievement
         private Achievement $achievement,
         private Attendee    $attendee,
     ) {
+        $this->attendee->addAchievement($this);
     }
 
     public function getAchievement(): Achievement

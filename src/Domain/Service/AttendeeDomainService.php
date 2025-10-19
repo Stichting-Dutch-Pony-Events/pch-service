@@ -8,6 +8,7 @@ use App\Application\Request\SetPasswordRequest;
 use App\Domain\Entity\Attendee;
 use App\Domain\Entity\Product;
 use App\Util\Exceptions\Exception\Common\InvalidInputException;
+use DateTime;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 readonly class AttendeeDomainService
@@ -76,6 +77,25 @@ readonly class AttendeeDomainService
 
         $hashedPassword = $this->passwordHasher->hashPassword($attendee, $setPasswordRequest->password);
         $attendee->setPassword($hashedPassword);
+
+        return $attendee;
+    }
+
+    public function calculatePointsAndTime(Attendee $attendee, DateTime $firstAchievementTime): Attendee
+    {
+        $points = 0;
+        $maxTime = $firstAchievementTime;
+
+        foreach ($attendee->getAchievements() as $achievement) {
+            $points += $achievement->getAchievement()->getPointValue();
+
+            if ($achievement->getCreatedAt() > $maxTime) {
+                $maxTime = $achievement->getCreatedAt();
+            }
+        }
+
+        $attendee->setPoints($points);
+        $attendee->setAchievementsCompletedTime($maxTime->getTimestamp() - $firstAchievementTime->getTimestamp());
 
         return $attendee;
     }

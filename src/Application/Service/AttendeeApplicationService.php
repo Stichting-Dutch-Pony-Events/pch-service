@@ -19,6 +19,7 @@ use App\Util\BadgeGenerator;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Contracts\Cache\CacheInterface;
 
 readonly class AttendeeApplicationService
 {
@@ -31,6 +32,7 @@ readonly class AttendeeApplicationService
         private TeamDomainService      $teamDomainService,
         private Filesystem             $filesystem,
         private BadgeGenerator         $badgeGenerator,
+        private CacheInterface         $cache,
     ) {
     }
 
@@ -155,5 +157,19 @@ readonly class AttendeeApplicationService
             $this->entityManager->remove($attendee);
         }
         $this->entityManager->flush();
+    }
+
+    public function calculateAttendeePositions(): void
+    {
+        $this->entityManager->wrapInTransaction(function ($entityManager) {
+            $attendees = $this->attendeeRepository->getSortedForScoring();
+
+            for ($i = 0, $iMax = count($attendees); $i < $iMax; $i++) {
+                $attendee = $attendees[$i];
+                $attendee->setPosition($i + 1);
+            }
+        });
+
+        $this->cache->delete('attendee_top_ten');
     }
 }

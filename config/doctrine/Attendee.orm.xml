@@ -25,6 +25,20 @@
         <field name="badgeFile" type="string" length="255" nullable="true"/>
         <field name="roles" type="role_enum_array"/>
 
+        <field name="points" type="integer">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
+
+        <field name="achievementsCompletedTime" type="integer">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
+
+        <field name="position" type="integer" nullable="true"/>
+
         <one-to-many field="checkIns" target-entity="App\Domain\Entity\CheckIn" mapped-by="attendee">
             <cascade>
                 <cascade-persist/>

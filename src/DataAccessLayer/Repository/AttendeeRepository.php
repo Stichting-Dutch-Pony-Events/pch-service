@@ -189,4 +189,32 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
 
         return $qb;
     }
+
+    /**
+     * @return Attendee[]
+     */
+    public function getSortedForScoring(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.points > 0')
+            ->orderBy('a.points', 'DESC')
+            ->addOrderBy('a.achievementsCompletedTime', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Attendee[]
+     */
+    public function getTopTenAttendees(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.points > 0')
+            ->andWhere('a.position IS NOT NULL')
+            ->orderBy('a.points', 'DESC')
+            ->addOrderBy('a.achievementsCompletedTime', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
 }

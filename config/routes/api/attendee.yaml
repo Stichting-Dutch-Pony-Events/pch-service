@@ -3,6 +3,11 @@ api.attendee.me:
   controller: App\Controller\AttendeeController::me
   methods: GET
 
+api.attendee.top_ten:
+  path: /attendee/top-ten
+  controller: App\Controller\AttendeeController::topTen
+  methods: GET
+
 api.attendee.find:
   path: /attendee/{identifier}
   controller: App\Controller\AttendeeController::find

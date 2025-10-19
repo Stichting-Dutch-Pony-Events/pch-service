@@ -3,8 +3,7 @@
 namespace App\Domain\Scheduler\Handlers;
 
 use App\DataAccessLayer\Repository\TeamRepository;
-use App\Domain\Entity\Team;
-use App\Domain\Scheduler\CalculateTeamPoints;
+use App\Domain\Scheduler\Messages\CalculateTeamPoints;
 use App\Domain\Service\TeamDomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -21,6 +20,7 @@ class CalculateTeamPointsHandler
 
     public function __invoke(CalculateTeamPoints $message): void
     {
+        var_dump('CalculateTeamPointsHandler invoked');
         $teams = $this->teamRepository->findAll();
         foreach ($teams as $team) {
             $this->teamDomainService->calculatePoints($team);

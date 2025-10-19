@@ -8,6 +8,7 @@ use App\Application\Request\SetAttendeeRolesRequest;
 use App\Application\Request\SetPasswordRequest;
 use App\Application\Response\AttendeeSearchResponse;
 use App\Application\Service\AttendeeApplicationService;
+use App\Application\View\AttendeeScoreView;
 use App\Application\View\AttendeeView;
 use App\DataAccessLayer\Repository\AttendeeRepository;
 use App\Domain\Entity\Attendee;
@@ -18,6 +19,7 @@ use App\Util\SymfonyUtils\Exception\WrongTypeException;
 use App\Util\SymfonyUtils\Mapper;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
+use Psr\Cache\InvalidArgumentException;
 use ReflectionException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,12 +29,15 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class AttendeeController extends AbstractController
 {
     public function __construct(
         private readonly AttendeeApplicationService $attendeeApplicationService,
-        private readonly AttendeeRepository         $attendeeRepository
+        private readonly AttendeeRepository         $attendeeRepository,
+        private readonly CacheInterface             $cache,
     ) {
     }
 
@@ -294,6 +299,33 @@ class AttendeeController extends AbstractController
                 $this->attendeeApplicationService->setAttendeeRoles($attendee, $setAttendeeRolesRequest),
                 AttendeeView::class
             )
+        );
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    #[OA\Response(
+        response: 200,
+        description: 'Top Ten Players',
+        content: new OA\JsonContent(
+            type:  'array',
+            items: new OA\Items(ref: new Model(type: AttendeeScoreView::class))
+        )
+    )]
+    #[OA\Tag(name: 'Attendee')]
+    public function topTen(): Response
+    {
+        return $this->cache->get(
+            'attendee_top_ten',
+            function (ItemInterface $item): Response {
+                $item->expiresAfter(300); // 5 minutes
+
+                return $this->json(
+                    Mapper::mapMany($this->attendeeRepository->getTopTenAttendees(), AttendeeScoreView::class),
+                    Response::HTTP_OK
+                );
+            }
         );
     }
 }
