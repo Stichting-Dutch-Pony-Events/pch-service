@@ -15,6 +15,12 @@
             </options>
         </field>
 
+        <field name="colour" length="7">
+            <options>
+                <option name="default">#ff9e5a</option>
+            </options>
+        </field>
+
         <one-to-many field="attendees" target-entity="App\Domain\Entity\Attendee" mapped-by="team"/>
         <one-to-many field="quizResults" target-entity="App\Domain\Entity\CharacterQuizSubmissionTeamResult"
                      mapped-by="team" fetch="EXTRA_LAZY">

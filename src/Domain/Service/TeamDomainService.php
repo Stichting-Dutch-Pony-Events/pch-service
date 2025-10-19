@@ -7,6 +7,7 @@ namespace App\Domain\Service;
 use App\DataAccessLayer\Repository\TeamRepository;
 use App\Domain\Entity\Attendee;
 use App\Domain\Entity\Team;
+use App\Util\Exceptions\Exception\Common\InvalidInputException;
 
 readonly class TeamDomainService
 {
@@ -43,17 +44,26 @@ readonly class TeamDomainService
         usort($teams, static fn(Team $a, Team $b) => $a->getAttendees()->count() <=> $b->getAttendees()->count());
     }
 
-    public function createTeam(string $name, string $description, string $identifier): Team
+    public function createTeam(string $name, string $description, string $identifier, string $colour): Team
     {
-        return new Team($name, $description, $identifier);
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $colour)) {
+            throw new InvalidInputException("Colour must be a valid hex code.");
+        }
+
+        return new Team($name, $description, $identifier, 0, $colour);
     }
 
-    public function updateTeam(Team $team, string $name, string $description, string $identifier): Team
+    public function updateTeam(Team $team, string $name, string $description, string $identifier, string $colour): Team
     {
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $colour)) {
+            throw new InvalidInputException("Colour must be a valid hex code.");
+        }
+
         return $team
             ->setName($name)
             ->setDescription($description)
-            ->setIdentifier($identifier);
+            ->setIdentifier($identifier)
+            ->setColour($colour);
     }
 
     public function calculatePoints(Team $team): Team

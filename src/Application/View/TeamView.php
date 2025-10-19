@@ -12,7 +12,8 @@ class TeamView
         public string $name,
         public string $description,
         public string $identifier,
-        public int    $points
+        public int    $points,
+        public string $colour
     ) {
     }
 }

@@ -24,6 +24,7 @@ class Team
      * @param string $description
      * @param string $identifier
      * @param int $points
+     * @param string $colour
      * @param Collection<array-key, Attendee>|null $attendees
      */
     public function __construct(
@@ -31,6 +32,7 @@ class Team
         private string $description,
         private string $identifier,
         private int    $points = 0,
+        private string $colour = '#ff9e5a',
         ?Collection    $attendees = null
     ) {
         $this->attendees = $attendees ?? new ArrayCollection();
@@ -81,6 +83,18 @@ class Team
     public function setPoints(int $points): self
     {
         $this->points = $points;
+
+        return $this;
+    }
+
+    public function getColour(): string
+    {
+        return $this->colour;
+    }
+
+    public function setColour(string $colour): self
+    {
+        $this->colour = $colour;
 
         return $this;
     }

@@ -8,6 +8,7 @@ class TeamRequest
         public string $name,
         public string $description,
         public string $identifier,
+        public string $colour,
     ) {
     }
 }

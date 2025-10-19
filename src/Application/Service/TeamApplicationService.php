@@ -18,9 +18,10 @@ readonly class TeamApplicationService
     public function createTeam(TeamRequest $teamRequest): Team
     {
         $team = $this->teamDomainService->createTeam(
-            name: $teamRequest->name,
+            name:        $teamRequest->name,
             description: $teamRequest->description,
-            identifier: $teamRequest->identifier
+            identifier:  $teamRequest->identifier,
+            colour:      $teamRequest->colour
         );
 
         $this->entityManager->persist($team);
@@ -32,10 +33,11 @@ readonly class TeamApplicationService
     public function updateTeam(Team $team, TeamRequest $teamRequest): Team
     {
         $team = $this->teamDomainService->updateTeam(
-            team: $team,
-            name: $teamRequest->name,
+            team:        $team,
+            name:        $teamRequest->name,
             description: $teamRequest->description,
-            identifier: $teamRequest->identifier
+            identifier:  $teamRequest->identifier,
+            colour:      $teamRequest->colour
         );
 
         $this->entityManager->flush();
