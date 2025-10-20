@@ -31,7 +31,7 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
     {
         for ($i = 0; $i < self::MINI_IDENTIFIER_MAX_ATTEMPTS; $i++) {
             $charactersLength = strlen(self::MINI_IDENTIFIER_CHARACTERS);
-            $randomString = '';
+            $randomString     = '';
             for ($j = 0; $j < 10; $j++) {
                 $randomString .= self::MINI_IDENTIFIER_CHARACTERS[random_int(0, $charactersLength - 1)];
             }
@@ -122,19 +122,19 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
             $this->createQueryBuilder('a')->select('a', 'p'),
             $attendeeSearchRequest
         );
-        $countQuery = $this->buildSearchQuery(
+        $countQuery  = $this->buildSearchQuery(
             $this->createQueryBuilder('a')->select('COUNT(a.id)'),
             $attendeeSearchRequest,
             true
         );
 
         $totalItems = (int)$countQuery->getQuery()->getSingleScalarResult();
-        $attendees = $searchQuery->getQuery()->getResult();
+        $attendees  = $searchQuery->getQuery()->getResult();
 
         return new AttendeeSearchResponse(
-            items:        $attendees,
-            total:        $totalItems,
-            page:         $attendeeSearchRequest->page,
+            items: $attendees,
+            total: $totalItems,
+            page: $attendeeSearchRequest->page,
             itemsPerPage: $attendeeSearchRequest->itemsPerPage
         );
     }
@@ -149,7 +149,7 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
         $qb->where('a.name LIKE :query')
             ->orWhere('a.email LIKE :query')
             ->orWhere('a.nickName LIKE :query')
-            ->setParameter('query', '%' . $attendeeSearchRequest->query . '%');
+            ->setParameter('query', '%'.$attendeeSearchRequest->query.'%');
 
         if (!empty($attendeeSearchRequest->productId)) {
             $qb->andWhere('a.product = :productId')
@@ -159,15 +159,15 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
         if (!empty($attendeeSearchRequest->role)) {
             if (str_contains($attendeeSearchRequest->role, ',')) {
                 $roles = explode(',', $attendeeSearchRequest->role);
-                $orX = $qb->expr()->orX();
+                $orX   = $qb->expr()->orX();
                 foreach ($roles as $index => $role) {
-                    $orX->add($qb->expr()->like('a.roles', ':role' . $index));
-                    $qb->setParameter('role' . $index, '%' . trim($role) . '%');
+                    $orX->add($qb->expr()->like('a.roles', ':role'.$index));
+                    $qb->setParameter('role'.$index, '%'.trim($role).'%');
                 }
                 $qb->andWhere($orX);
             } else {
                 $qb->andWhere('a.roles LIKE :role')
-                    ->setParameter('role', '%' . $attendeeSearchRequest->role . '%');
+                    ->setParameter('role', '%'.$attendeeSearchRequest->role.'%');
             }
         }
 
@@ -213,6 +213,26 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
             ->andWhere('a.position IS NOT NULL')
             ->orderBy('a.position', 'ASC')
             ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getAttendeesWithCharacterQuiz(): array
+    {
+        return $this->createQueryBuilder('attendee')
+            ->innerJoin('attendee.characterQuizSubmissions', 'characterQuizSubmissions')
+            ->addSelect('characterQuizSubmissions')
+            ->where('attendee.team IS NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getAttendeesWithoutCharacterQuiz(): array
+    {
+        return $this->createQueryBuilder('attendee')
+            ->leftJoin('attendee.characterQuizSubmissions', 'characterQuizSubmissions')
+            ->where('characterQuizSubmissions IS NULL')
+            ->andWhere('attendee.team IS NULL')
             ->getQuery()
             ->getResult();
     }

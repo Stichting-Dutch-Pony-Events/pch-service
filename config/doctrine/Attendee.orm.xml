@@ -80,6 +80,9 @@
             <cascade>
                 <cascade-remove/>
             </cascade>
+            <order-by>
+                <order-by-field name="created_at" direction="DESC"/>
+            </order-by>
         </one-to-many>
 
         <field name="createdAt" type="datetime">
