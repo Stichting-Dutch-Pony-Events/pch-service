@@ -1,0 +1,9 @@
+api.announcement.last-ten:
+  path: /announcement/last-ten
+  controller: App\Controller\AnnouncementController::lastTen
+  methods: GET
+
+api.announcement.create:
+  path: /announcement
+  controller: App\Controller\AnnouncementController::createAnnouncement
+  methods: POST

@@ -34,7 +34,7 @@ class TimetableDayController extends AbstractController
             type: 'array',
             items: new OA\Items(
                 ref: new Model(
-                    type: TimetableDay::class
+                    type: TimetableDayView::class
                 )
             )
         )
