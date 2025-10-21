@@ -43,6 +43,7 @@ class AttendeeVoter extends AbstractVoter
             self::VIEW => $this->canView($attendee, $user),
             self::EDIT => $this->canEdit($attendee, $user),
             self::EDIT_ROLES => $this->canEditRoles($user),
+            self::RESET_PASSWORD => $this->resetPassword($attendee, $user),
             default => throw new \LogicException('This code should not be reached!')
         };
     }
@@ -70,8 +71,12 @@ class AttendeeVoter extends AbstractVoter
         return $this->userHasRole($user, RoleEnum::STAFF);
     }
 
-    private function resetPassword(Attendee $attendee, UserInterface $user): bool
+    private function resetPassword(?Attendee $attendee, UserInterface $user): bool
     {
+        if ($attendee === null) {
+            return false;
+        }
+
         if ($this->userHasRole($user, RoleEnum::SUPER_ADMIN)) {
             return true;
         }
