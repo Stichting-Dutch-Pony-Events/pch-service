@@ -46,8 +46,8 @@ class AttendeeController extends AbstractController
         description: 'Attendee (self)',
         content: new OA\JsonContent(
             ref: new Model(
-                     type: AttendeeView::class
-                 )
+                type: AttendeeView::class
+            )
         )
     )]
     #[OA\Tag(name: 'Attendee')]
@@ -67,8 +67,8 @@ class AttendeeController extends AbstractController
         description: 'Attendee',
         content: new OA\JsonContent(
             ref: new Model(
-                     type: AttendeeView::class
-                 )
+                type: AttendeeView::class
+            )
         )
     )]
     #[OA\Response(
@@ -76,8 +76,8 @@ class AttendeeController extends AbstractController
         description: 'Attendee Not Found',
         content: new OA\JsonContent(
             ref: new Model(
-                     type: PublicExceptionResponse::class
-                 )
+                type: PublicExceptionResponse::class
+            )
         )
     )]
     #[OA\Tag(name: 'Attendee')]
@@ -101,8 +101,8 @@ class AttendeeController extends AbstractController
         description: 'Attendees',
         content: new OA\JsonContent(
             ref: new Model(
-                     type: AttendeeSearchResponse::class
-                 )
+                type: AttendeeSearchResponse::class
+            )
         )
     )]
     #[OA\QueryParameter(
@@ -118,8 +118,8 @@ class AttendeeController extends AbstractController
         description: 'Filter by product ID',
         required: true,
         schema: new OA\Schema(
-            type:    'string',
-            format:  'uuid',
+            type: 'string',
+            format: 'uuid',
             example: '01987001-4494-743e-8497-95f3c416cc53'
         )
     )]
@@ -128,8 +128,8 @@ class AttendeeController extends AbstractController
         description: 'Filter by Role',
         required: true,
         schema: new OA\Schema(
-            type:    'string',
-            enum:    ['ROLE_USER', 'ROLE_VOLUNTEER', 'ROLE_INFOBOOTH', 'ROLE_STAFF', 'ROLE_SUPER_ADMIN'],
+            type: 'string',
+            enum: ['ROLE_USER', 'ROLE_VOLUNTEER', 'ROLE_INFOBOOTH', 'ROLE_STAFF', 'ROLE_SUPER_ADMIN'],
             example: 'ROLE_VOLUNTEER'
         )
     )]
@@ -138,7 +138,7 @@ class AttendeeController extends AbstractController
         description: 'Page number for pagination',
         required: true,
         schema: new OA\Schema(
-            type:    'integer',
+            type: 'integer',
             default: 1
         )
     )]
@@ -147,7 +147,7 @@ class AttendeeController extends AbstractController
         description: 'Number of results per page',
         required: true,
         schema: new OA\Schema(
-            type:    'integer',
+            type: 'integer',
             default: 10
         )
     )]
@@ -156,7 +156,7 @@ class AttendeeController extends AbstractController
         description: 'Field to sort by',
         required: false,
         schema: new OA\Schema(
-            type:    'string',
+            type: 'string',
             default: 'name:asc',
             example: 'name:asc,email:desc'
         )
@@ -184,7 +184,7 @@ class AttendeeController extends AbstractController
     ): Response {
         return new Response($this->attendeeApplicationService->getAttendeeBadge($attendee), Response::HTTP_OK, [
             'Content-Type'        => 'image/png',
-            'Content-Disposition' => 'inline; filename="' . $attendee->getId() . '.png"'
+            'Content-Disposition' => 'inline; filename="'.$attendee->getId().'.png"'
         ]);
     }
 
@@ -197,8 +197,8 @@ class AttendeeController extends AbstractController
         description: 'Invalid Input',
         content: new OA\JsonContent(
             ref: new Model(
-                     type: PublicExceptionResponse::class
-                 )
+                type: PublicExceptionResponse::class
+            )
         )
     )]
     #[OA\RequestBody(
@@ -206,8 +206,8 @@ class AttendeeController extends AbstractController
         required: true,
         content: new OA\JsonContent(
             ref: new Model(
-                     type: SetPasswordRequest::class
-                 )
+                type: SetPasswordRequest::class
+            )
         )
     )]
     #[OA\Tag(name: 'Attendee')]
@@ -230,8 +230,8 @@ class AttendeeController extends AbstractController
         description: 'Attendee',
         content: new OA\JsonContent(
             ref: new Model(
-                     type: AttendeeView::class
-                 )
+                type: AttendeeView::class
+            )
         )
     )]
     #[OA\Response(
@@ -239,8 +239,8 @@ class AttendeeController extends AbstractController
         description: 'Invalid Input',
         content: new OA\JsonContent(
             ref: new Model(
-                     type: PublicExceptionResponse::class
-                 )
+                type: PublicExceptionResponse::class
+            )
         )
     )]
     #[OA\RequestBody(
@@ -248,8 +248,8 @@ class AttendeeController extends AbstractController
         required: true,
         content: new OA\JsonContent(
             ref: new Model(
-                     type: AttendeeRequest::class
-                 )
+                type: AttendeeRequest::class
+            )
         )
     )]
     #[OA\Tag(name: 'Attendee')]
@@ -274,8 +274,8 @@ class AttendeeController extends AbstractController
         description: 'Attendee Roles',
         content: new OA\JsonContent(
             ref: new Model(
-                     type: AttendeeView::class
-                 )
+                type: AttendeeView::class
+            )
         )
     )]
     #[OA\RequestBody(
@@ -283,8 +283,8 @@ class AttendeeController extends AbstractController
         required: true,
         content: new OA\JsonContent(
             ref: new Model(
-                     type: SetAttendeeRolesRequest::class
-                 )
+                type: SetAttendeeRolesRequest::class
+            )
         )
     )]
     #[OA\Tag(name: 'Attendee')]
@@ -309,7 +309,7 @@ class AttendeeController extends AbstractController
         response: 200,
         description: 'Top Ten Players',
         content: new OA\JsonContent(
-            type:  'array',
+            type: 'array',
             items: new OA\Items(ref: new Model(type: AttendeeScoreView::class))
         )
     )]
@@ -327,5 +327,19 @@ class AttendeeController extends AbstractController
                 );
             }
         );
+    }
+
+    #[OA\Response(
+        response: Response::HTTP_NO_CONTENT,
+        description: 'Reset Attendee Password',
+    )]
+    #[OA\Tag(name: 'Attendee')]
+    #[IsGranted(AttendeeVoter::RESET_PASSWORD, subject: 'attendee')]
+    public function resetAttendeePassword(
+        #[MapEntity(id: 'attendee')] Attendee $attendee,
+    ): Response {
+        $this->attendeeApplicationService->resetAttendeePassword($attendee);
+
+        return new Response("", Response::HTTP_NO_CONTENT);
     }
 }

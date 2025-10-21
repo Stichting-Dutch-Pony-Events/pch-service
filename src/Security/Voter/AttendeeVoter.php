@@ -12,11 +12,12 @@ class AttendeeVoter extends AbstractVoter
     public const VIEW = 'view';
     public const EDIT = 'edit';
     public const EDIT_ROLES = 'edit_roles';
+    public const RESET_PASSWORD = 'reset_password';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
         // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::EDIT_ROLES])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::EDIT_ROLES, self::RESET_PASSWORD])) {
             return false;
         }
 
@@ -67,5 +68,22 @@ class AttendeeVoter extends AbstractVoter
     private function canEditRoles(UserInterface $user): bool
     {
         return $this->userHasRole($user, RoleEnum::STAFF);
+    }
+
+    private function resetPassword(Attendee $attendee, UserInterface $user): bool
+    {
+        if ($this->userHasRole($user, RoleEnum::SUPER_ADMIN)) {
+            return true;
+        }
+
+        if ($this->userHasRole($user, RoleEnum::STAFF) && !$this->userHasRole($attendee, RoleEnum::SUPER_ADMIN)) {
+            return true;
+        }
+
+        if ($this->userHasRole($user, RoleEnum::INFOBOOTH) && !$this->userHasRole($attendee, RoleEnum::STAFF)) {
+            return true;
+        }
+
+        return false;
     }
 }

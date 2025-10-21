@@ -37,3 +37,8 @@ api.attendee.set-password:
   path: /attendee/me/password
   controller: App\Controller\AttendeeController::updatePassword
   methods: PUT
+
+api.attendee.reset-password:
+  path: /attendee/{attendee}/reset-password
+  controller: App\Controller\AttendeeController::resetAttendeePassword
+  methods: POST

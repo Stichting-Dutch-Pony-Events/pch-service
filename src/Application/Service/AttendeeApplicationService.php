@@ -176,4 +176,11 @@ readonly class AttendeeApplicationService
 
         $this->cache->delete('attendee_top_ten');
     }
+
+    public function resetAttendeePassword(Attendee $attendee): void
+    {
+        $attendee = $this->attendeeDomainService->resetAttendeePassword($attendee);
+
+        $this->entityManager->flush();
+    }
 }
