@@ -8,11 +8,11 @@ use App\Util\Exceptions\Exception\Common\InvalidInputException;
 use App\Util\Exceptions\Exception\Entity\EntityNotFoundException;
 use Exception;
 use GdImage;
-use GuzzleHttp\Exception\ClientException;
 use JsonException;
 use jucksearm\barcode\QRcode;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 class BadgeGenerator
 {
