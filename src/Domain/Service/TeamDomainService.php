@@ -54,7 +54,7 @@ readonly class TeamDomainService
                 continue;
             }
 
-            $teamAttendees[$highestTeam->getId()][] = $highestTeam;
+            $teamAttendees[$highestTeam->getTeam()->getId()][] = $attendee;
         }
 
         while (count($attendeesWithoutQuizSubmission) > 0) {
@@ -96,11 +96,8 @@ readonly class TeamDomainService
 
         $teamResults = $characterQuizSubmission->getTeamResults()->toArray();
 
-        usort($teamResults, function ($a, $b) {
-            return $a->getScore() <=> $b->getScore();
-        });
-
-        return count($teamResults) === 1 ? $teamResults[0] : null;
+        usort($teamResults, fn($a, $b) => $b->getPoints() <=> $a->getPoints());
+        return $teamResults[0] ?? null;
     }
 
     /**
