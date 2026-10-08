@@ -26,6 +26,7 @@ class AttendeeSimpleView
             nullable: true,
         )]
         public ?array      $userRoles,
+        public bool        $backstageBadge,
     ) {
     }
 }

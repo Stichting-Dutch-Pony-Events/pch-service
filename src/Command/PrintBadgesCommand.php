@@ -9,8 +9,10 @@ use App\Domain\Entity\Attendee;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 #[AsCommand(name: 'print:badges', description: 'Print badges')]
@@ -26,14 +28,17 @@ class PrintBadgesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
-        $output->writeln([
-            '<info>Print Badges</info>',
-            '============',
-            'This command will create print jobs for all attendees who do not already have a print job assigned.',
-            ''
-        ]);
+        $output->writeln(
+            [
+                '<info>Print Badges</info>',
+                '============',
+                'This command will create print jobs for all attendees who do not already have a print job assigned.',
+                ''
+            ]
+        );
 
         $confirmationQuestion = new ConfirmationQuestion(
             '<question>Do you want to continue? (yes/no):</question> ',
@@ -45,7 +50,27 @@ class PrintBadgesCommand extends Command
             return Command::INVALID;
         }
 
-        $attendees = $this->attendeeRepository->getAttendeesWithoutPrintJobs();
+        $badgeTypeQuestion = new ChoiceQuestion(
+            '<question>Which badges do you want to print?</question>',
+            ['All', 'Regular', 'Backstage'],
+            0
+        );
+
+        $badgeType = $helper->ask($input, $output, $badgeTypeQuestion);
+
+        $includeRegular = true;
+        $includeBackstage = true;
+
+        switch ($badgeType) {
+            case 'Regular':
+                $includeBackstage = false;
+                break;
+            case 'Backstage':
+                $includeRegular = false;
+                break;
+        }
+
+        $attendees = $this->attendeeRepository->getAttendeesWithoutPrintJobs($includeRegular, $includeBackstage);
 
         $output->writeln('<info>Found ' . count($attendees) . ' Attendees without Printed Badges</info>');
 

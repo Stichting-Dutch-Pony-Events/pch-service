@@ -31,7 +31,7 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
     {
         for ($i = 0; $i < self::MINI_IDENTIFIER_MAX_ATTEMPTS; $i++) {
             $charactersLength = strlen(self::MINI_IDENTIFIER_CHARACTERS);
-            $randomString     = '';
+            $randomString = '';
             for ($j = 0; $j < 10; $j++) {
                 $randomString .= self::MINI_IDENTIFIER_CHARACTERS[random_int(0, $charactersLength - 1)];
             }
@@ -93,14 +93,24 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
     /**
      * @return Attendee[]
      */
-    public function getAttendeesWithoutPrintJobs(): array
+    public function getAttendeesWithoutPrintJobs(bool $includeRegular = true, bool $includeBackstage = true): array
     {
-        return $this->createQueryBuilder('a')
+        $qb = $this->createQueryBuilder('a')
             ->leftJoin('a.printJobs', 'p')
             ->where('SIZE(a.printJobs) = 0')
-            ->andWhere('a.nickName IS NOT NULL')
-            ->getQuery()
-            ->getResult();
+            ->andWhere('a.nickName IS NOT NULL');
+
+        if (($includeBackstage xor $includeRegular)) {
+            $qb->andWhere('a.backstageBadge = :backstage');
+
+            if ($includeRegular) {
+                $qb->setParameter('backstage', 0);
+            } elseif ($includeBackstage) {
+                $qb->setParameter('backstage', 1);
+            }
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     private function getSortField(string $field): ?string
@@ -109,6 +119,7 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
             'name' => 'a.name',
             'email' => 'a.email',
             'product.name' => 'p.name',
+            default => null,
         };
     }
 
@@ -122,19 +133,19 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
             $this->createQueryBuilder('a')->select('a', 'p'),
             $attendeeSearchRequest
         );
-        $countQuery  = $this->buildSearchQuery(
+        $countQuery = $this->buildSearchQuery(
             $this->createQueryBuilder('a')->select('COUNT(a.id)'),
             $attendeeSearchRequest,
             true
         );
 
         $totalItems = (int)$countQuery->getQuery()->getSingleScalarResult();
-        $attendees  = $searchQuery->getQuery()->getResult();
+        $attendees = $searchQuery->getQuery()->getResult();
 
         return new AttendeeSearchResponse(
-            items: $attendees,
-            total: $totalItems,
-            page: $attendeeSearchRequest->page,
+            items:        $attendees,
+            total:        $totalItems,
+            page:         $attendeeSearchRequest->page,
             itemsPerPage: $attendeeSearchRequest->itemsPerPage
         );
     }
@@ -149,7 +160,7 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
         $qb->where('a.name LIKE :query')
             ->orWhere('a.email LIKE :query')
             ->orWhere('a.nickName LIKE :query')
-            ->setParameter('query', '%'.$attendeeSearchRequest->query.'%');
+            ->setParameter('query', '%' . $attendeeSearchRequest->query . '%');
 
         if (!empty($attendeeSearchRequest->productId)) {
             $qb->andWhere('a.product = :productId')
@@ -159,15 +170,15 @@ class AttendeeRepository extends ServiceEntityRepository implements UserLoaderIn
         if (!empty($attendeeSearchRequest->role)) {
             if (str_contains($attendeeSearchRequest->role, ',')) {
                 $roles = explode(',', $attendeeSearchRequest->role);
-                $orX   = $qb->expr()->orX();
+                $orX = $qb->expr()->orX();
                 foreach ($roles as $index => $role) {
-                    $orX->add($qb->expr()->like('a.roles', ':role'.$index));
-                    $qb->setParameter('role'.$index, '%'.trim($role).'%');
+                    $orX->add($qb->expr()->like('a.roles', ':role' . $index));
+                    $qb->setParameter('role' . $index, '%' . trim($role) . '%');
                 }
                 $qb->andWhere($orX);
             } else {
                 $qb->andWhere('a.roles LIKE :role')
-                    ->setParameter('role', '%'.$attendeeSearchRequest->role.'%');
+                    ->setParameter('role', '%' . $attendeeSearchRequest->role . '%');
             }
         }
 

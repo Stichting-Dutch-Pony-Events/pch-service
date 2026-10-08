@@ -47,6 +47,7 @@ class AttendeeView
         public ?TShirtSize                  $tShirtSize,
         public ?string                      $fireBaseToken,
         public ?ProductView                 $overrideBadgeProduct,
+        public bool                         $backstageBadge,
         public ?CharacterQuizSubmissionView $lastCharacterQuiz,
 
         #[OA\Property(

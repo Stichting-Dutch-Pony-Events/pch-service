@@ -22,6 +22,7 @@ class AttendeeRequest
         public ?TShirtSize $tShirtSize = null,
         public ?string     $fireBaseToken = null,
         public ?string     $overrideBadgeProductId = null,
+        public bool        $backstageBadge = false,
     ) {
     }
 }

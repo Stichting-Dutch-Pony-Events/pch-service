@@ -24,6 +24,11 @@
         <field name="fireBaseToken" type="string" length="255" nullable="true"/>
         <field name="badgeFile" type="string" length="255" nullable="true"/>
         <field name="roles" type="role_enum_array"/>
+        <field name="backstageBadge" type="boolean">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
 
         <field name="points" type="integer">
             <options>

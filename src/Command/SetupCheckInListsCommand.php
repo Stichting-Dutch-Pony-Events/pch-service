@@ -12,6 +12,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -34,15 +35,18 @@ class SetupCheckInListsCommand extends Command
         InputInterface  $input,
         OutputInterface $output
     ): int {
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
-        $output->writeln([
-            '<info>Check-in list setup</info>',
-            '============',
-            'This command will fetch the check-in lists from pretix for your configured event and will guide you through setting them up.',
-            '<comment>This will delete all previous check-in list config!</comment>',
-            ''
-        ]);
+        $output->writeln(
+            [
+                '<info>Check-in list setup</info>',
+                '============',
+                'This command will fetch the check-in lists from pretix for your configured event and will guide you through setting them up.',
+                '<comment>This will delete all previous check-in list config!</comment>',
+                ''
+            ]
+        );
 
         $confirmationQuestion = new ConfirmationQuestion(
             '<question>Do you want to continue? (yes/no):</question> ',
@@ -58,18 +62,22 @@ class SetupCheckInListsCommand extends Command
 
         $pretixCheckInLists = $this->pretixCheckInListRepository->getCheckinLists();
 
-        $output->writeln([
-            '',
-            '<info>' . count($pretixCheckInLists) . ' Check-in lists fetched from pretix</info>',
-            ''
-        ]);
+        $output->writeln(
+            [
+                '',
+                '<info>' . count($pretixCheckInLists) . ' Check-in lists fetched from pretix</info>',
+                ''
+            ]
+        );
 
         foreach ($pretixCheckInLists as $pretixCheckInList) {
-            $output->writeln([
-                '<info>Check-in list: ' . $pretixCheckInList->getName() . '</info>',
-                '============',
-                ''
-            ]);
+            $output->writeln(
+                [
+                    '<info>Check-in list: ' . $pretixCheckInList->getName() . '</info>',
+                    '============',
+                    ''
+                ]
+            );
 
             $checkInListTypes = array_map(function (\UnitEnum $case) {
                 return $case->value;
@@ -93,20 +101,22 @@ class SetupCheckInListsCommand extends Command
             );
 
             $checkInListRequest = new CheckInListRequest(
-                name: $pretixCheckInList->getName(),
-                pretixId: $pretixCheckInList->getId(),
-                startTime: $startTime,
-                endTime: $endTime,
-                type: $checkInListType,
+                name:             $pretixCheckInList->getName(),
+                pretixId:         $pretixCheckInList->getId(),
+                startTime:        $startTime,
+                endTime:          $endTime,
+                type:             $checkInListType,
                 pretixProductIds: $pretixCheckInList->getProductIds()
             );
 
             $checkInList = $this->checkInListApplicationService->createCheckInList($checkInListRequest);
-            $output->writeln([
-                '',
-                '<info>Check-in list created with id: ' . $checkInList->getId() . '</info>',
-                ''
-            ]);
+            $output->writeln(
+                [
+                    '',
+                    '<info>Check-in list created with id: ' . $checkInList->getId() . '</info>',
+                    ''
+                ]
+            );
         }
 
         return Command::SUCCESS;
@@ -118,6 +128,7 @@ class SetupCheckInListsCommand extends Command
         string          $questionText,
         int             $maxTries = 5
     ): ?DateTime {
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
         $question = new Question($questionText, null);
         $question->setValidator(function ($answer) {

@@ -20,18 +20,18 @@ readonly class AttendeeDomainService
     public function createAttendee(AttendeeRequest $attendeeRequest, Product $product): Attendee
     {
         $attendee = new Attendee(
-            name: $attendeeRequest->name,
-            firstName: $attendeeRequest->firstName,
-            middleName: $attendeeRequest->middleName,
-            familyName: $attendeeRequest->familyName,
-            nickName: $attendeeRequest->nickName,
-            email: $attendeeRequest->email,
-            orderCode: $attendeeRequest->orderCode,
-            ticketId: $attendeeRequest->ticketId,
-            ticketSecret: $attendeeRequest->ticketSecret ?? '',
-            product: $product,
-            tShirtSize: $attendeeRequest->tShirtSize,
-            nfcTagId: $attendeeRequest->nfcTagId,
+            name:           $attendeeRequest->name,
+            firstName:      $attendeeRequest->firstName,
+            middleName:     $attendeeRequest->middleName,
+            familyName:     $attendeeRequest->familyName,
+            nickName:       $attendeeRequest->nickName,
+            email:          $attendeeRequest->email,
+            orderCode:      $attendeeRequest->orderCode,
+            ticketId:       $attendeeRequest->ticketId,
+            ticketSecret:   $attendeeRequest->ticketSecret ?? '',
+            product:        $product,
+            tShirtSize:     $attendeeRequest->tShirtSize,
+            nfcTagId:       $attendeeRequest->nfcTagId,
             miniIdentifier: $attendeeRequest->miniIdentifier,
         );
 
@@ -57,7 +57,8 @@ readonly class AttendeeDomainService
             ->setNfcTagId($attendeeRequest->nfcTagId)
             ->setFireBaseToken($attendeeRequest->fireBaseToken)
             ->setBadgeFile(null)
-            ->setOverrideBadgeProduct($overrideBadgeProduct);
+            ->setOverrideBadgeProduct($overrideBadgeProduct)
+            ->setBackstageBadge($attendeeRequest->backstageBadge);
     }
 
     public function setAttendeeRoles(Attendee $attendee, SetAttendeeRolesRequest $setAttendeeRolesRequest): Attendee
@@ -91,7 +92,7 @@ readonly class AttendeeDomainService
 
     public function calculatePointsAndTime(Attendee $attendee, DateTime $firstAchievementTime): Attendee
     {
-        $points  = 0;
+        $points = 0;
         $maxTime = $firstAchievementTime;
 
         foreach ($attendee->getAchievements() as $achievement) {

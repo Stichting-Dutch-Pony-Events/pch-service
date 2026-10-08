@@ -31,28 +31,32 @@ class Attendee implements EnumUserInterface, PasswordAuthenticatedUserInterface
     private Collection $characterQuizSubmissions;
 
     /**
-     * @param  string  $name
-     * @param  string|null  $firstName
-     * @param  string|null  $middleName
-     * @param  string|null  $familyName
-     * @param  string|null  $nickName
-     * @param  string|null  $email
-     * @param  string  $orderCode
-     * @param  int  $ticketId
-     * @param  string  $ticketSecret
-     * @param  Product  $product
-     * @param  Team|null  $team
-     * @param  TShirtSize|null  $tShirtSize
-     * @param  string|null  $nfcTagId
-     * @param  string|null  $miniIdentifier
-     * @param  string|null  $password
-     * @param  string|null  $fireBaseToken
-     * @param  string|null  $badgeFile
-     * @param  Product|null  $overrideBadgeProduct
-     * @param  RoleEnum[]  $roles
-     * @param  Collection<array-key, CheckIn>|null  $checkIns
-     * @param  Collection<array-key, Achievement>|null  $achievements
-     * @param  Collection<array-key, PrintJob>|null  $printJobs
+     * @param string $name
+     * @param string|null $firstName
+     * @param string|null $middleName
+     * @param string|null $familyName
+     * @param string|null $nickName
+     * @param string|null $email
+     * @param string $orderCode
+     * @param int $ticketId
+     * @param string $ticketSecret
+     * @param Product $product
+     * @param Team|null $team
+     * @param TShirtSize|null $tShirtSize
+     * @param string|null $nfcTagId
+     * @param string|null $miniIdentifier
+     * @param string|null $password
+     * @param string|null $fireBaseToken
+     * @param string|null $badgeFile
+     * @param Product|null $overrideBadgeProduct
+     * @param int $points
+     * @param int $achievementsCompletedTime
+     * @param int|null $position
+     * @param bool $backstageBadge
+     * @param RoleEnum[] $roles
+     * @param Collection<array-key, CheckIn>|null $checkIns
+     * @param Collection<array-key, Achievement>|null $achievements
+     * @param Collection<array-key, PrintJob>|null $printJobs
      */
     public function __construct(
         private string      $name,
@@ -76,15 +80,16 @@ class Attendee implements EnumUserInterface, PasswordAuthenticatedUserInterface
         private int         $points = 0,
         private int         $achievementsCompletedTime = 0,
         private ?int        $position = null,
+        private bool        $backstageBadge = false,
         private array       $roles = [RoleEnum::USER],
         ?Collection         $checkIns = null,
         ?Collection         $achievements = null,
         ?Collection         $printJobs = null,
     ) {
-        $this->checkIns                 = $checkIns ?? new ArrayCollection();
-        $this->achievements             = $achievements ?? new ArrayCollection();
-        $this->printJobs                = $printJobs ?? new ArrayCollection();
-        $this->timetableItems           = new ArrayCollection();
+        $this->checkIns = $checkIns ?? new ArrayCollection();
+        $this->achievements = $achievements ?? new ArrayCollection();
+        $this->printJobs = $printJobs ?? new ArrayCollection();
+        $this->timetableItems = new ArrayCollection();
         $this->characterQuizSubmissions = new ArrayCollection();
     }
 
@@ -312,8 +317,20 @@ class Attendee implements EnumUserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function isBackstageBadge(): ?bool
+    {
+        return $this->backstageBadge;
+    }
+
+    public function setBackstageBadge(bool $backstageBadge): self
+    {
+        $this->backstageBadge = $backstageBadge;
+
+        return $this;
+    }
+
     /**
-     * @param  RoleEnum[]  $roles
+     * @param RoleEnum[] $roles
      * @return $this
      */
     public function setRoles(array $roles): self
