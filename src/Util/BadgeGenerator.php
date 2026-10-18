@@ -142,12 +142,6 @@ class BadgeGenerator
 
         imagepng($image, $filename);
 
-        imagedestroy($image);
-        if (isset($ocImage)) {
-            imagedestroy($ocImage);
-        }
-        imagedestroy($qrCode);
-
         $attendee->setBadgeFile($filename);
 
         return $filename;
