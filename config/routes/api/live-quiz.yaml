@@ -1,0 +1,49 @@
+api.live-quiz.sessions.list:
+  path: /live-quiz/sessions
+  controller: App\Controller\LiveQuizController::listSessions
+  methods: GET
+
+api.live-quiz.sessions.create:
+  path: /live-quiz/sessions
+  controller: App\Controller\LiveQuizController::createSession
+  methods: POST
+
+api.live-quiz.sessions.join:
+  path: /live-quiz/sessions/join
+  controller: App\Controller\LiveQuizController::joinSession
+  methods: POST
+
+api.live-quiz.sessions.joined:
+  path: /live-quiz/sessions/joined
+  controller: App\Controller\LiveQuizController::getJoinedSession
+  methods: GET
+
+api.live-quiz.sessions.question.create:
+  path: /live-quiz/sessions/{session}/questions
+  controller: App\Controller\LiveQuizController::createQuestion
+  methods: POST
+
+api.live-quiz.sessions.question.push:
+  path: /live-quiz/sessions/{session}/questions/{question}/push
+  controller: App\Controller\LiveQuizController::pushQuestion
+  methods: POST
+
+api.live-quiz.sessions.current-question:
+  path: /live-quiz/sessions/{session}/current-question
+  controller: App\Controller\LiveQuizController::getCurrentQuestion
+  methods: GET
+
+api.live-quiz.sessions.question.respond:
+  path: /live-quiz/sessions/{session}/questions/{question}/respond
+  controller: App\Controller\LiveQuizController::submitResponse
+  methods: POST
+
+api.live-quiz.sessions.question.results:
+  path: /live-quiz/sessions/{session}/questions/{question}/results
+  controller: App\Controller\LiveQuizController::getResults
+  methods: GET
+
+api.live-quiz.sessions.deactivate:
+  path: /live-quiz/sessions/{session}/deactivate
+  controller: App\Controller\LiveQuizController::deactivateSession
+  methods: POST

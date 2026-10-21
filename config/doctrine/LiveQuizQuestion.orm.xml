@@ -1,0 +1,50 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+    <entity name="App\Domain\Entity\LiveQuizQuestion"
+            repository-class="App\DataAccessLayer\Repository\LiveQuizQuestionRepository"
+            table="live_quiz_question">
+        <id name="id" type="uuid" column="id">
+            <generator strategy="CUSTOM"/>
+            <custom-id-generator class="doctrine.uuid_generator"/>
+        </id>
+
+        <field name="label" type="string" length="500" nullable="true"/>
+        <field name="durationSeconds" type="integer">
+            <options>
+                <option name="default">15</option>
+            </options>
+        </field>
+        <field name="openedAt" type="datetime" nullable="true"/>
+
+        <many-to-one field="session" target-entity="App\Domain\Entity\LiveQuizSession" inversed-by="questions">
+            <join-column name="session_id" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <one-to-many field="options"
+                     target-entity="App\Domain\Entity\LiveQuizOption"
+                     mapped-by="question">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+            <order-by>
+                <order-by-field name="order" direction="ASC"/>
+            </order-by>
+        </one-to-many>
+
+        <one-to-many field="responses"
+                     target-entity="App\Domain\Entity\LiveQuizResponse"
+                     mapped-by="question">
+            <cascade>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <field name="createdAt" type="datetime">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" type="datetime">
+            <gedmo:timestampable on="update"/>
+        </field>
+    </entity>
+</doctrine-mapping>
