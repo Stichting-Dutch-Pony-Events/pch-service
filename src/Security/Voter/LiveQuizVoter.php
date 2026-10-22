@@ -22,13 +22,13 @@ class LiveQuizVoter extends AbstractVoter
         self::LIST_SESSIONS,
         self::MANAGE_QUESTION,
         self::DEACTIVATE_SESSION,
+        self::VIEW_RESULTS,
     ];
 
     private const array USER_ATTRIBUTES = [
         self::JOIN_SESSION,
         self::SUBMIT_RESPONSE,
         self::VIEW_CURRENT,
-        self::VIEW_RESULTS,
     ];
 
     protected function supports(string $attribute, mixed $subject): bool

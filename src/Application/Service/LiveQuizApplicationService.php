@@ -152,24 +152,15 @@ readonly class LiveQuizApplicationService
             $question->getOptions()->toArray()
         );
 
-        $message = CloudMessage::new()
-            ->toTopic('PCH')
-            ->withData([
-                'live-quiz-question' => 'true',
-                'sessionId'          => $session->getId(),
-                'questionId'         => $question->getId(),
-                'label'              => $question->getLabel() ?? '',
-                'durationSeconds'    => (string) $question->getDurationSeconds(),
-                'openedAt'           => $openedAt->format(DateTime::ATOM),
-                'options'            => json_encode(array_values($options), JSON_THROW_ON_ERROR),
-            ]);
-
-        try {
-            $this->firebaseMessaging->send($message);
-        } catch (MessagingException|FirebaseException $e) {
-            // Clients can still pick the question up via "Reload Question".
-            $this->logger->error($e->getMessage(), ['exception' => $e]);
-        }
+        $this->sendData([
+            'live-quiz-question' => 'true',
+            'sessionId'          => $session->getId(),
+            'questionId'         => $question->getId(),
+            'label'              => $question->getLabel() ?? '',
+            'durationSeconds'    => (string) $question->getDurationSeconds(),
+            'openedAt'           => $openedAt->format(DateTime::ATOM),
+            'options'            => json_encode(array_values($options), JSON_THROW_ON_ERROR),
+        ]);
 
         return Mapper::mapOne($question, LiveQuizQuestionView::class);
     }
@@ -218,19 +209,10 @@ readonly class LiveQuizApplicationService
         $this->flushUnique('Already responded to this question');
     }
 
-    public function getResults(LiveQuizSession $session, LiveQuizQuestion $question, Attendee $user, bool $isStaff): LiveQuizResultView
+    // Staff only (see LiveQuizVoter): participants never get to see results.
+    public function getResults(LiveQuizSession $session, LiveQuizQuestion $question): LiveQuizResultView
     {
         $this->assertBelongsTo($session, $question);
-
-        if (!$isStaff) {
-            if ($this->participantRepository->findBySessionAndAttendee($session, $user) === null) {
-                throw new AccessDeniedHttpException('Not a participant in this session');
-            }
-
-            if ($question->isOpen()) {
-                throw new AccessDeniedHttpException('Results not available while question is open');
-            }
-        }
 
         $counts = $this->responseRepository->countByQuestionGroupedByOption($question);
         $totalResponses = (int) array_sum(array_column($counts, 'count'));
@@ -274,8 +256,28 @@ readonly class LiveQuizApplicationService
 
     public function deactivateSession(LiveQuizSession $session): void
     {
+        if (!$session->isActive()) {
+            return;
+        }
+
         $session->setIsActive(false);
         $this->entityManager->flush();
+
+        $this->sendData([
+            'live-quiz-session-ended' => 'true',
+            'sessionId'               => $session->getId(),
+        ]);
+    }
+
+    /** @param array<non-empty-string, string> $data */
+    private function sendData(array $data): void
+    {
+        try {
+            $this->firebaseMessaging->send(CloudMessage::new()->toTopic('PCH')->withData($data));
+        } catch (MessagingException|FirebaseException $e) {
+            // Clients can still find out via "Reload Question".
+            $this->logger->error($e->getMessage(), ['exception' => $e]);
+        }
     }
 
     private function toSessionView(LiveQuizSession $session): LiveQuizSessionView

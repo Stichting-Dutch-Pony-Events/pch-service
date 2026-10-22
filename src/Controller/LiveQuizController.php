@@ -11,7 +11,6 @@ use App\Application\View\LiveQuizQuestionView;
 use App\Domain\Entity\Attendee;
 use App\Domain\Entity\LiveQuizQuestion;
 use App\Domain\Entity\LiveQuizSession;
-use App\Security\Enum\RoleEnum;
 use App\Security\Voter\LiveQuizVoter;
 use App\Util\SymfonyUtils\Mapper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -122,12 +121,8 @@ class LiveQuizController extends AbstractController
         #[MapEntity(id: 'session')] LiveQuizSession $session,
         #[MapEntity(id: 'question')] LiveQuizQuestion $question,
     ): Response {
-        /** @var Attendee $attendee */
-        $attendee = $this->getUser();
-        $isStaff = $this->isGranted(RoleEnum::STAFF->value);
-
         return $this->json(
-            $this->liveQuizApplicationService->getResults($session, $question, $attendee, $isStaff)
+            $this->liveQuizApplicationService->getResults($session, $question)
         );
     }
 
